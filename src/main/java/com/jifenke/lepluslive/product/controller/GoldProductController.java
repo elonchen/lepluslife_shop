@@ -67,7 +67,7 @@ public class GoldProductController {
     model.addAttribute("score3", score - score % 100);
 
     model.addAttribute("m", JsonUtils.jsonToPojo(productModuleService.findList(), Map.class));
-    model.addAttribute("wxConfig", weiXinPayService.getWeiXinPayConfig(request));
+    model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     return MvUtil.go("/gold/product/index2");
   }
 

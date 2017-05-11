@@ -3,6 +3,7 @@ package com.jifenke.lepluslive.global.filter;
 import com.jifenke.lepluslive.global.config.Constants;
 import com.jifenke.lepluslive.global.util.CookieUtils;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,21 +19,28 @@ import javax.servlet.http.HttpSession;
  */
 public class WeiXinFilter implements HandlerInterceptor {
 
+  @Value("${weixin.appId}")
+  private String APPID;
+
+  @Value("${weixin.rootUrl}")
+  private String URL;
+
   @Override
   public boolean preHandle(HttpServletRequest request,
                            HttpServletResponse httpServletResponse, Object o) throws Exception {
     String action = request.getRequestURI();
     if (action.equals("/weixin/weixinReply") || action.equals("/weixin/load") || action
-        .equals("/weixin/userRegister") || action.equals("/weixin/pay/afterPay") || action
+        .equals("/weixin/userRegister") || action
+            .equals("/weixin/getOpenId") || action.equals("/weixin/pay/afterPay") || action
             .equals("/weixin/pay/afterPhonePay")) {
       return true;
     }
-    String unionId = CookieUtils.getCookieValue(request, "leJiaUnionId");
+    String unionId = CookieUtils.getCookieValue(request, "leJiaShopUnionId");
     if (unionId != null) {
       return true;
     }
     try {
-      String callbackUrl = Constants.WEI_XIN_ROOT_URL + "/weixin/userRegister?action=" + action;
+      String callbackUrl = Constants.WEI_XIN_URL + "/weixin/userRegister?action=" + action;
       String
           redirectUrl =
           "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + Constants.APPID

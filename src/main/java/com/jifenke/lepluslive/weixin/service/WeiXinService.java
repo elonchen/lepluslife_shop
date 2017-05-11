@@ -1,26 +1,17 @@
 package com.jifenke.lepluslive.weixin.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jifenke.lepluslive.global.config.Constants;
 import com.jifenke.lepluslive.global.util.CookieUtils;
+import com.jifenke.lepluslive.global.util.HttpUtils;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,92 +45,40 @@ public class WeiXinService {
   @Inject
   private WeiXinPayService weiXinPayService;
 
-
   public Map<String, Object> getSnsAccessToken(String code) {
     String
         getUrl =
         "https://api.weixin.qq.com/sns/oauth2/access_token?secret=" + secret + "&appid=" + appid
         + "&code=" + code + "&grant_type=" + grantType;
-    CloseableHttpClient httpclient = HttpClients.createDefault();
-    HttpGet httpGet = new HttpGet(getUrl);
-    httpGet.addHeader("Content-Type", "application/json");
-    CloseableHttpResponse response = null;
-    try {
-      response = httpclient.execute(httpGet);
-      HttpEntity entity = response.getEntity();
-      ObjectMapper mapper = new ObjectMapper();
-      Map<String, Object>
-          map =
-          mapper.readValue(new BufferedReader(new InputStreamReader(entity.getContent(), "utf-8")),
-                           Map.class);
-      EntityUtils.consume(entity);
-      response.close();
-      return map;
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
+    Map<String, String> headers = new HashMap<>();
+    headers.put("Content-Type", "application/json");
+    return HttpUtils.get(getUrl, headers);
   }
 
   public Map<String, Object> getDetailWeiXinUser(String accessToken, String openid) {
     String
         getUrl =
         "https://api.weixin.qq.com/sns/userinfo?access_token=" + accessToken + "&openid=" + openid;
-    CloseableHttpClient httpclient = HttpClients.createDefault();
-    HttpGet httpGet = new HttpGet(getUrl);
-    httpGet.addHeader("Content-Type", "application/json;charset=utf8mb4");
-    CloseableHttpResponse response = null;
-    try {
-      response = httpclient.execute(httpGet);
-      HttpEntity entity = response.getEntity();
-      ObjectMapper mapper = new ObjectMapper();
-      Map<String, Object>
-          userDetail =
-          mapper.readValue(new BufferedReader(new InputStreamReader(entity.getContent(), "utf-8")),
-                           Map.class);
-      EntityUtils.consume(entity);
-      response.close();
-      return userDetail;
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
+    Map<String, String> headers = new HashMap<>();
+    headers.put("Content-Type", "application/json;charset=utf8mb4");
+    return HttpUtils.get(getUrl, headers);
   }
 
   //主动获取微信用户信息
   public Map<String, Object> getWeiXinUserInfo(String openid) {
     String accessToken = dictionaryService.findDictionaryById(7L).getValue();
-//    String
-//        accessToken =
-//        "Gu-yGZhWqC5ADzk5SS-gYf31AawVLMPuRPNeivwiJ6r9azPQ3wNGvYScEfFeb_pDtepmKNp8nCJs5HLjx9jJE7aNiLsL3IofTYoziwNab_wD7P6ez0AyrwAtV49JklfjXRAfAJAQKT";
     String
         getUrl =
         "https://api.weixin.qq.com/cgi-bin/user/info?access_token=" + accessToken + "&openid="
         + openid;
-    CloseableHttpClient httpclient = HttpClients.createDefault();
-    HttpGet httpGet = new HttpGet(getUrl);
-    httpGet.addHeader("Content-Type", "application/json;charset=utf8mb4");
-    CloseableHttpResponse response = null;
-    try {
-      response = httpclient.execute(httpGet);
-      HttpEntity entity = response.getEntity();
-      ObjectMapper mapper = new ObjectMapper();
-      Map<String, Object>
-          userDetail =
-          mapper.readValue(new BufferedReader(new InputStreamReader(entity.getContent(), "utf-8")),
-                           Map.class);
-      EntityUtils.consume(entity);
-      response.close();
-      return userDetail;
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
+    Map<String, String> headers = new HashMap<>();
+    headers.put("Content-Type", "application/json;charset=utf8mb4");
+    return HttpUtils.get(getUrl, headers);
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public WeiXinUser getCurrentWeiXinUser(HttpServletRequest request) {
-    String unionId = CookieUtils.getCookieValue(request, "leJiaUnionId");
+    String unionId = CookieUtils.getCookieValue(request, "leJiaShopUnionId");
     return weiXinUserService.findWeiXinUserByUnionId(unionId);
   }
 
@@ -152,12 +91,12 @@ public class WeiXinService {
   }
 
   /**
-   * 获取页面调用接口所需的配置参数wxconfig
+   * 获取页面调用接口所需的配置参数wxConfig
    */
   public Map getWeiXinConfig(HttpServletRequest request) {
     Long timestamp = new Date().getTime() / 1000;
     String noncestr = MvUtil.getRandomStr();
-    Map map = new HashMap<>();
+    Map<String, Object> map = new HashMap<>();
     map.put("appId", appid);
     map.put("timestamp", timestamp);
     map.put("noncestr", noncestr);

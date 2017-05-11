@@ -36,32 +36,6 @@ public class HttpClientUtil {
 
   private static Logger log = LoggerFactory.getLogger(HttpClientUtil.class);
 
-  /**
-   * HTTP GET
-   */
-  public static Map<Object, Object> get(String getUrl) {
-
-    CloseableHttpClient client = HttpClients.createDefault();
-    HttpGet httpGet = new HttpGet(getUrl);
-    httpGet.addHeader("Content-Type", "application/json");
-    CloseableHttpResponse response = null;
-    try {
-      response = client.execute(httpGet);
-      HttpEntity entity = response.getEntity();
-      ObjectMapper mapper = new ObjectMapper();
-      Map<Object, Object>
-          map =
-          mapper.readValue(new BufferedReader(new InputStreamReader(entity.getContent(), "utf-8")),
-                           Map.class);
-      EntityUtils.consume(entity);
-      response.close();
-      return map;
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
   public static String post(String url, Map<String, String> params, String charset) {
     DefaultHttpClient httpclient = new DefaultHttpClient();
     String body = null;
