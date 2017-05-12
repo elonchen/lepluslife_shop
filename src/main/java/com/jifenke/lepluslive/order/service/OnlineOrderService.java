@@ -549,4 +549,8 @@ public class OnlineOrderService {
 //    }
 //  }
 
+  public Long sumOrderPriceByLeJiaUser(Long id){
+    return orderRepository.sumOrderPriceByLeJiaUser(id);
+  }
+
 }

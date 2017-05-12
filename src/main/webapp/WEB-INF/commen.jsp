@@ -4,3 +4,4 @@
 <c:set var="wxRootUrl" value="http://www.lepluslife.com"></c:set>
 <c:set var="resource" value="http://image.lepluslife.com/frontRes"></c:set>
 <c:set var="commonResource" value="http://image.lepluslife.com/common"></c:set>
+<c:set var="leplusShopResource" value="http://www.tiegancrm.com/leplus_shop/"></c:set>
