@@ -164,23 +164,24 @@ public class WeixinController {
       }
       CookieUtils.setCookie(request, response, "leJiaShopUnionId", result[1],
                             Constants.COOKIE_DISABLE_TIME);
-      if ("null".equals(result[0])) {
-        //需要静默获取乐加生活的openId
-        String
-            callbackUrl =
-            URLEncoder
-                .encode(Constants.WEI_XIN_LIFE_URL + "/front/weixin/getOpenId?action="
-                        + Constants.WEI_XIN_URL + action,
-                        "UTF-8");
-        StringBuffer redirectUrl = new StringBuffer();
-        redirectUrl.append(Constants.WEI_XIN_LIFE_URL)
-            .append("/front/weixin/snsapi_base_openid?callbackUrl=")
-            .append(callbackUrl).append("&unionId=")
-            .append(result[1]);
-        response.sendRedirect(redirectUrl.toString());
-      } else {
-        response.sendRedirect(action);
-      }
+//      if ("null".equals(result[0])) {
+//        //需要静默获取乐加生活的openId
+//        String
+//            callbackUrl =
+//            URLEncoder
+//                .encode(Constants.WEI_XIN_LIFE_URL + "/front/weixin/getOpenId?action="
+//                        + Constants.WEI_XIN_URL + action,
+//                        "UTF-8");
+//        StringBuffer redirectUrl = new StringBuffer();
+//        redirectUrl.append(Constants.WEI_XIN_LIFE_URL)
+//            .append("/front/weixin/snsapi_base_openid?callbackUrl=")
+//            .append(callbackUrl).append("&unionId=")
+//            .append(result[1]);
+//        response.sendRedirect(redirectUrl.toString());
+//      } else {
+//        response.sendRedirect(action);
+//      }
+      response.sendRedirect(action);
     }
     return null;
   }
