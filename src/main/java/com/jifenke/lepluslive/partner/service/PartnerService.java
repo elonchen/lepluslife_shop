@@ -1,17 +1,12 @@
 package com.jifenke.lepluslive.partner.service;
 
+import com.jifenke.lepluslive.lejiauser.domain.criteria.MerchantCriteria;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.repository.LeJiaUserRepository;
 import com.jifenke.lepluslive.merchant.domain.entities.Merchant;
 import com.jifenke.lepluslive.merchant.service.MerchantService;
-import com.jifenke.lepluslive.partner.domain.entities.Partner;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerInfo;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerScoreLog;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerWallet;
-import com.jifenke.lepluslive.partner.repository.PartnerInfoRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerScoreLogRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerWalletRepository;
+import com.jifenke.lepluslive.partner.domain.entities.*;
+import com.jifenke.lepluslive.partner.repository.*;
 import com.jifenke.lepluslive.score.domain.entities.ScoreA;
 import com.jifenke.lepluslive.score.domain.entities.ScoreADetail;
 import com.jifenke.lepluslive.score.domain.entities.ScoreB;
@@ -70,6 +65,12 @@ public class PartnerService {
 
     @Inject
     private LeJiaUserRepository leJiaUserRepository;
+
+    @Inject
+    private PartnerWalletOnlineLogRepository partnerWalletOnlineLogRepository;
+
+    @Inject
+    private PartnerWalletLogRepository partnerWalletLogRepository;
 
     @Inject
     private MerchantService merchantService;
@@ -246,4 +247,53 @@ public class PartnerService {
         result.put("dailyBindCount", dailyBindCount);
         return result;
     }
+
+    /**
+     *  合伙人佣金记录  17/05/12
+     *  1.线下佣金记录
+     *  2.线上佣金记录
+     *  3.总佣金
+     */
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public Map findPartnerCommisssion(Partner partner) {
+        Map result = new HashMap();
+        //  佣金记录
+        List<PartnerWalletOnlineLog> onlineLogs = partnerWalletOnlineLogRepository.findByPartnerIdOrderByCreateDateDesc(partner.getId());
+        List<PartnerWalletLog> offLineLogs = partnerWalletLogRepository.findByParnterIdOrderByCreateDateDesc(partner.getId());
+        //  佣金总计
+        Long sumOffLine = partnerWalletLogRepository.countOffLineCommission(partner.getId());
+        Long sumOnLine = partnerWalletOnlineLogRepository.countOnlineCommission(partner.getId());
+        Long totalCommission = (sumOnLine==null?0:sumOnLine)+(sumOffLine==null?0:sumOffLine);
+        result.put("onlineLogs",onlineLogs);
+        result.put("offLineLogs",offLineLogs);
+        result.put("totalCommission",totalCommission);
+        return result;
+    }
+
+    /**
+     *  合伙人的好店信息  17/05/12
+     *  1.门店名称
+     *  2.每日佣金
+     *  3.锁定会员数
+     */
+    @Transactional(readOnly = true,propagation = Propagation.REQUIRED)
+    public List<Object[]> findMerchantDataByPartner(MerchantCriteria merchantCriteria) {
+        Partner partner = merchantCriteria.getPartner();
+        List<Object[]> list = null;
+        if(merchantCriteria.getType()==0) {
+            if(merchantCriteria.getOrderBy()==0) {
+                list =  partnerRepository.findMerchantsDataByPartnerOrderByAmountAsc(partner.getId());
+            }else {
+                list =  partnerRepository.findMerchantsDataByPartnerOrderByAmountDesc(partner.getId());
+            }
+        }else {
+            if(merchantCriteria.getOrderBy()==0) {
+                list =  partnerRepository.findMerchantsDataByPartnerOrderByBindUserAsc(partner.getId());
+            }else {
+                list =  partnerRepository.findMerchantsDataByPartnerOrderByBindUserDesc(partner.getId());
+            }
+        }
+        return list;
+    }
+
 }

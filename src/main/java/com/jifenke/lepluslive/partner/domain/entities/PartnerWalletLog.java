@@ -1,19 +1,14 @@
 package com.jifenke.lepluslive.partner.domain.entities;
 
+import javax.persistence.*;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 /**
- * 合伙人线上分润钱包变动明细 Created by zhangwen on 16/11/05.
+ * Created by wcg on 16/6/22.
  */
 @Entity
-@Table(name = "PARTNER_WALLET_ONLINE_LOG")
-public class PartnerWalletOnlineLog {
+@Table(name = "PARTNER_WALLET_LOG")
+public class PartnerWalletLog {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,13 +18,11 @@ public class PartnerWalletOnlineLog {
 
   private Long partnerId;
 
-  private Long beforeChangeMoney; //商户钱包改变前金额
+  private Long beforeChangeMoney; //合伙人钱包改变前金额
 
   private Long afterChangeMoney; //改变后的金额
 
-  private Long changeMoney;   //线上钱包改变金额 理论=beforeChangeMoney-afterChangeMoney
-
-  private Long type; //如果为1代表app线上订单分润  2代表公众号线上订单分润   类型在 Category 表查看 category 字段
+  private Long type; //如果为1代表线下支付订单 4=线下订单退款
 
   private Date createDate = new Date();
 
@@ -75,14 +68,6 @@ public class PartnerWalletOnlineLog {
 
   public Long getAfterChangeMoney() {
     return afterChangeMoney;
-  }
-
-  public Long getChangeMoney() {
-    return changeMoney;
-  }
-
-  public void setChangeMoney(Long changeMoney) {
-    this.changeMoney = changeMoney;
   }
 
   public void setAfterChangeMoney(Long afterChangeMoney) {
