@@ -195,6 +195,7 @@ public class ProductService {
     map.put("hotStyle", o[9]);
     map.put("postage", o[10]);
     map.put("buyLimit", o[11]);
+    map.put("backPartner", o[13]);
     return map;
   }
 

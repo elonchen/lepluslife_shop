@@ -18,7 +18,7 @@ public class PartnerQrCode {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private Integer id;
+  private Long id;
 
   @OneToOne
   private Partner partner;
@@ -31,13 +31,17 @@ public class PartnerQrCode {
 
   private String ticket;      //获取的二维码ticket，凭借此ticket可以在有效时间内换取二维码(30天)
 
-  private String downUrl;  //临时二维码海报下载链接
+  private String url;  //临时二维码的值
 
-  public Integer getId() {
+  private String mediaId;   //临时素材ID 有效期三天 可复用（不知什么意思）
+
+  private Long mediaCreated;   //临时素材创建时间，用来判断是否需要重新上传
+
+  public Long getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -81,11 +85,27 @@ public class PartnerQrCode {
     this.ticket = ticket;
   }
 
-  public String getDownUrl() {
-    return downUrl;
+  public String getMediaId() {
+    return mediaId;
   }
 
-  public void setDownUrl(String downUrl) {
-    this.downUrl = downUrl;
+  public void setMediaId(String mediaId) {
+    this.mediaId = mediaId;
+  }
+
+  public Long getMediaCreated() {
+    return mediaCreated;
+  }
+
+  public void setMediaCreated(Long mediaCreated) {
+    this.mediaCreated = mediaCreated;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
   }
 }

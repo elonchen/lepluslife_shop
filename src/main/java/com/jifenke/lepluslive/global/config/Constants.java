@@ -14,6 +14,8 @@ public final class Constants {
 
   public static final String WEI_XIN_TOKEN = "88zctest";
 
+  public static final Long CODE_EXPIRE_SECONDS = 2592000L;
+
   public static final String APPID = "wx9a694d7de8b8b081";
 
   public static final String WEI_XIN_URL = "http://shop.tiegancrm.com";

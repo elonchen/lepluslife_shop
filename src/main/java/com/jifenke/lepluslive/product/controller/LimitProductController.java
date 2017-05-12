@@ -61,24 +61,10 @@ public class LimitProductController {
   public ModelAndView productIndex(HttpServletRequest request, Model model) {
     //商品分类
     List<ProductType> typeList = productService.findAllProductType();
-    //主打爆品
-//    Map product = productService.findMainHotProduct();
     model.addAttribute("scoreC", scoreCService
         .findScoreCByLeJiaUser(weiXinService.getCurrentWeiXinUser(request).getLeJiaUser()));
-//    model.addAttribute("product", product);
     model.addAttribute("typeList", typeList);
     return MvUtil.go("/product/productIndex");
-  }
-
-  /**
-   * 公众号 秒杀首页 16/09/21
-   */
-  @RequestMapping(value = "/weixin/hotIndex", method = RequestMethod.GET)
-  public ModelAndView hotIndex(Model model) {
-//    //主打爆品
-//    Map product = productService.findMainHotProduct();
-//    model.addAttribute("product", product);
-    return MvUtil.go("/product/hotIndex");
   }
 
   /**
@@ -87,8 +73,7 @@ public class LimitProductController {
    * @param productId 商品id
    */
   @RequestMapping(value = "/weixin/limitDetail", method = RequestMethod.GET)
-  public ModelAndView goBannerPage(HttpServletRequest request,
-                                   @RequestParam(required = true) Long productId, Model model) {
+  public ModelAndView goBannerPage(HttpServletRequest request, @RequestParam Long productId, Model model) {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     Product product = null;
     List<ProductDetail> detailList = null;

@@ -22,13 +22,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   /**
    * 不分类 分页获取臻品列表 16/09/21
    */
-  @Query(value = "SELECT p.id,p.name,p.price,p.min_price,p.min_score,p.picture,p.thumb,p.custom_sale,p.sale_num,p.hot_style,p.postage,p.buy_limit,t.type FROM product p,product_type t WHERE p.product_type_id=t.id AND p.state=1 AND p.type=1 ORDER BY p.sid ASC LIMIT ?1,?2", nativeQuery = true)
+  @Query(value = "SELECT p.id,p.name,p.price,p.min_price,p.min_score,p.picture,p.thumb,p.custom_sale,p.sale_num,p.hot_style,p.postage,p.buy_limit,t.type,p.back_partner FROM product p,product_type t WHERE p.product_type_id=t.id AND p.state=1 AND p.type=1 ORDER BY p.sid ASC LIMIT ?1,?2", nativeQuery = true)
   List<Object[]> findProductListByPage(Integer startNum, Integer pageSize);
 
   /**
    * 分类  分页获取臻品列表 16/09/21
    */
-  @Query(value = "SELECT p.id,p.name,p.price,p.min_price,p.min_score,p.picture,p.thumb,p.custom_sale,p.sale_num,p.hot_style,p.postage,p.buy_limit,t.type FROM product p,product_type t WHERE p.product_type_id=t.id AND p.state=1 AND p.type=1 AND t.id=?1 ORDER BY p.sid ASC LIMIT ?2,?3", nativeQuery = true)
+  @Query(value = "SELECT p.id,p.name,p.price,p.min_price,p.min_score,p.picture,p.thumb,p.custom_sale,p.sale_num,p.hot_style,p.postage,p.buy_limit,t.type,p.back_partner FROM product p,product_type t WHERE p.product_type_id=t.id AND p.state=1 AND p.type=1 AND t.id=?1 ORDER BY p.sid ASC LIMIT ?2,?3", nativeQuery = true)
   List<Object[]> findProductListByTypeAndPage(Integer typeId, Integer startNum, Integer pageSize);
 
   /**

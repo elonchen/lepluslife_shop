@@ -103,55 +103,6 @@
                                 </div>
                             </div>
                         </section>
-                        <%--<section class="top">--%>
-                        <%--<img src="${resourceUrl}/frontRes/product/hotIndex/img/line.png" alt="">--%>
-
-                        <%--<p>主打爆款</p>--%>
-
-                        <%--<div style="float: right;margin-top: -6%;font-size: 14px;color: #999999;margin-right: 3%"--%>
-                        <%--onclick="goMenu(2)">--%>
-                        <%--<img style="width: 10%;position: absolute;right: 0;left:87%;margin-top: 0.8%;"--%>
-                        <%--src="${resourceUrl}/frontRes/product/hotIndex/img/index_all.png"--%>
-                        <%--alt=""/>--%>
-                        <%--</div>--%>
-                        <%--</section>--%>
-                        <%--<c:if test="${product != null}">--%>
-                        <%--<section class="hotGoods" style="margin-top: -2px;"--%>
-                        <%--onclick="goHotDetail(${product.id})">--%>
-                        <%--<div>--%>
-                        <%--<img src="${product.thumb}" alt="">--%>
-                        <%--</div>--%>
-
-                        <%--<div></div>--%>
-                        <%--<div>${product.name}</div>--%>
-                        <%--<div><span--%>
-                        <%--style="color:#333;font-size: 15px;margin-right: -2px"><fmt:formatNumber--%>
-                        <%--type="number"--%>
-                        <%--value="${product.minPrice/100}"--%>
-                        <%--pattern="0.00"--%>
-                        <%--maxFractionDigits="2"/>元</span> + <span--%>
-                        <%--style="margin-left: -2px;font-size: 14px;color: #fb991a;"><fmt:formatNumber--%>
-                        <%--type="number"--%>
-                        <%--value="${product.minScore/100}"--%>
-                        <%--pattern="0.00"--%>
-                        <%--maxFractionDigits="2"/>金币</span>--%>
-                        <%--</div>--%>
-                        <%--<div>--%>
-                        <%--<span class="line-down"--%>
-                        <%--style="margin-top: -5px;font-size: 12px;color: #999;">市场价<fmt:formatNumber--%>
-                        <%--type="number"--%>
-                        <%--value="${product.price/100}"--%>
-                        <%--pattern="0.00"--%>
-                        <%--maxFractionDigits="2"/>元</span>--%>
-                        <%--</div>--%>
-                        <%--<div class="w-buyNow">--%>
-                        <%--<img src="${resourceUrl}/frontRes/product/hotIndex/img/buyNow.png"--%>
-                        <%--alt="">--%>
-
-                        <%--<p>仅剩${product.repository}份</p>--%>
-                        <%--</div>--%>
-                        <%--</section>--%>
-                        <%--</c:if>--%>
 
                         <section class="top" style="margin-bottom: 10px;">
                             <img src="${resourceUrl}/frontRes/product/hotIndex/img/line.png" alt="">
