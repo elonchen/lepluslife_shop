@@ -15,7 +15,7 @@ import javax.persistence.Table;
  * @author zhangwen【zhangwenit@126.com】 2017/5/11 11:04
  **/
 @Entity
-@Table(name = "PRODUCT")
+@Table(name = "PRODUCT_SHARE")
 public class ProductShare {
 
   @Id

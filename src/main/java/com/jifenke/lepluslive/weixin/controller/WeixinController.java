@@ -144,7 +144,7 @@ public class WeixinController {
       WeiXinUser weiXinUser = null;
       if (user != null) {
         weiXinUser = user.getWeiXinUser();
-        result[1] = weiXinUser.getOpenId();
+        result[1] = weiXinUser.getUnionId();
       }
       //2种情况 当用户不存在时,当上次登录距离此次已经经过了3天
       if (weiXinUser == null || new Date(
