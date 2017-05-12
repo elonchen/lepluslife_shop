@@ -102,7 +102,7 @@ public class OnlineOrderController {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     OnLineOrder order = orderService.findOnLineOrderById(orderId);
     model.addAttribute("order", order);
-    model.addAttribute("wxConfig", weiXinPayService.getWeiXinPayConfig(request));
+    model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     model.addAttribute("canUseScore",
                        scoreCService.findScoreCByLeJiaUser(weiXinUser.getLeJiaUser())
                            .getScore()); //用户可用金币
@@ -146,7 +146,7 @@ public class OnlineOrderController {
   @RequestMapping(value = "/weixin/recharge", method = RequestMethod.GET)
   public ModelAndView recharge(HttpServletRequest request, Model model) {
     LeJiaUser leJiaUser = weiXinService.getCurrentWeiXinUser(request).getLeJiaUser();
-    model.addAttribute("wxConfig", weiXinPayService.getWeiXinPayConfig(request));
+    model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     model.addAttribute("phone", leJiaUser.getPhoneNumber());
     model.addAttribute("canUseScore",
                        scoreCService.findScoreCByLeJiaUser(leJiaUser).getScore()); //用户可用金币

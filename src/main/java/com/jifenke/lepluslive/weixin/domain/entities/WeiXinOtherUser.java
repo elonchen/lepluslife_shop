@@ -1,10 +1,15 @@
 package com.jifenke.lepluslive.weixin.domain.entities;
 
 
-import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
-
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * 其他公众号用户微信信息

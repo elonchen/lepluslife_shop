@@ -16,17 +16,18 @@ import com.jifenke.lepluslive.product.domain.entities.ProductType;
 import com.jifenke.lepluslive.product.domain.entities.ScrollPicture;
 import com.jifenke.lepluslive.product.service.ProductService;
 import com.jifenke.lepluslive.product.service.ScrollPictureService;
-import com.jifenke.lepluslive.score.domain.entities.ScoreB;
 import com.jifenke.lepluslive.score.service.ScoreAService;
-import com.jifenke.lepluslive.score.service.ScoreBService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
+import com.jifenke.lepluslive.weixin.service.WeiXinOtherUserService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
 import com.jifenke.lepluslive.weixin.service.WeiXinUserService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +57,7 @@ public class WeixinController {
 
   private static Logger log = LoggerFactory.getLogger(WeixinController.class);
 
+
   @Inject
   private WeiXinUserService weiXinUserService;
 
@@ -63,9 +66,6 @@ public class WeixinController {
 
   @Inject
   private ProductService productService;
-
-  @Inject
-  private ScoreBService scoreBService;
 
   @Inject
   private ScoreCService scoreCService;
@@ -82,15 +82,16 @@ public class WeixinController {
   @Inject
   private PartnerService partnerService;
 
+  @Inject
+  private WeiXinOtherUserService weiXinOtherUserService;
+
   @RequestMapping("/shop")
-  public ModelAndView goProductPage(@CookieValue String leJiaUnionId,
+  public ModelAndView goProductPage(HttpServletRequest request,
                                     Model model) {
-    LeJiaUser leJiaUser = weiXinUserService.findWeiXinUserByUnionId(leJiaUnionId).getLeJiaUser();
+    LeJiaUser leJiaUser = weiXinService.getCurrentWeiXinUser(request).getLeJiaUser();
     //商品分类
     List<ProductType> typeList = productService.findAllProductType();
     //主打爆品
-//    Map product = productService.findMainHotProduct();
-//    model.addAttribute("product", product);
     model.addAttribute("scoreC", scoreCService.findScoreCByLeJiaUser(leJiaUser));
     model.addAttribute("typeList", typeList);
     return MvUtil.go("/product/productIndex");
@@ -138,10 +139,12 @@ public class WeixinController {
 
     if (map.get("openid") != null) {
       String openid = "" + map.get("openid");
-      String unionId = "";
-      WeiXinUser weiXinUser = weiXinUserService.findWeiXinUserByOpenId(openid);
-      if (weiXinUser != null) {
-        unionId = weiXinUser.getUnionId();
+      String[] result = new String[2];
+      WeiXinOtherUser user = weiXinOtherUserService.findByOpenId(openid);
+      WeiXinUser weiXinUser = null;
+      if (user != null) {
+        weiXinUser = user.getWeiXinUser();
+        result[1] = weiXinUser.getUnionId();
       }
       //2种情况 当用户不存在时,当上次登录距离此次已经经过了3天
       if (weiXinUser == null || new Date(
@@ -153,21 +156,33 @@ public class WeixinController {
           log.error(userDetail.get("errcode").toString() + userDetail.get("errmsg").toString());
         } else {
           try {
-            unionId = weiXinUserService.saveWeiXinUser(userDetail, map);
+            result = weiXinUserService.saveWeiXinUser(userDetail, user);
           } catch (IOException e) {
             e.printStackTrace();
           }
         }
       }
-      try {
-        CookieUtils.setCookie(request, response, "leJiaUnionId", unionId,
-                              Constants.COOKIE_DISABLE_TIME);
-        response.sendRedirect(action);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      CookieUtils.setCookie(request, response, "leJiaShopUnionId", result[1],
+                            Constants.COOKIE_DISABLE_TIME);
+//      if ("null".equals(result[0])) {
+//        //需要静默获取乐加生活的openId
+//        String
+//            callbackUrl =
+//            URLEncoder
+//                .encode(Constants.WEI_XIN_LIFE_URL + "/front/weixin/getOpenId?action="
+//                        + Constants.WEI_XIN_URL + action,
+//                        "UTF-8");
+//        StringBuffer redirectUrl = new StringBuffer();
+//        redirectUrl.append(Constants.WEI_XIN_LIFE_URL)
+//            .append("/front/weixin/snsapi_base_openid?callbackUrl=")
+//            .append(callbackUrl).append("&unionId=")
+//            .append(result[1]);
+//        response.sendRedirect(redirectUrl.toString());
+//      } else {
+//        response.sendRedirect(action);
+//      }
+      response.sendRedirect(action);
     }
-
     return null;
   }
 

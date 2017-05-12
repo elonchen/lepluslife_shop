@@ -14,6 +14,7 @@ import com.jifenke.lepluslive.score.repository.ScoreARepository;
 import com.jifenke.lepluslive.score.repository.ScoreBDetailRepository;
 import com.jifenke.lepluslive.score.repository.ScoreBRepository;
 import com.jifenke.lepluslive.score.repository.ScoreCRepository;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.repository.WeiXinUserRepository;
 
@@ -32,7 +33,8 @@ import java.util.Random;
 import javax.inject.Inject;
 
 /**
- * Created by wcg on 16/3/18.
+ * 微信用户
+ * Created by zhangwen on 17/5/11.
  */
 @Service
 @Transactional(readOnly = true)
@@ -68,6 +70,9 @@ public class WeiXinUserService {
   @Inject
   private ScoreCRepository scoreCRepository;
 
+  @Inject
+  private WeiXinOtherUserService weiXinOtherUserService;
+
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public WeiXinUser findWeiXinUserByOpenId(String openId) {
@@ -89,15 +94,19 @@ public class WeiXinUserService {
   }
 
 
-
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public void saveWeiXinUser(WeiXinUser weiXinUser) throws Exception {
     weiXinUserRepository.save(weiXinUser);
   }
 
-
+  /**
+   * 网页授权保存微信信息  2017/5/11
+   *
+   * @param userDetail 微信信息
+   * @param user       微信其他账号
+   */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public String saveWeiXinUser(Map<String, Object> userDetail, Map<String, Object> map)
+  public String[] saveWeiXinUser(Map<String, Object> userDetail, WeiXinOtherUser user)
       throws IOException {
     String openid = userDetail.get("openid").toString();
     String
@@ -107,12 +116,15 @@ public class WeiXinUserService {
     ScoreA scoreA = null;
     ScoreB scoreB = null;
     Date date = new Date();
+    String[] result = new String[2];
+
     if (weiXinUser == null) {
+      result[0] = "null";
       weiXinUser = new WeiXinUser();
       weiXinUser.setLastUpdated(date);
       weiXinUser.setDateCreated(date);
       LeJiaUser leJiaUser = new LeJiaUser();
-      leJiaUser.setHeadImageUrl(userDetail.get("headimgurl").toString());
+      leJiaUser.setHeadImageUrl(String.valueOf(userDetail.get("headimgurl")));
       leJiaUser.setWeiXinUser(weiXinUser);
       RegisterOrigin registerOrigin = new RegisterOrigin();
       registerOrigin.setId(1L);
@@ -133,23 +145,29 @@ public class WeiXinUserService {
       scoreC.setLeJiaUser(leJiaUser);
       scoreC.setLastUpdateDate(date);
       scoreCRepository.save(scoreC);
+    } else {
+      result[0] = "unNull";
+    }
+    if (user == null) {
+      user = new WeiXinOtherUser();
+      user.setOpenId(openid);
+      user.setWeiXinUser(weiXinUser);
+      weiXinOtherUserService.saveWeiXinOtherUser(user);
     }
 
-    weiXinUser.setOpenId(openid);
     weiXinUser.setUnionId(unionId);
-    weiXinUser.setCity(userDetail.get("city").toString());
-    weiXinUser.setCountry(userDetail.get("country").toString());
+    weiXinUser.setCity(String.valueOf(userDetail.get("city")));
+    weiXinUser.setCountry(String.valueOf(userDetail.get("country")));
     weiXinUser.setSex(Long.parseLong(userDetail.get("sex").toString()));
-    weiXinUser.setNickname(userDetail.get("nickname").toString());
-    weiXinUser.setLanguage(userDetail.get("language").toString());
-    weiXinUser.setHeadImageUrl(userDetail.get("headimgurl").toString());
-    weiXinUser.setProvince(userDetail.get("province").toString());
-    weiXinUser.setAccessToken(map.get("access_token").toString());
-    weiXinUser.setRefreshToken(map.get("refresh_token").toString());
+    weiXinUser.setNickname(String.valueOf(userDetail.get("nickname")));
+    weiXinUser.setLanguage(String.valueOf(userDetail.get("language")));
+    weiXinUser.setHeadImageUrl(String.valueOf(userDetail.get("headimgurl")));
+    weiXinUser.setProvince(String.valueOf(userDetail.get("province")));
     weiXinUser.setLastUserInfoDate(date);
     weiXinUser.setLastUpdated(date);
     weiXinUserRepository.save(weiXinUser);
-    return unionId;
+    result[1] = unionId;
+    return result;
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)

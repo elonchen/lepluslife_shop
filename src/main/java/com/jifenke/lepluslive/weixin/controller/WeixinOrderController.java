@@ -57,7 +57,7 @@ public class WeixinOrderController {
     model.addAttribute("order", orderService.findOnLineOrderById(orderId));
     model.addAttribute("address",
                        addressService.findAddressByLeJiaUserAndState(weiXinUser.getLeJiaUser()));
-    model.addAttribute("wxConfig", weiXinPayService.getWeiXinPayConfig(request));
+    model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     return MvUtil.go("/order/confirmOrder");
   }
 

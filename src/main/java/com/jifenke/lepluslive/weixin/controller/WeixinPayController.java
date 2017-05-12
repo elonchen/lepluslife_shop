@@ -13,7 +13,6 @@ import com.jifenke.lepluslive.order.service.OnlineOrderService;
 import com.jifenke.lepluslive.order.service.OrderService;
 import com.jifenke.lepluslive.product.domain.entities.ProductType;
 import com.jifenke.lepluslive.product.service.ProductService;
-import com.jifenke.lepluslive.score.domain.entities.ScoreB;
 import com.jifenke.lepluslive.score.service.ScoreAService;
 import com.jifenke.lepluslive.score.service.ScoreBService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
@@ -209,7 +208,7 @@ public class WeixinPayController {
 
     ActivityPhoneOrder order = phoneOrderService.findByOrderId(orderId);
     model.addAttribute("order", order);
-    model.addAttribute("wxConfig", weiXinPayService.getWeiXinPayConfig(request));
+    model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     if (order.getType() == 2) {
       return MvUtil.go("/gold/recharge/success");
     }

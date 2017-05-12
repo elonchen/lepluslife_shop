@@ -1,10 +1,8 @@
 package com.jifenke.lepluslive.weixin.service;
 
-import com.jifenke.lepluslive.global.config.Constants;
 import com.jifenke.lepluslive.global.util.MD5Util;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.global.util.WeixinPayUtil;
-import com.jifenke.lepluslive.order.domain.entities.OnLineOrder;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -52,25 +49,14 @@ public class WeiXinPayService {
   @Value("${app.mchKey}")
   private String mchKey_APP;
 
+  @Value("${weixin.rootUrl}")
+  private static String rootUrl;
+
   @Inject
   private DictionaryService dictionaryService;
 
   @Inject
   private WeiXinService weiXinService;
-
-  /**
-   * 获取公众号支付页面的配置参数wxconfig
-   */
-  public Map getWeiXinPayConfig(HttpServletRequest request) {
-    Long timestamp = new Date().getTime() / 1000;
-    String noncestr = MvUtil.getRandomStr();
-    Map<String, Object> map = new HashMap<>();
-    map.put("appId", appId_JS);
-    map.put("timestamp", timestamp);
-    map.put("noncestr", noncestr);
-    map.put("signature", getJsapiSignature(request, noncestr, timestamp));
-    return map;
-  }
 
   /**
    * 返回微信APP支付或公众号支付所需要的参数  2017/4/5
@@ -192,37 +178,6 @@ public class WeiXinPayService {
   }
 
   /**
-   * 公众号封装订单查询参数
-   */
-  @Transactional(readOnly = true)
-  public SortedMap<String, Object> buildOrderQueryParams(OnLineOrder onLineOrder) {
-    SortedMap<String, Object> orderParams = new TreeMap<>();
-    orderParams.put("appid", appId_JS);
-    orderParams.put("mch_id", mchId_JS);
-    orderParams.put("out_trade_no", onLineOrder.getOrderSid());
-    orderParams.put("nonce_str", MvUtil.getRandomStr());
-    String sign = createSign("UTF-8", orderParams, "JSAPI");
-    orderParams.put("sign", sign);
-    return orderParams;
-  }
-
-  /**
-   * APP封装订单查询参数   16/09/29
-   */
-  @Transactional(readOnly = true)
-  public SortedMap<String, Object> buildAPPOrderQueryParams(OnLineOrder onLineOrder) {
-    SortedMap<String, Object> orderParams = new TreeMap<>();
-    orderParams.put("appid", appId_APP);
-    orderParams.put("mch_id", mchId_APP);
-    orderParams.put("out_trade_no", onLineOrder.getOrderSid());
-    orderParams.put("nonce_str", MvUtil.getRandomStr());
-    String sign = createSign("UTF-8", orderParams, "APP");
-    orderParams.put("sign", sign);
-    return orderParams;
-  }
-
-
-  /**
    * @return ip地址
    */
   public String getIpAddr(HttpServletRequest request) {
@@ -284,7 +239,7 @@ public class WeiXinPayService {
   /**
    * 获取请求的XML
    */
-  public String getRequestXml(SortedMap<String, Object> parameters) {
+  private String getRequestXml(SortedMap<String, Object> parameters) {
     StringBuilder sb = new StringBuilder();
     sb.append("<xml>");
     Set es = parameters.entrySet();//所有参与传参的参数按照accsii排序（升序）
@@ -300,7 +255,7 @@ public class WeiXinPayService {
     return sb.toString();
   }
 
-  public String getJsapiSignature(HttpServletRequest request, String noncestr, Long timestamp) {
+  String getJsapiSignature(HttpServletRequest request, String noncestr, Long timestamp) {
     StringBuilder sb = new StringBuilder();
     sb.append("jsapi_ticket=");
     sb.append(dictionaryService.findDictionaryById(8L).getValue());
@@ -315,10 +270,8 @@ public class WeiXinPayService {
     return DigestUtils.sha1Hex(sb.toString());
   }
 
-  public String getCompleteRequestUrl(HttpServletRequest request) {
-
-    return Constants.WEI_XIN_ROOT_URL +
-           request.getRequestURI() +
-           (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+  private String getCompleteRequestUrl(HttpServletRequest request) {
+    return rootUrl + request.getRequestURI() + (request.getQueryString() != null ? "?" + request
+        .getQueryString() : "");
   }
 }

@@ -117,7 +117,7 @@ public class RechargeController {
     model.addAttribute("ruleList", JsonUtils.objectToJson(ruleService.findAllByState(1)));
     model.addAttribute("orderList", JsonUtils.objectToJson(
         orderService.findAllByLeJiaUser(weiXinUser.getLeJiaUser())));
-    model.addAttribute("wxConfig", weiXinPayService.getWeiXinPayConfig(request));
+    model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     return MvUtil.go("/activity/phone/index");
   }
 
