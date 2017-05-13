@@ -145,6 +145,8 @@ public class WeiXinUserService {
       scoreC.setLeJiaUser(leJiaUser);
       scoreC.setLastUpdateDate(date);
       scoreCRepository.save(scoreC);
+    } else if(weiXinUser.getOpenId() == null){
+      result[0] = "null";
     } else {
       result[0] = "unNull";
     }
@@ -442,18 +444,4 @@ public class WeiXinUserService {
       }
     }
   }
-
-  //  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-//  public WeiXinUser saveBarCodeForUser(WeiXinUser weiXinUser) throws IOException {
-//    LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
-//    byte[]
-//        bytes =
-//        barcodeService.barcode(leJiaUser.getUserSid(), BarcodeConfig.Barcode.defaultConfig());
-//    String filePath = MvUtil.getFilePath(Constants.BAR_CODE_EXT);
-//    fileImageService.SaveUserBarCode(bytes, filePath);
-//
-//    leJiaUser.setOneBarCodeUrl(barCodeRootUrl + "/" + filePath);
-//    leJiaUserRepository.save(leJiaUser);
-//    return weiXinUser;
-//  }
 }
