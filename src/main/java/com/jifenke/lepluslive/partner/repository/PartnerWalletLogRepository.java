@@ -21,6 +21,6 @@ public interface PartnerWalletLogRepository extends JpaRepository<PartnerWalletL
      * 查询合伙人线下佣金收入之和 17/05/12
      * 根据时间排序
      */
-    @Query(value="select sum(changeMoney) from partner_wallet_log where partner_id = ?1",nativeQuery = true)
+    @Query(value="select sum(change_money) from partner_wallet_log where partner_id = ?1",nativeQuery = true)
     Long countOffLineCommission(Long partnerId);
 }

@@ -17,6 +17,7 @@ import com.jifenke.lepluslive.score.repository.ScoreBDetailRepository;
 import com.jifenke.lepluslive.score.repository.ScoreBRepository;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 
+import com.jifenke.lepluslive.weixin.repository.WeiXinUserRepository;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -26,8 +27,10 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -70,7 +73,13 @@ public class PartnerService {
     private PartnerWalletOnlineLogRepository partnerWalletOnlineLogRepository;
 
     @Inject
+    private PartnerWalletOnlineRepository partnerWalletOnlineRepository;
+
+    @Inject
     private PartnerWalletLogRepository partnerWalletLogRepository;
+
+    @Inject
+    private WeiXinUserRepository weiXinUserRepository;
 
     @Inject
     private MerchantService merchantService;
@@ -237,9 +246,9 @@ public class PartnerService {
      *  3.今日锁定会员数。
      */
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Map findUserByPartner(Partner partner,Integer currPage) {
+    public Map findUserByPartner(Partner partner, Integer currPage) {
         Map result = new HashMap();
-        List<LeJiaUser> bindUsers = leJiaUserRepository.findByBindPartnerAndPage(partner.getId(),currPage);
+        List<LeJiaUser> bindUsers = leJiaUserRepository.findByBindPartnerAndPage(partner.getId(), currPage);
         Long bindCount = leJiaUserRepository.countPartnerBindLeJiaUser(partner.getId());
         Long dailyBindCount = leJiaUserRepository.countPartnerDailyBindLeJiaUser(partner.getId());
         result.put("bindUsers", bindUsers);
@@ -248,49 +257,78 @@ public class PartnerService {
         return result;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public List<Object[]> findBindUsersByPage(Partner partner, Integer currPage) {
+        List<Object[]> list = leJiaUserRepository.findByBindPartnerAndPageSimple(partner.getId(), currPage);
+        if (list != null && list.size() > 0) {
+            for (Object[] objects : list) {
+                WeiXinUser wx = weiXinUserRepository.findOne(new Long(objects[0].toString()));
+                WeiXinUser weiXinUser = new WeiXinUser();
+                weiXinUser.setNickname(wx.getNickname());
+                weiXinUser.setHeadImageUrl(wx.getHeadImageUrl());
+                objects[0] = weiXinUser;
+                objects[1] = objects[1].toString().substring(0, 19);
+            }
+        }
+        return list;
+    }
+
     /**
-     *  合伙人佣金记录  17/05/12
-     *  1.线下佣金记录
-     *  2.线上佣金记录
-     *  3.总佣金
+     * 合伙人佣金记录  17/05/12
+     * 1.线下佣金记录
+     * 2.线上佣金记录
+     * 3.总佣金
      */
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Map findPartnerCommisssion(Partner partner,Integer currPage) {
+    public Map findPartnerCommisssion(Partner partner, Integer currPage) {
         Map result = new HashMap();
         //  佣金记录
-        List<PartnerWalletOnlineLog> onlineLogs = partnerWalletOnlineLogRepository.findByPartnerIdAndPage(partner.getId(),currPage);
-        List<PartnerWalletLog> offLineLogs = partnerWalletLogRepository.findByPartnerIdAndPage(partner.getId(),currPage);
+        List<PartnerWalletOnlineLog> onlineLogs = partnerWalletOnlineLogRepository.findByPartnerIdAndPage(partner.getId(), currPage);
+        List<PartnerWalletLog> offLineLogs = partnerWalletLogRepository.findByPartnerIdAndPage(partner.getId(), currPage);
         //  佣金总计
-        Long sumOffLine = partnerWalletLogRepository.countOffLineCommission(partner.getId());
-        Long sumOnLine = partnerWalletOnlineLogRepository.countOnlineCommission(partner.getId());
-        Long totalCommission = (sumOnLine==null?0:sumOnLine)+(sumOffLine==null?0:sumOffLine);
-        result.put("onlineLogs",onlineLogs);
-        result.put("offLineLogs",offLineLogs);
-        result.put("totalCommission",totalCommission);
+        PartnerWalletOnline walletOnline = partnerWalletOnlineRepository.findByPartner(partner);
+        PartnerWallet walletOff = partnerWalletRepository.findByPartner(partner);
+        Long sumOffLine = walletOnline == null ? 0L : walletOnline.getTotalMoney();
+        Long sumOnLine = walletOff == null ? 0L : walletOff.getTotalMoney();
+        Long totalCommission = sumOnLine + sumOffLine;
+        result.put("onlineLogs", onlineLogs);
+        result.put("offLineLogs", offLineLogs);
+        result.put("totalCommission", totalCommission);
+        return result;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public Map findPartnerCommisssionSimple(Partner partner, Integer currPage) {
+        Map result = new HashMap();
+        //  佣金记录
+        List<PartnerWalletOnlineLog> onlineLogs = partnerWalletOnlineLogRepository.findByPartnerIdAndPage(partner.getId(), currPage);
+        List<PartnerWalletLog> offLineLogs = partnerWalletLogRepository.findByPartnerIdAndPage(partner.getId(), currPage);
+        result.put("onlineLogs", onlineLogs);
+        result.put("offLineLogs", offLineLogs);
         return result;
     }
 
     /**
-     *  合伙人的好店信息  17/05/12
-     *  1.门店名称
-     *  2.每日佣金
-     *  3.锁定会员数
+     * 合伙人的好店信息  17/05/12
+     * 1.门店名称
+     * 2.每日佣金
+     * 3.锁定会员数
      */
-    @Transactional(readOnly = true,propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public List<Object[]> findMerchantDataByPartner(MerchantCriteria merchantCriteria) {
         Partner partner = merchantCriteria.getPartner();
         List<Object[]> list = null;
-        if(merchantCriteria.getType()==0) {
-            if(merchantCriteria.getOrderBy()==0) {
-                list =  partnerRepository.findMerchantsDataByPartnerOrderByAmountAsc(partner.getId());
-            }else {
-                list =  partnerRepository.findMerchantsDataByPartnerOrderByAmountDesc(partner.getId());
+        if (merchantCriteria.getType() == 0) {
+            if (merchantCriteria.getOrderBy() == 0) {
+                list = partnerRepository.findMerchantsDataByPartnerOrderByAmountAsc(partner.getId());
+            } else {
+                list = partnerRepository.findMerchantsDataByPartnerOrderByAmountDesc(partner.getId());
             }
-        }else {
-            if(merchantCriteria.getOrderBy()==0) {
-                list =  partnerRepository.findMerchantsDataByPartnerOrderByBindUserAsc(partner.getId());
-            }else {
-                list =  partnerRepository.findMerchantsDataByPartnerOrderByBindUserDesc(partner.getId());
+        } else {
+            if (merchantCriteria.getOrderBy() == 0) {
+                list = partnerRepository.findMerchantsDataByPartnerOrderByBindUserAsc(partner.getId());
+            } else {
+                list = partnerRepository.findMerchantsDataByPartnerOrderByBindUserDesc(partner.getId());
             }
         }
         return list;
