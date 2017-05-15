@@ -6,9 +6,7 @@ import com.jifenke.lepluslive.activity.service.ActivityCodeBurseService;
 import com.jifenke.lepluslive.activity.service.ActivityJoinLogService;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
 import com.jifenke.lepluslive.merchant.service.MerchantService;
-import com.jifenke.lepluslive.statistics.domain.entities.VisitLog;
-import com.jifenke.lepluslive.statistics.service.VisitLogRedisService;
-import com.jifenke.lepluslive.statistics.service.VisitLogService;
+import com.jifenke.lepluslive.partner.service.PartnerQrCodeService;
 import com.jifenke.lepluslive.weixin.domain.entities.AutoReplyRule;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.domain.entities.WeixinMessage;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,10 +57,7 @@ public class WeixinReplyService {
   private MerchantService merchantService;
 
   @Inject
-  private VisitLogService visitLogService;
-
-  @Inject
-  private VisitLogRedisService redisService;
+  private PartnerQrCodeService partnerQrCodeService;
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public String routeWeixinEvent(Map map) {
@@ -84,16 +80,16 @@ public class WeixinReplyService {
         break;
       case "LOCATION":
         //上报地理位置
-        str = buildLocationReply(map);
+//        str = buildLocationReply(map);
         break;
       case "CLICK":
 //                用户点击菜单事件
         str = buildMenuMessageReply(map);
-        menuViewVisit(map);
+//        menuViewVisit(map);
         break;
       case "VIEW":
 //                点击菜单跳转链接时的事件推送
-        menuViewVisit(map);
+//        menuViewVisit(map);
         break;
       default:
         break;
@@ -235,19 +231,20 @@ public class WeixinReplyService {
    * 点击自定义菜单发送图片
    */
   private String buildMenuMessageReply(Map map) {
-    //回复
-    StringBuffer buffer = new StringBuffer();
-    buffer.append("<xml><ToUserName><![CDATA[").append(map.get("FromUserName"))
-        .append("]]></ToUserName>");
-    buffer.append("<FromUserName><![CDATA[").append(map.get("ToUserName"))
-        .append("]]></FromUserName>");
-    buffer.append("<CreateTime>").append(map.get("CreateTime")).append("</CreateTime>");
-    buffer.append("<MsgType><![CDATA[image]]></MsgType><Image><MediaId><![CDATA[");
-//    buffer.append("V9tGnEZo9vEqxnbQQltE9J9ii3mV2IIGUrSVQupvEhE");
-    buffer.append("ExYmvSBL_aElY8lmMTB2gh_lWkXwHQ5TDeA12f4KAeU");
-    buffer.append("]]></MediaId></Image></xml>");
+    String mediaId = null;
+    try {
+      mediaId = partnerQrCodeService.getMediaId(map.get("FromUserName").toString());
+    } catch (IOException e) {
+      e.printStackTrace();
+      return returnText(map, "系统异常，请稍后再试");
+    }
+    if (mediaId == null) { //未找到合伙人信息，返回文本消息
+      return returnText(map, "请先注册成为合伙人");
+    } else if (mediaId.startsWith("fail")) { //接口调用异常，返回文本消息
+      return returnText(map, "接口调用异常，请稍后再试");
+    }
 
-    return buffer.toString();
+    return returnImage(map, mediaId);
   }
 
   /**
@@ -269,15 +266,6 @@ public class WeixinReplyService {
       return str;
     }
     return "";
-  }
-
-  /**
-   * 上报地理位置时发送的信息
-   */
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  private String buildLocationReply(Map map) {
-    // weiXinUserInfoService.saveWeiXinUserInfo(map);
-    return "success";
   }
 
   /**
@@ -414,13 +402,61 @@ public class WeixinReplyService {
   }
 
   /**
-   * 点击菜单到URL时保存点击记录  2017/03/10
+   * 回复文本消息  2017/5/15
+   *
+   * @param map 请求包
+   * @param msg 消息内容
    */
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  private void menuViewVisit(Map map) {
-    visitLogService.saveLog(new VisitLog(String.valueOf(map.get("FromUserName")), "menu",
-                                         String.valueOf(map.get("EventKey")), "weixin"));
-    redisService.addClickLog(String.valueOf(map.get("FromUserName")), "menu:",
-                             String.valueOf(map.get("EventKey")));
+  private String returnText(Map map, String msg) {
+    StringBuffer buffer = new StringBuffer();
+    buffer.append("<xml>");
+    buffer.append("<ToUserName><![CDATA[" + map.get("FromUserName") + "]]></ToUserName>");
+    buffer.append("<FromUserName><![CDATA[" + map.get("ToUserName") + "]]></FromUserName>");
+    buffer.append("<CreateTime>" + map.get("CreateTime") + "</CreateTime>");
+    buffer.append("<MsgType><![CDATA[text]]></MsgType>");
+    buffer.append("<Content><![CDATA[" + msg + "]]></Content>");
+    buffer.append("</xml>");
+    return buffer.toString();
   }
+
+  /**
+   * 回复图片消息  2017/5/15
+   *
+   * @param map     请求包
+   * @param mediaId 图片素材ID
+   */
+  private String returnImage(Map map, String mediaId) {
+    //回复
+    StringBuffer buffer = new StringBuffer();
+    buffer.append("<xml><ToUserName><![CDATA[").append(map.get("FromUserName"))
+        .append("]]></ToUserName>");
+    buffer.append("<FromUserName><![CDATA[").append(map.get("ToUserName"))
+        .append("]]></FromUserName>");
+    buffer.append("<CreateTime>").append(map.get("CreateTime")).append("</CreateTime>");
+    buffer.append("<MsgType><![CDATA[image]]></MsgType><Image><MediaId><![CDATA[");
+    buffer.append(mediaId);
+    buffer.append("]]></MediaId></Image></xml>");
+
+    return buffer.toString();
+  }
+
+  //  /**
+//   * 上报地理位置时发送的信息
+//   */
+//  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+//  private String buildLocationReply(Map map) {
+//    // weiXinUserInfoService.saveWeiXinUserInfo(map);
+//    return "success";
+//  }
+
+//  /**
+//   * 点击菜单到URL时保存点击记录  2017/03/10
+//   */
+//  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+//  private void menuViewVisit(Map map) {
+//    visitLogService.saveLog(new VisitLog(String.valueOf(map.get("FromUserName")), "menu",
+//                                         String.valueOf(map.get("EventKey")), "weixin"));
+//    redisService.addClickLog(String.valueOf(map.get("FromUserName")), "menu:",
+//                             String.valueOf(map.get("EventKey")));
+//  }
 }

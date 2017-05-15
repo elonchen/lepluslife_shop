@@ -179,7 +179,7 @@ public class PartnerService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Optional findPartnerByWeiXinUser(WeiXinUser weiXinUser) {
+    public Optional<Partner> findPartnerByWeiXinUser(WeiXinUser weiXinUser) {
         return partnerRepository.findByWeiXinUser(weiXinUser);
     }
 

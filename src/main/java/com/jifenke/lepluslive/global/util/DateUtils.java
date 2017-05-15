@@ -56,5 +56,12 @@ public class DateUtils {
     return calendar.getTime();
   }
 
+  /**
+   * 获取当前时间戳
+   */
+  public static Long getTimeStamp() {
+    return new Date().getTime() / 1000;
+  }
+
 
 }
