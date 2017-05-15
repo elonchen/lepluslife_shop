@@ -14,7 +14,8 @@ public interface PartnerWalletLogRepository extends JpaRepository<PartnerWalletL
      * 查询合伙人线下佣金收入 17/05/12
      * 根据时间排序
      */
-    List<PartnerWalletLog> findByParnterIdOrderByCreateDateDesc(Long partnerId);
+    @Query(value="select * from partner_wallet_log where partner_id = ?1  order by create_date DESC limit ?2,10 ",nativeQuery = true)
+    List<PartnerWalletLog> findByPartnerIdAndPage(Long partnerId,Integer currPage);
 
     /**
      * 查询合伙人线下佣金收入之和 17/05/12

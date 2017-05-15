@@ -48,6 +48,7 @@ public interface LeJiaUserRepository extends JpaRepository<LeJiaUser, Long> {
   /**
    *  查找当前合伙人下所有会员
    */
-  List<LeJiaUser> findByBindPartner(Partner bindPartner);
+  @Query(value="select * from le_jia_user where bind_partner_id  = ?1 limit ?2,10",nativeQuery = true)
+  List<LeJiaUser> findByBindPartnerAndPage(Long bindPartner, Integer currPage);
 
 }
