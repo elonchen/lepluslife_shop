@@ -237,9 +237,9 @@ public class PartnerService {
      *  3.今日锁定会员数。
      */
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Map findUserByPartner(Partner partner) {
+    public Map findUserByPartner(Partner partner,Integer currPage) {
         Map result = new HashMap();
-        List<LeJiaUser> bindUsers = leJiaUserRepository.findByBindPartner(partner);
+        List<LeJiaUser> bindUsers = leJiaUserRepository.findByBindPartnerAndPage(partner.getId(),currPage);
         Long bindCount = leJiaUserRepository.countPartnerBindLeJiaUser(partner.getId());
         Long dailyBindCount = leJiaUserRepository.countPartnerDailyBindLeJiaUser(partner.getId());
         result.put("bindUsers", bindUsers);
@@ -255,11 +255,11 @@ public class PartnerService {
      *  3.总佣金
      */
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Map findPartnerCommisssion(Partner partner) {
+    public Map findPartnerCommisssion(Partner partner,Integer currPage) {
         Map result = new HashMap();
         //  佣金记录
-        List<PartnerWalletOnlineLog> onlineLogs = partnerWalletOnlineLogRepository.findByPartnerIdOrderByCreateDateDesc(partner.getId());
-        List<PartnerWalletLog> offLineLogs = partnerWalletLogRepository.findByParnterIdOrderByCreateDateDesc(partner.getId());
+        List<PartnerWalletOnlineLog> onlineLogs = partnerWalletOnlineLogRepository.findByPartnerIdAndPage(partner.getId(),currPage);
+        List<PartnerWalletLog> offLineLogs = partnerWalletLogRepository.findByPartnerIdAndPage(partner.getId(),currPage);
         //  佣金总计
         Long sumOffLine = partnerWalletLogRepository.countOffLineCommission(partner.getId());
         Long sumOnLine = partnerWalletOnlineLogRepository.countOnlineCommission(partner.getId());
