@@ -65,7 +65,7 @@ public class PartnerCenterController {
          }
          Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
          Map result = partnerService.findPartnerCommisssion(partner,currPage*10);
-         model.addAttribute("onlineLogs",result.get("onlineLogs"));
+         model.addAttribute("onLineLogs",result.get("onLineLogs"));
          model.addAttribute("offLineLogs",result.get("offLineLogs"));
          model.addAttribute("totalCommission",result.get("totalCommission"));
          return MvUtil.go("/partner/commissionRecord/commissionRecord");

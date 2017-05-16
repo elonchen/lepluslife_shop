@@ -291,7 +291,7 @@ public class PartnerService {
         Long sumOffLine = walletOnline == null ? 0L : walletOnline.getTotalMoney();
         Long sumOnLine = walletOff == null ? 0L : walletOff.getTotalMoney();
         Long totalCommission = sumOnLine + sumOffLine;
-        result.put("onlineLogs", onlineLogs);
+        result.put("onLineLogs", onlineLogs);
         result.put("offLineLogs", offLineLogs);
         result.put("totalCommission", totalCommission);
         return result;
@@ -303,7 +303,7 @@ public class PartnerService {
         //  佣金记录
         List<PartnerWalletOnlineLog> onlineLogs = partnerWalletOnlineLogRepository.findByPartnerIdAndPage(partner.getId(), currPage);
         List<PartnerWalletLog> offLineLogs = partnerWalletLogRepository.findByPartnerIdAndPage(partner.getId(), currPage);
-        result.put("onlineLogs", onlineLogs);
+        result.put("onLineLogs", onlineLogs);
         result.put("offLineLogs", offLineLogs);
         return result;
     }
