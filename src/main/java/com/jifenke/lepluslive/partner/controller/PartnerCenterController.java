@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,16 +82,31 @@ public class PartnerCenterController {
         return LejiaResult.ok(result);
     }
     /**
-     *  合伙人中心 -  提现记录
+     *  合伙人中心 -  我的好店
      *  17/05/12
      */
-    @RequestMapping(value="/partnerCenter",method = RequestMethod.GET)
+    @RequestMapping(value="/myShops",method = RequestMethod.GET)
     public ModelAndView myCommission(Model model, MerchantCriteria merchantCriteria) {
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        if(merchantCriteria.getType()==null||merchantCriteria.getOrderBy()==null) {
+            merchantCriteria = new MerchantCriteria();
+            merchantCriteria.setOrderBy(0);
+            merchantCriteria.setType(0);
+        }
+        merchantCriteria.setPartner(partner);
+        List<Object[]> list = partnerService.findMerchantDataByPartner(merchantCriteria);
+        Long totalBind = partnerService.findUserBindByPartner(partner);
+        model.addAttribute("list",list);
+        model.addAttribute("totalBind",totalBind);
+        return MvUtil.go("/partner/myShop/myShop");
+    }
+    @RequestMapping(value="/myShopsByCriteria",method = RequestMethod.POST)
+    @ResponseBody
+    public LejiaResult myCommissionByCriteria(Model model, MerchantCriteria merchantCriteria) {
         Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
         merchantCriteria.setPartner(partner);
         List<Object[]> list = partnerService.findMerchantDataByPartner(merchantCriteria);
-        model.addAttribute(list);
-        return MvUtil.go("/partner/partnerCenter/partnerCenter");
+        return LejiaResult.ok(list);
     }
     /**
      *  合伙人中心  - 乐加客服
@@ -120,4 +136,5 @@ public class PartnerCenterController {
         model.addAttribute("bills",list);
         return MvUtil.go("/partner/withdrawRecord/withdrawRecord");
     }
+
 }

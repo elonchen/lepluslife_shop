@@ -256,6 +256,11 @@ public class PartnerService {
         result.put("dailyBindCount", dailyBindCount);
         return result;
     }
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public Long findUserBindByPartner(Partner partner) {
+        Long bindCount = leJiaUserRepository.countPartnerBindLeJiaUser(partner.getId());
+        return bindCount;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<Object[]> findBindUsersByPage(Partner partner, Integer currPage) {
@@ -333,5 +338,4 @@ public class PartnerService {
         }
         return list;
     }
-
 }
