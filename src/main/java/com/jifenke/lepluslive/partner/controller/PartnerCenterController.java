@@ -35,6 +35,18 @@ public class PartnerCenterController {
 
 
     /**
+     * 合伙人中心 - 首页
+     * 17/05/11
+     *  currPage
+     */
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView homePage(Model model) {
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        return MvUtil.go("/partner/partnerCenter/partnerCenter");
+    }
+
+
+    /**
      * 合伙人中心 -  我的会员
      * 17/05/11
      *  currPage

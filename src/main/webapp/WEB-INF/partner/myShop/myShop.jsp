@@ -36,7 +36,7 @@
             <div class="zuoriliushui" id="dailyCommission">
                 <c:forEach var="data" items="${list}">
                     <div class="list">
-                        <div class="face-img"><img src="http://www.tiegancrm.com/leplus_shop/partner_center/image/Group4@2x.png" alt=""></div>
+                        <div class="face-img"><img src="http://www.tiegancrm.com/leplus_shop/partner_center/images/Group4@2x.png" alt=""></div>
                         <div class="desc">
                             <p class="clearfix"><span class="left ttl">${data[1]}</span><span class="right num">锁定会员：<span class="origin-color">${data[2]}</span>/${data[4]}</span>
                             </p>
@@ -94,7 +94,7 @@
             success: function (response) {
                var list = response.data;
                for(var i=0;i<list.length;i++) {
-                   newContent+='<div class="list"><div class="face-img"><img src="http://www.tiegancrm.com/leplus_shop/partner_center/image/Group4@2x.png" alt=""></div>'+
+                   newContent+='<div class="list"><div class="face-img"><img src="http://www.tiegancrm.com/leplus_shop/partner_center/images/Group4@2x.png" alt=""></div>'+
                        '<div class="desc">'+
                        '<p class="clearfix"><span class="left ttl">'+list[i][1]+'</span><span class="right num">锁定会员：<span class="origin-color">'+list[i][2]+'</span>/'+list[i][4]+'</span>'+
                    '</p><p class="money">昨日流水：¥'+(list[i][3]/100.0)+'</p></div></div>';

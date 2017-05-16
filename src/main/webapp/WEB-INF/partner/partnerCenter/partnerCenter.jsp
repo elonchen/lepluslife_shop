@@ -5,6 +5,10 @@
   Time: 10:06
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="/WEB-INF/commen.jsp" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,37 +63,37 @@
     <div class="menu">
         <div class="item border-bottom border-right">
             <div class="menu-wrapper">
-                <div class="icon"><img src="images/yongjinjilu@2x.png" alt=""></div>
+                <div class="icon"><img src="${leplusShopResource}/partner_center/images/yongjinjilu@2x.png" alt=""></div>
                 <h3>佣金记录</h3>
             </div>
         </div>
         <div class="item border-bottom border-right">
             <div class="menu-wrapper">
-                <div class="icon"><img src="images/tixainjilu@2x.png" alt=""></div>
+                <div class="icon"><img src="${leplusShopResource}/partner_center/images/tixainjilu@2x.png" alt=""></div>
                 <h3>提现记录</h3>
             </div>
         </div>
         <div class="item item-final border-bottom">
             <div class="menu-wrapper">
-                <div class="icon"><img src="images/wodehuiyuan@2x.png" alt=""></div>
+                <div class="icon"><img src="${leplusShopResource}/partner_center/images/wodehuiyuan@2x.png" alt=""></div>
                 <h3>我的会员</h3>
             </div>
         </div>
         <div class="item border-right">
             <div class="menu-wrapper">
-                <div class="icon"><img src="images/wodehaodian@2x.png" alt=""></div>
+                <div class="icon"><img src="${leplusShopResource}/partner_center/images/wodehaodian@2x.png" alt=""></div>
                 <h3>我的好店</h3>
             </div>
         </div>
         <div class="item border-right">
             <div class="menu-wrapper">
-                <div class="icon"><img src="images/shourupaiming@2x.png" alt=""></div>
+                <div class="icon"><img src="${leplusShopResource}/partner_center/images/shourupaiming@2x.png" alt=""></div>
                 <h3>收入排名</h3>
             </div>
         </div>
         <div class="item item-final">
             <div class="menu-wrapper">
-                <div class="icon"><img src="images/kefuzhongxin@2x.png" alt=""></div>
+                <div class="icon"><img src="${leplusShopResource}/partner_center/images/kefuzhongxin@2x.png" alt=""></div>
                 <h3>客服中心</h3>
             </div>
         </div>
