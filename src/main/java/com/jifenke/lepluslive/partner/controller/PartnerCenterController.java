@@ -1,17 +1,20 @@
 package com.jifenke.lepluslive.partner.controller;
 
+import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.lejiauser.domain.criteria.MerchantCriteria;
+import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.partner.domain.entities.Partner;
+import com.jifenke.lepluslive.partner.domain.entities.WeiXinWithdrawBill;
 import com.jifenke.lepluslive.partner.service.PartnerService;
+import com.jifenke.lepluslive.partner.service.WeiXinWithdrawBillService;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,21 @@ public class PartnerCenterController {
     private PartnerService partnerService;
     @Inject
     private DictionaryService dictionaryService;
+    @Inject
+    private WeiXinWithdrawBillService weiXinWithdrawBillService;
+
+
+    /**
+     * 合伙人中心 - 首页
+     * 17/05/11
+     *  currPage
+     */
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ModelAndView homePage(Model model) {
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        return MvUtil.go("/partner/partnerCenter/partnerCenter");
+    }
+
 
     /**
      * 合伙人中心 -  我的会员
@@ -34,10 +52,19 @@ public class PartnerCenterController {
      *  currPage
      */
     @RequestMapping(value = "/myMember", method = RequestMethod.GET)
-    public ModelAndView myBindUsers(Model model,Integer currPage) {
-        Map result = partnerService.findUserByPartner(new Partner(),currPage);
+    public ModelAndView myBindUsers(Model model) {
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        Integer currPage=0;                                                                // Start
+        Map result = partnerService.findUserByPartner(partner,currPage);
         model.addAttribute("data", result);
         return MvUtil.go("/partner/myMember/myMember");
+    }
+    @RequestMapping(value = "/myMember/{currPage}", method = RequestMethod.GET)
+    @ResponseBody
+    public LejiaResult myBindUsersByPage(@PathVariable Integer currPage) {
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        List<Object[]> result = partnerService.findBindUsersByPage(partner, currPage*10);
+        return LejiaResult.ok(result);
     }
 
     /**
@@ -46,22 +73,52 @@ public class PartnerCenterController {
      */
      @RequestMapping(value="/commissionRecord",method = RequestMethod.GET)
     public ModelAndView myCommission(Model model,Integer currPage) {
-         Map result = partnerService.findPartnerCommisssion(new Partner(),currPage);
-         model.addAttribute("onlineLogs",result.get("onlineLogs"));
+         if(currPage==null) {
+             currPage = 0;
+         }
+         Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+         Map result = partnerService.findPartnerCommisssion(partner,currPage*10);
+         model.addAttribute("onLineLogs",result.get("onLineLogs"));
          model.addAttribute("offLineLogs",result.get("offLineLogs"));
          model.addAttribute("totalCommission",result.get("totalCommission"));
          return MvUtil.go("/partner/commissionRecord/commissionRecord");
      }
-
+    @RequestMapping(value = "/commissionRecord/{currPage}", method = RequestMethod.GET)
+    @ResponseBody
+    public LejiaResult myCommissionByPage(@PathVariable Integer currPage) {
+        if(currPage==null) {
+            currPage = 0;
+        }
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        Map result = partnerService.findPartnerCommisssionSimple(partner,currPage*10);
+        return LejiaResult.ok(result);
+    }
     /**
-     *  合伙人中心 -  提现记录
+     *  合伙人中心 -  我的好店
      *  17/05/12
      */
-    @RequestMapping(value="/partnerCenter",method = RequestMethod.GET)
+    @RequestMapping(value="/myShops",method = RequestMethod.GET)
     public ModelAndView myCommission(Model model, MerchantCriteria merchantCriteria) {
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        if(merchantCriteria.getType()==null||merchantCriteria.getOrderBy()==null) {
+            merchantCriteria = new MerchantCriteria();
+            merchantCriteria.setOrderBy(0);
+            merchantCriteria.setType(0);
+        }
+        merchantCriteria.setPartner(partner);
         List<Object[]> list = partnerService.findMerchantDataByPartner(merchantCriteria);
-        model.addAttribute(list);
-        return MvUtil.go("/partner/partnerCenter/partnerCenter");
+        Long totalBind = partnerService.findUserBindByPartner(partner);
+        model.addAttribute("list",list);
+        model.addAttribute("totalBind",totalBind);
+        return MvUtil.go("/partner/myShop/myShop");
+    }
+    @RequestMapping(value="/myShopsByCriteria",method = RequestMethod.POST)
+    @ResponseBody
+    public LejiaResult myCommissionByCriteria(Model model, MerchantCriteria merchantCriteria) {
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        merchantCriteria.setPartner(partner);
+        List<Object[]> list = partnerService.findMerchantDataByPartner(merchantCriteria);
+        return LejiaResult.ok(list);
     }
     /**
      *  合伙人中心  - 乐加客服
@@ -85,7 +142,11 @@ public class PartnerCenterController {
      */
     @RequestMapping(value="/withdrawRecord",method = RequestMethod.GET)
     public ModelAndView wxWithdrawBill(Model model,Integer currPage) {
-
+        Partner partner = partnerService.findPartnerBySid("4354749");              // -- Temo
+        currPage=10;
+        List<WeiXinWithdrawBill> list = weiXinWithdrawBillService.findByPartnerAndPage(partner.getId(), currPage);
+        model.addAttribute("bills",list);
         return MvUtil.go("/partner/withdrawRecord/withdrawRecord");
     }
+
 }

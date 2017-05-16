@@ -23,6 +23,6 @@ public interface PartnerWalletOnlineLogRepository
      * 查询合伙人线上佣金收入之和 17/05/12
      * 根据时间排序
      */
-    @Query(value="select sum(changeMoney) from partner_wallet_online_log where partner_id = ?1",nativeQuery = true)
+    @Query(value="select sum(change_money) from partner_wallet_online_log where partner_id = ?1",nativeQuery = true)
     Long countOnlineCommission(Long partnerId);
 }

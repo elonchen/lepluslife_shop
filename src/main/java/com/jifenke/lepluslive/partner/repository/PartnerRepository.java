@@ -31,26 +31,26 @@ public interface PartnerRepository extends JpaRepository<Partner, Long> {
      */
     @Query(value = "select id,`name`," +
             "(select count(*) from le_jia_user where le_jia_user.bind_merchant_id = merchant.id) bind_users," +
-            "(select IFNULL(sum(ofl.total_price),0) from off_line_order ofl where ofl.merchant_id = merchant.id  and to_days(ofl.complete_date) = to_days(now()) ) off_Line_price" +
+            "(select IFNULL(sum(ofl.total_price),0) from off_line_order ofl where ofl.merchant_id = merchant.id  and to_days(ofl.complete_date) = to_days(now()) ) off_Line_price,IFNULL(merchant.user_limit,0)" +
             " from merchant where partner_id=?1 order by off_Line_price desc ", nativeQuery = true)
     List<Object[]> findMerchantsDataByPartnerOrderByAmountDesc(Long partnerId);
 
     @Query(value = "select id,`name`," +
             "(select count(*) from le_jia_user where le_jia_user.bind_merchant_id = merchant.id) bind_users," +
-            "(select IFNULL(sum(ofl.total_price),0) from off_line_order ofl where ofl.merchant_id = merchant.id  and to_days(ofl.complete_date) = to_days(now()) ) off_Line_price" +
+            "(select IFNULL(sum(ofl.total_price),0) from off_line_order ofl where ofl.merchant_id = merchant.id  and to_days(ofl.complete_date) = to_days(now()) ) off_Line_price,IFNULL(merchant.user_limit,0)" +
             " from merchant where partner_id=?1 order by off_Line_price asc ", nativeQuery = true)
     List<Object[]> findMerchantsDataByPartnerOrderByAmountAsc(Long partnerId);
 
 
     @Query(value = "select id,`name`," +
             "(select count(*) from le_jia_user where le_jia_user.bind_merchant_id = merchant.id) bind_users," +
-            "(select IFNULL(sum(ofl.total_price),0) from off_line_order ofl where ofl.merchant_id = merchant.id  and to_days(ofl.complete_date) = to_days(now()) ) off_Line_price" +
+            "(select IFNULL(sum(ofl.total_price),0) from off_line_order ofl where ofl.merchant_id = merchant.id  and to_days(ofl.complete_date) = to_days(now()) ) off_Line_price,IFNULL(merchant.user_limit,0)" +
             " from merchant where partner_id=?1 order by bind_users desc ", nativeQuery = true)
     List<Object[]> findMerchantsDataByPartnerOrderByBindUserDesc(Long partnerId);
 
     @Query(value = "select id,`name`," +
             "(select count(*) from le_jia_user where le_jia_user.bind_merchant_id = merchant.id) bind_users," +
-            "(select IFNULL(sum(ofl.total_price),0) from off_line_order ofl where ofl.merchant_id = merchant.id  and to_days(ofl.complete_date) = to_days(now()) ) off_Line_price" +
+            "(select IFNULL(sum(ofl.total_price),0) from off_line_order ofl where ofl.merchant_id = merchant.id  and to_days(ofl.complete_date) = to_days(now()) ) off_Line_price,IFNULL(merchant.user_limit,0)" +
             " from merchant where partner_id=?1 order by bind_users asc ", nativeQuery = true)
     List<Object[]> findMerchantsDataByPartnerOrderByBindUserAsc(Long partnerId);
 }

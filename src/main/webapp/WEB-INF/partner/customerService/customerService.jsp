@@ -5,6 +5,8 @@
   Time: 10:06
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/commen.jsp" %>
 <!DOCTYPE html>
@@ -31,7 +33,7 @@
         <h3 class="desc">长按识别二维码</h3>
         <div class="tel">
             <h3 class="tel-ttl">客服电话</h3>
-            <p class="tel-num"><a href="tel:400-0412-800">400-0412-800</a></p>
+            <p class="tel-num"><a href="tel:400-0412-800">${servicePhone}</a></p>
         </div>
     </div>
     <h3 class="warning">您也可以直接在公众号里留言反馈问题</h3>
