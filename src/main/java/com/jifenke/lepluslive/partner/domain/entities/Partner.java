@@ -1,5 +1,6 @@
 package com.jifenke.lepluslive.partner.domain.entities;
 
+import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 
 import javax.persistence.Entity;
@@ -22,7 +23,7 @@ public class Partner {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  private String partnerSid;
+  private String partnerSid = MvUtil.getRandomNumber(7);
 
   private String name; //账户名
 
@@ -42,7 +43,7 @@ public class Partner {
 
   private String payee;
 
-  private Integer benefitTime; //发放福利次数
+  private Integer benefitTime =0; //发放福利次数
 
   @OneToOne
   private WeiXinUser weiXinUser;

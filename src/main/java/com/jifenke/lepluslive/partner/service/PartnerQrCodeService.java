@@ -1,10 +1,14 @@
 package com.jifenke.lepluslive.partner.service;
 
 import com.jifenke.lepluslive.global.config.Constants;
+import com.jifenke.lepluslive.global.util.DateUtils;
 import com.jifenke.lepluslive.global.util.ImageUtils;
 import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import com.jifenke.lepluslive.partner.domain.entities.PartnerQrCode;
 import com.jifenke.lepluslive.partner.repository.PartnerQrCodeRepository;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
+import com.jifenke.lepluslive.weixin.service.WeiXinOtherUserService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
 
 import org.springframework.stereotype.Service;
@@ -35,6 +39,71 @@ public class PartnerQrCodeService {
   @Inject
   private WeiXinService weiXinService;
 
+  @Inject
+  private WeiXinOtherUserService weiXinOtherUserService;
+
+  @Inject
+  private PartnerService partnerService;
+
+  /**
+   * 点击推广二维码菜单返回临时图片消息的素材ID
+   *
+   * @param openId 合伙人对应的微信openId
+   * @return mediaId 素材ID
+   */
+  public String getMediaId(String openId) throws IOException {
+    WeiXinOtherUser otherUser = weiXinOtherUserService.findByOpenId(openId);
+    if (otherUser != null) {
+      WeiXinUser weiXinUser = otherUser.getWeiXinUser();
+      if (weiXinUser != null) {
+        Partner partner = partnerService.findPartnerByWeiXinUser(weiXinUser).orElse(null);
+        if (partner != null) {
+          PartnerQrCode partnerQrCode = repository.findByPartner(partner).orElse(null);
+          if (partnerQrCode == null) { //创建一个
+            partnerQrCode = getQrCode(partner);
+            return partnerQrCode != null ? partnerQrCode.getMediaId()
+                                         : "fail create scene or media";
+          } else {
+            if (DateUtils.getTimeStamp() - 252000 < partnerQrCode.getMediaCreated()) {
+              return partnerQrCode.getMediaId();
+            }
+            //素材已过期，先判断二维码是否过期
+            if (DateUtils.getTimeStamp() - 2505600
+                > partnerQrCode.getDateUpdate().getTime() / 1000) {
+              //二维码已过期
+              partnerQrCode = createScene(partnerQrCode);
+              if (partnerQrCode == null) {
+                return "fail create scene";
+              }
+            }
+            //更新素材
+            partnerQrCode = uploadImage(partnerQrCode);
+
+            return partnerQrCode != null ? partnerQrCode.getMediaId()
+                                         : "fail create mediaID";
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * 生成一个合伙人临时二维码海报（包括创建、获取临时二维码、合成图片、生成图片素材）  2017/5/15
+   *
+   * @param partner 合伙人
+   */
+  public PartnerQrCode getQrCode(Partner partner) throws IOException {
+
+    PartnerQrCode partnerQrCode = insertQrCode(partner); //创建记录并获取临时二维码
+    if (partnerQrCode != null) {
+      return uploadImage(partnerQrCode);
+    }
+    return null;
+  }
+
+
   /**
    * 合成合伙人二维码海报  2017/5/12
    */
@@ -55,7 +124,7 @@ public class PartnerQrCodeService {
   }
 
   /**
-   * 创建一个合伙人二维码记录，并生成一个临时二维码  2017/5/12
+   * 创建一个合伙人二维码记录，并创建一个临时二维码  2017/5/12
    *
    * @param partner 合伙人
    * @return 二维码
@@ -65,6 +134,14 @@ public class PartnerQrCodeService {
     PartnerQrCode qrCode = new PartnerQrCode();
     qrCode.setPartner(partner);
     repository.saveAndFlush(qrCode);
+    return createScene(qrCode);
+  }
+
+  /**
+   * 创建临时二维码  2017/5/15
+   */
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public PartnerQrCode createScene(PartnerQrCode qrCode) {
     //获取ID作为场景值ID
     int i = 3;
     while (i > 0) {
@@ -84,8 +161,9 @@ public class PartnerQrCodeService {
     return null;
   }
 
+
   /**
-   * 创建某合伙人临时素材并保存  2017/5/12
+   * 创建某合伙人临时素材并保存(包括合成图片)  2017/5/12
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public PartnerQrCode uploadImage(PartnerQrCode qrCode) throws IOException {

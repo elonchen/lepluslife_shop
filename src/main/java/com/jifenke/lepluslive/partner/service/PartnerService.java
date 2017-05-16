@@ -2,6 +2,7 @@ package com.jifenke.lepluslive.partner.service;
 
 import com.jifenke.lepluslive.lejiauser.domain.criteria.MerchantCriteria;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
+import com.jifenke.lepluslive.lejiauser.domain.entities.RegisterOrigin;
 import com.jifenke.lepluslive.lejiauser.repository.LeJiaUserRepository;
 import com.jifenke.lepluslive.merchant.domain.entities.Merchant;
 import com.jifenke.lepluslive.merchant.service.MerchantService;
@@ -16,8 +17,9 @@ import com.jifenke.lepluslive.score.repository.ScoreARepository;
 import com.jifenke.lepluslive.score.repository.ScoreBDetailRepository;
 import com.jifenke.lepluslive.score.repository.ScoreBRepository;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
-
 import com.jifenke.lepluslive.weixin.repository.WeiXinUserRepository;
+import com.jifenke.lepluslive.weixin.service.DictionaryService;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -27,10 +29,8 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -73,16 +73,23 @@ public class PartnerService {
     private PartnerWalletOnlineLogRepository partnerWalletOnlineLogRepository;
 
     @Inject
-    private PartnerWalletOnlineRepository partnerWalletOnlineRepository;
+    private PartnerWalletLogRepository partnerWalletLogRepository;
 
     @Inject
-    private PartnerWalletLogRepository partnerWalletLogRepository;
+    private MerchantService merchantService;
+
+
+    @Inject
+    private DictionaryService dictionaryService;
+
+    @Inject
+    private PartnerWalletOnlineRepository partnerWalletOnlineRepository;
 
     @Inject
     private WeiXinUserRepository weiXinUserRepository;
 
     @Inject
-    private MerchantService merchantService;
+    private PartnerWalletOnlineService partnerWalletOnlineService;
 
     private static ReentrantLock lock = new ReentrantLock();
 
@@ -188,7 +195,7 @@ public class PartnerService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Optional findPartnerByWeiXinUser(WeiXinUser weiXinUser) {
+    public Optional<Partner> findPartnerByWeiXinUser(WeiXinUser weiXinUser) {
         return partnerRepository.findByWeiXinUser(weiXinUser);
     }
 
@@ -261,7 +268,6 @@ public class PartnerService {
         Long bindCount = leJiaUserRepository.countPartnerBindLeJiaUser(partner.getId());
         return bindCount;
     }
-
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public List<Object[]> findBindUsersByPage(Partner partner, Integer currPage) {
         List<Object[]> list = leJiaUserRepository.findByBindPartnerAndPageSimple(partner.getId(), currPage);
@@ -338,4 +344,57 @@ public class PartnerService {
         }
         return list;
     }
+
+    /**
+     * 创建合伙人
+     */
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+    public Partner registerPartner(String phoneNumber, String name, WeiXinUser weiXinUser) {
+        LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
+        Partner partner = new Partner();
+        partner.setPhoneNumber(phoneNumber);
+        partner.setPartnerName(name);
+        partner.setWeiXinUser(weiXinUser);
+        partner.setUserLimit(Long.parseLong(dictionaryService.findDictionaryById(60L).getValue()));
+        partner.setMerchantLimit(Long.parseLong(dictionaryService.findDictionaryById(61L).getValue()));
+        partnerRepository.save(partner);
+        PartnerWallet partnerWallet = new PartnerWallet();
+        partnerWallet.setPartner(partner);
+        partnerWallet.setPartner(partner);
+        partnerWalletRepository.save(partnerWallet);
+        //创建线上钱包
+        PartnerWalletOnline walletOnline = new PartnerWalletOnline();
+        walletOnline.setPartner(partner);
+        partnerWalletOnlineRepository.save(walletOnline);
+        PartnerInfo partnerInfo = new PartnerInfo();
+        partnerInfo.setPartner(partner);
+        partnerInfoRepository.save(partnerInfo);
+
+        //会员跟换手机号
+        if (leJiaUser.getRegisterOrigin() == null) {
+            leJiaUser.setRegisterOrigin(new RegisterOrigin(1L));
+        }
+        leJiaUser.setPhoneBindDate(new Date());
+        leJiaUser.setPhoneNumber(phoneNumber);
+        leJiaUserRepository.save(leJiaUser);
+        if (leJiaUser.getBindMerchant() == null) {
+            leJiaUser.setBindMerchant(new Merchant(1226L));
+        }
+        if (leJiaUser.getBindPartner() == null) {
+            leJiaUser.setBindPartner(partner);
+        } else {//为会员绑定合伙人发一笔福利
+            PartnerWalletOnline
+                    wallet =
+                    partnerWalletOnlineRepository.findByPartner(leJiaUser.getBindPartner());
+            String[] values = dictionaryService.findDictionaryById(62L).getValue().split("~");
+            Long
+                    welfare =
+                    new Random().nextInt(Integer.parseInt(values[1]) - Integer.parseInt(values[0]) + 1)
+                            + Long.parseLong(values[0]);
+            partnerWalletOnlineService
+                    .shareToPartner(welfare, leJiaUser.getBindPartner(), wallet, null, 16002L);
+        }
+        return partner;
+    }
+
 }

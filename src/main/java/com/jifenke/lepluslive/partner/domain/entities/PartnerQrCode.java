@@ -33,7 +33,7 @@ public class PartnerQrCode {
 
   private String url;  //临时二维码的值
 
-  private String mediaId;   //临时素材ID 有效期三天 可复用（不知什么意思）
+  private String mediaId;   //临时素材ID 有效期三天 可复用
 
   private Long mediaCreated;   //临时素材创建时间，用来判断是否需要重新上传
 
