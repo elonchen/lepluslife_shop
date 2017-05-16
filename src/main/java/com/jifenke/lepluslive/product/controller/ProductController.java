@@ -1,22 +1,29 @@
 package com.jifenke.lepluslive.product.controller;
 
 
+import com.jifenke.lepluslive.global.util.JsonUtils;
 import com.jifenke.lepluslive.global.util.LejiaResult;
+import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.product.controller.dto.ProductDto;
 import com.jifenke.lepluslive.product.domain.entities.Product;
+import com.jifenke.lepluslive.product.domain.entities.ProductDetail;
 import com.jifenke.lepluslive.product.domain.entities.ProductType;
 import com.jifenke.lepluslive.product.domain.entities.ScrollPicture;
 import com.jifenke.lepluslive.product.service.ProductService;
+import com.jifenke.lepluslive.product.service.ProductShareService;
 import com.jifenke.lepluslive.product.service.ScrollPictureService;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
+import com.jifenke.lepluslive.weixin.service.WeiXinService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.http.MediaType;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -24,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -31,7 +39,7 @@ import io.swagger.annotations.ApiOperation;
  * Created by wcg on 16/3/9.
  */
 @RestController
-@RequestMapping("shop")
+@RequestMapping("/")
 public class ProductController {
 
   @Inject
@@ -43,15 +51,22 @@ public class ProductController {
   @Inject
   private DictionaryService dictionaryService;
 
+  @Inject
+  private WeiXinService weiXinService;
+
+  @Inject
+  private ProductShareService productShareService;
+
   @ApiOperation(value = "获取所有的商品类别名称及顶部图片")
   @RequestMapping(value = "/type", method = RequestMethod.GET)
+
   public LejiaResult findAllProductType() {
     return LejiaResult.ok(productService.findAllProductType());
   }
 
   //todo:待删除
   @ApiOperation(value = "查看商品列表")
-  @RequestMapping(value = "/product", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  @RequestMapping(value = "shop/product", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
   public List<ProductDto> findPageProduct(
       @RequestParam(value = "page", required = false) Integer offset,
       @RequestParam(value = "productType", required = true) Integer productType) {
@@ -76,13 +91,13 @@ public class ProductController {
   }
 
 
-  @RequestMapping(value = "/product/productType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  @RequestMapping(value = "shop/product/productType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
   public List<ProductType> goProductTypePage() {
     return productService.findAllProductType();
   }
 
   @ApiOperation(value = "查看商品详情")
-  @RequestMapping(value = "/product/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  @RequestMapping(value = "shop/product/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
   public ProductDto getProductDetail(@PathVariable Long id) {
     Product product = productService.findOneProduct(id);
     if (product != null) {
@@ -117,7 +132,7 @@ public class ProductController {
    * @param page   当前页码
    * @param typeId 臻品类型 0=所有
    */
-  @RequestMapping(value = "/productList", method = RequestMethod.GET)
+  @RequestMapping(value = "shop/productList", method = RequestMethod.GET)
   public LejiaResult productList(@RequestParam Integer page, @RequestParam Integer typeId) {
     if (page == null || page < 1) {
       page = 1;
@@ -127,6 +142,43 @@ public class ProductController {
     }
     List<Map> list = productService.findProductListByTypeAndPage(page, typeId);
     return LejiaResult.ok(list);
+  }
+
+  /**
+   * 公众号臻品详情页  2017/5/16
+   *
+   * @param id 商品ID
+   */
+  @RequestMapping("front/product/weixin/{id}")
+  public ModelAndView goProductDetailPage(@PathVariable Long id, Model model,
+                                          @RequestParam(required = false) Long shareWxUserId,
+                                          HttpServletRequest request) {
+    Product product = productService.findOneProduct(id);
+    List<ScrollPicture> scrollPictureList = scrollPictureService.findAllByProduct(product);
+    List<ProductDetail>
+        productDetails =
+        productService.findAllProductDetailsByProduct(product);
+    ProductDto productDto = new ProductDto();
+    productDto.setProductSpecs(productService.findAllProductSpec(product));
+
+    try {
+      BeanUtils.copyProperties(productDto, product);
+      productDto.setScrollPictures(scrollPictureList.stream().map(scrollPicture -> {
+        scrollPicture.setProduct(null);
+        return scrollPicture;
+      }).collect(
+          Collectors.toList()));
+
+      model.addAttribute("product", productDto);
+      model.addAttribute("productdetails", JsonUtils.objectToJson(productDetails));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    model.addAttribute("shareWxUserId", shareWxUserId);
+    model.addAttribute("currWxUserId", weiXinService.getCurrentWeiXinUser(request).getId());
+    model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
+    model.addAttribute("share", productShareService.findByProduct(product));
+    return MvUtil.go("/product/productDetail");
   }
 
 

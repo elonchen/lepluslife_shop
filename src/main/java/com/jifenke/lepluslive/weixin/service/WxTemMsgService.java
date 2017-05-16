@@ -77,7 +77,7 @@ public class WxTemMsgService {
     param.put("url", wxTemMsg.getUrl());
     param.put("data", map2);
 
-    sendTemplateMessage(param,7L);
+    sendTemplateMessage(param,57L);
   }
 
   /**

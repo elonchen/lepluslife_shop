@@ -457,6 +457,13 @@
             $('.xzgg').css({'display': 'none'});
         })
     }
-
 </script>
+<script>
+    <%-------------------------分享参数----------------------------%>
+    var shareTitle = '${share.title}',
+        shareLink = '${wxRootUrl}/front/product/weixin/${product.id}?shareWxUserId=${currWxUserId}',
+        shareImgUrl = '${share.picture}',
+        shareDesc = '${share.description}';
+</script>
+<%@include file="/WEB-INF/weixin/common/share.jsp" %>
 </html>

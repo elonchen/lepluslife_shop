@@ -373,7 +373,7 @@
             window.location.href = "http://" + url;
         } else if (afterType == 2) {
             var productId = $(o).prev().prev().prev().val();
-            location.href = "/weixin/product/" + productId;
+            location.href = "/front/product/weixin/" + productId;
         } else if (afterType == 3) {
             var merchantId = $(o).prev().prev().prev().prev().val();
             location.href = "merchant/info/" + merchantId + "?status=0";

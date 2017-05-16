@@ -2,20 +2,14 @@ package com.jifenke.lepluslive.weixin.controller;
 
 import com.jifenke.lepluslive.global.config.Constants;
 import com.jifenke.lepluslive.global.util.CookieUtils;
-import com.jifenke.lepluslive.global.util.JsonUtils;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
 import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import com.jifenke.lepluslive.partner.service.PartnerService;
-import com.jifenke.lepluslive.product.controller.dto.ProductDto;
-import com.jifenke.lepluslive.product.domain.entities.Product;
-import com.jifenke.lepluslive.product.domain.entities.ProductDetail;
 import com.jifenke.lepluslive.product.domain.entities.ProductType;
-import com.jifenke.lepluslive.product.domain.entities.ScrollPicture;
 import com.jifenke.lepluslive.product.service.ProductService;
-import com.jifenke.lepluslive.product.service.ScrollPictureService;
 import com.jifenke.lepluslive.score.service.ScoreAService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
@@ -24,12 +18,9 @@ import com.jifenke.lepluslive.weixin.service.WeiXinOtherUserService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
 import com.jifenke.lepluslive.weixin.service.WeiXinUserService;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,11 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -74,9 +63,6 @@ public class WeixinController {
   private ScoreAService scoreAService;
 
   @Inject
-  private ScrollPictureService scrollPictureService;
-
-  @Inject
   private LeJiaUserService leJiaUserService;
 
   @Inject
@@ -95,32 +81,6 @@ public class WeixinController {
     model.addAttribute("scoreC", scoreCService.findScoreCByLeJiaUser(leJiaUser));
     model.addAttribute("typeList", typeList);
     return MvUtil.go("/product/productIndex");
-  }
-
-  @RequestMapping("/product/{id}")
-  public ModelAndView goProductDetailPage(@PathVariable Long id, Model model) {
-    Product product = productService.findOneProduct(id);
-    List<ScrollPicture> scrollPictureList = scrollPictureService.findAllByProduct(product);
-    List<ProductDetail>
-        productDetails =
-        productService.findAllProductDetailsByProduct(product);
-    ProductDto productDto = new ProductDto();
-    productDto.setProductSpecs(productService.findAllProductSpec(product));
-
-    try {
-      BeanUtils.copyProperties(productDto, product);
-      productDto.setScrollPictures(scrollPictureList.stream().map(scrollPicture -> {
-        scrollPicture.setProduct(null);
-        return scrollPicture;
-      }).collect(
-          Collectors.toList()));
-
-      model.addAttribute("product", productDto);
-      model.addAttribute("productdetails", JsonUtils.objectToJson(productDetails));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return MvUtil.go("/product/productDetail");
   }
 
   @RequestMapping("/userRegister")

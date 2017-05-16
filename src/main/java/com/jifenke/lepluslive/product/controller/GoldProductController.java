@@ -11,7 +11,6 @@ import com.jifenke.lepluslive.product.service.ProductModuleService;
 import com.jifenke.lepluslive.product.service.ProductService;
 import com.jifenke.lepluslive.product.service.ScrollPictureService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
-import com.jifenke.lepluslive.weixin.service.WeiXinPayService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
 
 import org.springframework.ui.Model;
@@ -48,9 +47,6 @@ public class GoldProductController {
 
   @Inject
   private GoldProductService goldProductService;
-
-  @Inject
-  private WeiXinPayService weiXinPayService;
 
   @Inject
   private ProductModuleService productModuleService;

@@ -50,7 +50,7 @@ public class WeiXinPayService {
   private String mchKey_APP;
 
   @Value("${weixin.rootUrl}")
-  private static String rootUrl;
+  private String rootUrl;
 
   @Inject
   private DictionaryService dictionaryService;
@@ -258,7 +258,7 @@ public class WeiXinPayService {
   String getJsapiSignature(HttpServletRequest request, String noncestr, Long timestamp) {
     StringBuilder sb = new StringBuilder();
     sb.append("jsapi_ticket=");
-    sb.append(dictionaryService.findDictionaryById(8L).getValue());
+    sb.append(dictionaryService.findDictionaryById(58L).getValue());
     sb.append("&noncestr=");
     sb.append(noncestr);
     sb.append("&timestamp=");
