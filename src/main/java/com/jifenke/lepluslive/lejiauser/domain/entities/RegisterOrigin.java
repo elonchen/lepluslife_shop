@@ -65,4 +65,12 @@ public class RegisterOrigin {
   public void setDateCreated(Date dateCreated) {
     this.dateCreated = dateCreated;
   }
+
+
+  public RegisterOrigin() {
+  }
+
+  public RegisterOrigin(Long id) {
+    this.id = id;
+  }
 }
