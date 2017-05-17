@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import java.util.Date;
 
 /**
  * Created by wcg on 16/6/21.
@@ -32,6 +33,10 @@ public class PartnerWallet {
   private Long totalScoreA = 0L; //累计红包
 
   private Long totalScoreB = 0L;//累计积分
+
+  private Date createDate = new Date();
+
+  private Date lastUpdate;  //最后更新时间
 
   @OneToOne
   private Partner partner;
@@ -117,5 +122,21 @@ public class PartnerWallet {
 
   public void setTotalWithdrawals(Long totalWithdrawals) {
     this.totalWithdrawals = totalWithdrawals;
+  }
+
+  public Date getLastUpdate() {
+    return lastUpdate;
+  }
+
+  public void setLastUpdate(Date lastUpdate) {
+    this.lastUpdate = lastUpdate;
+  }
+
+  public Date getCreateDate() {
+    return createDate;
+  }
+
+  public void setCreateDate(Date createDate) {
+    this.createDate = createDate;
   }
 }

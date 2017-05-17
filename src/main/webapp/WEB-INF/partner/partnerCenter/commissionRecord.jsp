@@ -153,7 +153,7 @@
         var newOnContent = "";
         $.ajax({
             type: "get",
-            url: "/front/partnerCenter/commissionRecord/" + currPage,
+            url: "/front/partnerCenter/weixin/commissionRecord/" + currPage,
             contentType: "application/json",
             success: function (response) {
                 var offLineLogs = response.data.offLineLogs;
@@ -196,6 +196,7 @@
                 }
                 offContent.innerHTML += newOffContent;
                 onContent.innerHTML += newOnContent;
+                currPage=currPage+1;
             }
         });
     }
