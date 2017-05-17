@@ -26,10 +26,10 @@
     <div class="top">
         <div class="wx-faceImg">
             <div class="img-inner">
-                <img src="" alt="">
+                <img src="${partner.weiXinUser.headImageUrl}" alt="">
             </div>
         </div>
-        <h3 class="wx-name">积分客</h3>
+        <h3 class="wx-name">${partner.name}</h3>
         <div class="personalInfo">
             <div class="item">
                 <p>${data.dailyBindCount}</p>
@@ -68,7 +68,7 @@
         var newContent = "";
         $.ajax({
             type: "get",
-            url: "/front/partnerCenter/myMember/"+currPage,
+            url: "/front/partnerCenter/weixin/myMember/"+currPage,
             contentType: "application/json",
             success: function (data) {
                var users =  data.data;

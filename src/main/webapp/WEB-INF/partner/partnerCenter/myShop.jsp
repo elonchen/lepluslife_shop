@@ -89,7 +89,7 @@
         var newContent = "";
         $.ajax({
             type: "post",
-            url: "/front/partnerCenter/myShopsByCriteria",
+            url: "/front/partnerCenter/weixin/myShopsByCriteria",
             data: merchantCriteria,
             success: function (response) {
                var list = response.data;

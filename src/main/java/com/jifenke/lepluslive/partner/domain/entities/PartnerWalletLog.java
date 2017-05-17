@@ -22,6 +22,8 @@ public class PartnerWalletLog {
 
   private Long afterChangeMoney; //改变后的金额
 
+  private Long changeMoney;   //线上钱包改变金额 理论=beforeChangeMoney-afterChangeMoney
+
   private Long type; //如果为1代表线下支付订单 4=线下订单退款
 
   private Date createDate = new Date();
@@ -80,5 +82,13 @@ public class PartnerWalletLog {
 
   public void setCreateDate(Date createDate) {
     this.createDate = createDate;
+  }
+
+  public Long getChangeMoney() {
+    return changeMoney;
+  }
+
+  public void setChangeMoney(Long changeMoney) {
+    this.changeMoney = changeMoney;
   }
 }

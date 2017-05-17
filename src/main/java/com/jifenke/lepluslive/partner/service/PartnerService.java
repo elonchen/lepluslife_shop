@@ -307,6 +307,15 @@ public class PartnerService {
         result.put("totalCommission", totalCommission);
         return result;
     }
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public Long findPartnerTotalCommisssion(Partner partner) {
+        PartnerWalletOnline walletOnline = partnerWalletOnlineRepository.findByPartner(partner);
+        PartnerWallet walletOff = partnerWalletRepository.findByPartner(partner);
+        Long sumOffLine = walletOnline == null ? 0L : walletOnline.getAvailableBalance();
+        Long sumOnLine = walletOff == null ? 0L : walletOff.getAvailableBalance();
+        Long totalCommission = sumOnLine + sumOffLine;
+        return totalCommission;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public Map findPartnerCommisssionSimple(Partner partner, Integer currPage) {
@@ -343,6 +352,10 @@ public class PartnerService {
             }
         }
         return list;
+    }
+    @Transactional(readOnly = true,propagation = Propagation.REQUIRED)
+    public Long findMerchantBindCountByPartner(Partner partner) {
+        return partnerRepository.countParnterBindMerchant(partner.getId());
     }
 
     /**

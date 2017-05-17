@@ -26,15 +26,15 @@
     <div class="top">
         <div class="wx-faceImg">
             <div class="img-inner">
-                <img src="" alt="">
+                <img src="${partner.weiXinUser.headImageUrl}" alt="">
             </div>
         </div>
-        <h3 class="wx-name">积分客</h3>
+        <h3 class="wx-name">${partner.name}</h3>
         <div class="personalInfo">
             <div class="item myMember">
                 <div class="info clearfix">
                     <span class="left">我的会员</span>
-                    <span class="right"><span class="font">120</span>/200</span>
+                    <span class="right"><span class="font">${userCount}</span>/${userLimit}</span>
                 </div>
                 <div class="progress">
                     <span style="width:30%"></span>
@@ -44,7 +44,7 @@
             <div class="item myShop">
                 <div class="info clearfix">
                     <span class="left">我的好店</span>
-                    <span class="right"><span class="font">6</span>/10</span>
+                    <span class="right"><span class="font">${merchantCount}</span>/${merchantLimit}</span>
                 </div>
                 <div class="progress">
                     <span style="width:30%"></span>
@@ -56,30 +56,30 @@
     </div>
     <!--提现-->
     <div class="tx clearfix">
-        <span class="left">我的佣金：￥50.88</span>
-        <span class="right btn-tx">提现</span>
+        <span class="left">我的佣金：￥${totalCommission/100.0}</span>
+        <span class="right btn-tx" onclick="withdrawCenter()">提现</span>
     </div>
     <!--菜单-->
     <div class="menu">
-        <div class="item border-bottom border-right">
+        <div class="item border-bottom border-right" onclick="commissionRecord()">
             <div class="menu-wrapper">
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/yongjinjilu@2x.png" alt=""></div>
                 <h3>佣金记录</h3>
             </div>
         </div>
-        <div class="item border-bottom border-right">
+        <div class="item border-bottom border-right" onclick="withdrawRecord()">
             <div class="menu-wrapper">
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/tixainjilu@2x.png" alt=""></div>
                 <h3>提现记录</h3>
             </div>
         </div>
-        <div class="item item-final border-bottom">
+        <div class="item item-final border-bottom" onclick="myMember()">
             <div class="menu-wrapper">
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/wodehuiyuan@2x.png" alt=""></div>
                 <h3>我的会员</h3>
             </div>
         </div>
-        <div class="item border-right">
+        <div class="item border-right" onclick="myShop()">
             <div class="menu-wrapper">
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/wodehaodian@2x.png" alt=""></div>
                 <h3>我的好店</h3>
@@ -91,7 +91,7 @@
                 <h3>收入排名</h3>
             </div>
         </div>
-        <div class="item item-final">
+        <div class="item item-final" onclick="customerService()">
             <div class="menu-wrapper">
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/kefuzhongxin@2x.png" alt=""></div>
                 <h3>客服中心</h3>
@@ -135,6 +135,25 @@
         setTimeout(function () {
             $(".shadow").css("display","none");
         },0.1);
+    }
+    //  页面跳转
+    function withdrawCenter() {
+        location.href = "/front/partnerCenter/weixin/withdrawCenter";
+    }
+    function withdrawRecord() {
+        location.href = "/front/partnerCenter/weixin/withdrawRecord";
+    }
+    function myShop() {
+        location.href = "/front/partnerCenter/weixin/myShops";
+    }
+    function myMember() {
+        location.href = "/front/partnerCenter/weixinmyMember";
+    }
+    function customerService() {
+        location.href = "/front/partnerCenter/weixin/customerService";
+    }
+    function commissionRecord() {
+        location.href = "/front/partnerCenter/weixin/commissionRecord";
     }
 </script>
 </body>
