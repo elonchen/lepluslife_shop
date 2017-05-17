@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 /**
@@ -47,28 +49,30 @@ public class PartnerWalletOnlineService {
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public void shareToPartner(Long shareMoney, Partner partner, PartnerWalletOnline partnerWallet,
                              String orderSid, Long type) {
-      PartnerWalletOnlineLog log = new PartnerWalletOnlineLog();
+    PartnerWalletOnlineLog log = new PartnerWalletOnlineLog();
 
-      Long availableBalance = partnerWallet.getAvailableBalance();
-      log.setBeforeChangeMoney(availableBalance);
-      long afterShareMoney = availableBalance + shareMoney;
+    Long availableBalance = partnerWallet.getAvailableBalance();
+    log.setBeforeChangeMoney(availableBalance);
+    long afterShareMoney = availableBalance + shareMoney;
 
-      log.setAfterChangeMoney(afterShareMoney);
-      log.setChangeMoney(shareMoney);
+    log.setAfterChangeMoney(afterShareMoney);
+    log.setChangeMoney(shareMoney);
 
-      log.setPartnerId(partner.getId());
+    log.setPartnerId(partner.getId());
 
-      log.setOrderSid(orderSid);
+    log.setOrderSid(orderSid);
 
-      log.setType(type);
+    log.setType(type);
 
-      partnerWallet.setTotalMoney(partnerWallet.getTotalMoney() + shareMoney);
+    partnerWallet.setTotalMoney(partnerWallet.getTotalMoney() + shareMoney);
 
-      partnerWallet.setAvailableBalance(afterShareMoney);
+    partnerWallet.setAvailableBalance(afterShareMoney);
 
-      logRepository.save(log);
+    partnerWallet.setLastUpdate(new Date());
 
-      onlineRepository.save(partnerWallet);
+    logRepository.save(log);
+
+    onlineRepository.save(partnerWallet);
 
   }
 

@@ -357,6 +357,7 @@ public class PartnerService {
         partner.setWeiXinUser(weiXinUser);
         partner.setUserLimit(Long.parseLong(dictionaryService.findDictionaryById(60L).getValue()));
         partner.setMerchantLimit(Long.parseLong(dictionaryService.findDictionaryById(61L).getValue()));
+        partner.setOrigin(1);
         partnerRepository.save(partner);
         PartnerWallet partnerWallet = new PartnerWallet();
         partnerWallet.setPartner(partner);
