@@ -47,7 +47,6 @@ public class PartnerCenterController {
      * currPage
      */
     @RequestMapping(value = "/weixin/", method = RequestMethod.GET)
-//    @RequestMapping(value = "/weixin/", method = RequestMethod.GET)
     public ModelAndView homePage(Model model, HttpServletRequest request) {
         Partner partner = null;
 //        WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
