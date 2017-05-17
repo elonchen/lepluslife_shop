@@ -97,7 +97,7 @@
     function withdraw(price) {
         $.ajax({
             type: "post",
-            url: "/front/partnerCenter/withdrawCenter/weixin/withdraw",
+            url: "/front/partnerCenter/weixin/withdrawCenter/withdraw",
             data: {price:price},
             success: function (response) {
                if(response.status!=500) {
@@ -109,7 +109,7 @@
         });
     }
     function partnerCenter() {
-        location.href = "/front/weixin/partnerCenter/";
+        location.href = "/front/partnerCenter/weixin";
     }
 </script>
 </body>

@@ -138,22 +138,22 @@
     }
     //  页面跳转
     function withdrawCenter() {
-        location.href = "/front/weixin/partnerCenter/withdrawCenter";
+        location.href = "/front/partnerCenter/weixin/withdrawCenter";
     }
     function withdrawRecord() {
-        location.href = "/front/weixin/partnerCenter/withdrawRecord";
+        location.href = "/front/partnerCenter/weixin/withdrawRecord";
     }
     function myShop() {
-        location.href = "/front/weixin/partnerCenter/myShops";
+        location.href = "/front/partnerCenter/weixin/myShops";
     }
     function myMember() {
-        location.href = "/front/weixin/partnerCenter/myMember";
+        location.href = "/front/partnerCenter/weixinmyMember";
     }
     function customerService() {
-        location.href = "/front/weixin/partnerCenter/customerService";
+        location.href = "/front/partnerCenter/weixin/customerService";
     }
     function commissionRecord() {
-        location.href = "/front/weixin/partnerCenter/commissionRecord";
+        location.href = "/front/partnerCenter/weixin/commissionRecord";
     }
 </script>
 </body>
