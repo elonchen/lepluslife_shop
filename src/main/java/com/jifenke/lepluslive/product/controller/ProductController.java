@@ -12,7 +12,10 @@ import com.jifenke.lepluslive.product.domain.entities.ScrollPicture;
 import com.jifenke.lepluslive.product.service.ProductService;
 import com.jifenke.lepluslive.product.service.ProductShareService;
 import com.jifenke.lepluslive.product.service.ScrollPictureService;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
+import com.jifenke.lepluslive.weixin.service.WeiXinOtherUserService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -56,6 +59,9 @@ public class ProductController {
 
   @Inject
   private ProductShareService productShareService;
+
+  @Inject
+  private WeiXinOtherUserService weiXinOtherUserService;
 
   @ApiOperation(value = "获取所有的商品类别名称及顶部图片")
   @RequestMapping(value = "/type", method = RequestMethod.GET)
@@ -174,8 +180,11 @@ public class ProductController {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+    WeiXinOtherUser otherUser = weiXinOtherUserService.findByWeiXinUser(weiXinUser);
+    model.addAttribute("subState", otherUser.getSubState());
     model.addAttribute("shareWxUserId", shareWxUserId);
-    model.addAttribute("currWxUserId", weiXinService.getCurrentWeiXinUser(request).getId());
+    model.addAttribute("currWxUserId", weiXinUser.getId());
     model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     model.addAttribute("share", productShareService.findByProduct(product));
     return MvUtil.go("/product/productDetail");

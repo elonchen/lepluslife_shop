@@ -70,6 +70,13 @@ public class WeiXinUser {
 
   private Integer massRemain = 4;  //本月群发余数
 
+  public WeiXinUser() {
+  }
+
+  public WeiXinUser(Long id) {
+    this.id = id;
+  }
+
   public Integer getHongBaoState() {
     return hongBaoState;
   }

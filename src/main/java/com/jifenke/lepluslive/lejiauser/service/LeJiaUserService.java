@@ -8,6 +8,8 @@ import com.jifenke.lepluslive.lejiauser.repository.LeJiaUserRepository;
 import com.jifenke.lepluslive.merchant.domain.entities.Merchant;
 import com.jifenke.lepluslive.merchant.service.MerchantService;
 import com.jifenke.lepluslive.partner.domain.entities.Partner;
+import com.jifenke.lepluslive.partner.domain.entities.PartnerQrCode;
+import com.jifenke.lepluslive.partner.service.PartnerQrCodeService;
 import com.jifenke.lepluslive.score.domain.entities.ScoreA;
 import com.jifenke.lepluslive.score.domain.entities.ScoreB;
 import com.jifenke.lepluslive.score.repository.ScoreARepository;
@@ -304,5 +306,31 @@ public class LeJiaUserService {
     Query query = em.createNativeQuery(sql);
     List<Object[]> list = query.getResultList();
     return list;
+  }
+
+  @Inject
+  private PartnerQrCodeService partnerQrCodeService;
+
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public void checkUserBindPartner(LeJiaUser leJiaUser, String subSource) {
+    if (subSource != null && !"".equals(subSource)) {
+      if (leJiaUser.getBindPartner() == null) {
+        if (subSource.startsWith("1")) {
+          Long qrCodeId = Long.valueOf(subSource.split("_")[2]);
+          PartnerQrCode qrCode = partnerQrCodeService.findById(qrCodeId);
+          if (qrCode != null) {
+            Date date = new Date();
+            leJiaUser.setBindPartner(qrCode.getPartner());
+            leJiaUser.setBindPartnerDate(date);
+            if (leJiaUser.getBindMerchant() == null) {
+              leJiaUser.setBindMerchant(new Merchant(1226L)); //统一虚拟商户
+              leJiaUser.setBindMerchantDate(date);
+            }
+            leJiaUserRepository.save(leJiaUser);
+          }
+        }
+      }
+
+    }
   }
 }

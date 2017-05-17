@@ -1,6 +1,7 @@
 package com.jifenke.lepluslive.weixin.service;
 
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.repository.WeiXinOtherUserRepository;
 
 import org.springframework.stereotype.Service;
@@ -24,6 +25,12 @@ public class WeiXinOtherUserService {
   public WeiXinOtherUser findByOpenId(String openId) {
 
     return repository.findByOpenId(openId);
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public WeiXinOtherUser findByWeiXinUser(WeiXinUser weiXinUser) {
+
+    return repository.findByWeiXinUserAndSource(weiXinUser, 1);
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)

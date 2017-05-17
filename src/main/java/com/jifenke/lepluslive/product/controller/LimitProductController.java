@@ -5,6 +5,8 @@ import com.jifenke.lepluslive.global.util.JsonUtils;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.order.service.OrderDetailService;
+import com.jifenke.lepluslive.partner.domain.entities.Partner;
+import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.product.domain.entities.Product;
 import com.jifenke.lepluslive.product.domain.entities.ProductDetail;
 import com.jifenke.lepluslive.product.domain.entities.ProductSpec;
@@ -54,15 +56,24 @@ public class LimitProductController {
   @Inject
   private WeiXinService weiXinService;
 
+  @Inject
+  private PartnerService partnerService;
+
   /**
    * 公众号 商品首页 16/09/20
    */
   @RequestMapping(value = "/weixin/productIndex", method = RequestMethod.GET)
   public ModelAndView productIndex(HttpServletRequest request, Model model) {
+
+    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+
+    Partner partner = partnerService.findPartnerByWeiXinUser(weiXinUser).orElse(null);
+
+    model.addAttribute("partner", partner == null ? 0 : 1);
+
     //商品分类
     List<ProductType> typeList = productService.findAllProductType();
-    model.addAttribute("scoreC", scoreCService
-        .findScoreCByLeJiaUser(weiXinService.getCurrentWeiXinUser(request).getLeJiaUser()));
+    model.addAttribute("scoreC", scoreCService.findScoreCByLeJiaUser(weiXinUser.getLeJiaUser()));
     model.addAttribute("typeList", typeList);
     return MvUtil.go("/product/productIndex");
   }
@@ -73,7 +84,8 @@ public class LimitProductController {
    * @param productId 商品id
    */
   @RequestMapping(value = "/weixin/limitDetail", method = RequestMethod.GET)
-  public ModelAndView goBannerPage(HttpServletRequest request, @RequestParam Long productId, Model model) {
+  public ModelAndView goBannerPage(HttpServletRequest request, @RequestParam Long productId,
+                                   Model model) {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     Product product = null;
     List<ProductDetail> detailList = null;

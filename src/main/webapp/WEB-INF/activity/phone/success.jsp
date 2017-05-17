@@ -37,10 +37,10 @@
             <p>奖励您<br><fmt:formatNumber type="number"
                                         value="${order.payBackScore/100}"
                                         pattern="0.00"
-                                        maxFractionDigits="2"/>元乐加红包！</p>
+                                        maxFractionDigits="2"/>元鼓励金！</p>
 
             <p>
-                红包可在同城乐店消费抵现<br>
+                鼓励金可在同城乐店消费抵现<br>
                 <a href="/merchant/index"> 查看可用乐店 > </a>
             </p>
 

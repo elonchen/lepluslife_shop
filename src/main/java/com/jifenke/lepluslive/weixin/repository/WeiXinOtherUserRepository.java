@@ -1,6 +1,7 @@
 package com.jifenke.lepluslive.weixin.repository;
 
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,5 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface WeiXinOtherUserRepository extends JpaRepository<WeiXinOtherUser, Long> {
 
   WeiXinOtherUser findByOpenId(String openId);
+
+  WeiXinOtherUser findByWeiXinUserAndSource(WeiXinUser weiXinUser, Integer source);
 
 }

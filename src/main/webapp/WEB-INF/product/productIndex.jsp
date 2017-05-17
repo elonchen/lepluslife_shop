@@ -22,12 +22,27 @@
     <c:set var="resourceUrl" value="http://www.lepluslife.com/resource"></c:set>
     <c:set var="wxRootUrl" value="http://www.lepluslife.com"></c:set>
     <link rel="stylesheet" href="${resource}/product/index/css/reset.css">
-    <link rel="stylesheet" href="${resource}/product/index/css/bastMain2.css">
+    <link rel="stylesheet" href="${leplusShopResource}/product/index/css/bastMain2.css">
     <link rel="stylesheet" href="${commonResource}/css/swiper.min.css">
     <link rel="stylesheet" href="${resourceUrl}/css/paySuccess.css">
     <link rel="stylesheet" href="${resourceUrl}/css/payFailed.css">
 </head>
+<style>
+    .w-back {
+        position: absolute;
+        width: 65px !important;
+        height: 28px;
+    }
 
+    .w-back > p {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        margin-top: 11px;
+        color: #FFF;
+        font-size: 10px;
+    }
+</style>
 <body>
 <c:if test="${orderId!=null}">
     <div id="mask-failed">
@@ -289,6 +304,8 @@
 </script>
 
 <script>
+
+    var partner = '${partner}';
     //强制保留两位小数
     function toDecimal(x) {
         var f = parseFloat(x);
@@ -354,15 +371,22 @@
                                typeCurrLength[typeId] = list.length;
                                for (var i = 0; i < list.length; i++) {
                                    var currP = '<div onclick="goProductDetail(' + list[i].id
-                                               + ')"><div><img height="125px" src="'
-                                               + list[i].picture
-                                               + '" alt=""></div><div>' + list[i].name
-                                               + '</div><div><span style="font-size: 18px;color:#DAA662;font-weight: 300;margin-right: -3px;">'
-                                               + toDecimal(list[i].minPrice / 100)
-                                               + '元</span></div><div class="line-down" style="padding-left: 7%;color: #bebebe;">市场价'
-                                               + toDecimal(list[i].price / 100)
-                                               + '元</div> <div> <div>' + list[i].saleNumber
-                                               + '份已售</div><div>' + (list[i].postage == 0
+                                               + ')">'
+                                               + '<div class="w-back">';
+                                   if (partner == 1) {
+                                       currP +=
+                                           '<p>返佣' + toDecimal(list[i].backPartner / 100)
+                                           + '元</p><img width="65" height="28" src="${resource}/product/index/img/bq.png">';
+                                   }
+                                   currP += '</div><div><img height="125px" src="'
+                                            + list[i].picture
+                                            + '" alt=""></div><div>' + list[i].name
+                                            + '</div><div><span style="font-size: 18px;color:#DAA662;font-weight: 300;margin-right: -3px;">'
+                                            + toDecimal(list[i].minPrice / 100)
+                                            + '元</span></div><div class="line-down" style="padding-left: 7%;color: #bebebe;">市场价'
+                                            + toDecimal(list[i].price / 100)
+                                            + '元</div> <div> <div>' + list[i].saleNumber
+                                            + '份已售</div><div>' + (list[i].postage == 0
                                            ? '包邮' : '') + '</div></div></div>';
                                    content += currP;
                                }
