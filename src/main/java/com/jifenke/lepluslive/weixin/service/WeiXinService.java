@@ -71,7 +71,7 @@ public class WeiXinService {
 
   //主动获取微信用户信息
   public Map<String, Object> getWeiXinUserInfo(String openid) {
-    String accessToken = dictionaryService.findDictionaryById(7L).getValue();
+    String accessToken = dictionaryService.findDictionaryById(57L).getValue();
     String
         getUrl =
         "https://api.weixin.qq.com/cgi-bin/user/info?access_token=" + accessToken + "&openid="

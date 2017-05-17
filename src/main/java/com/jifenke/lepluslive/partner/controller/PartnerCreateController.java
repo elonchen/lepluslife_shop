@@ -78,7 +78,7 @@ public class PartnerCreateController {
   }
 
   /**
-   * 进入合伙人页面
+   * 进入合伙人注册页面
    */
   @RequestMapping(value = "/tt/register", method = RequestMethod.GET)
   public ModelAndView partnerRegisterPage(HttpServletRequest request, Model model) {
@@ -89,7 +89,7 @@ public class PartnerCreateController {
   }
 
   /**
-   * 进入合伙人页面
+   * 合伙人注册接口
    */
   @RequestMapping(value = "/tt/doRegister", method = RequestMethod.POST)
   public LejiaResult partnerRegister(@RequestParam(required = false) String name,@RequestParam(required = false) String phoneNumber,
@@ -108,5 +108,16 @@ public class PartnerCreateController {
       e.printStackTrace();
       return LejiaResult.build(500, "服务器异常");
     }
+  }
+
+  /**
+   * 合伙人注册成功接口
+   */
+  @RequestMapping(value = "/tt/register_success", method = RequestMethod.POST)
+  public ModelAndView goRegisterSuccessPage(Model model) {
+    //    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
+    model.addAttribute("weiXinUser", weiXinUser);
+    return MvUtil.go("/partner/register/registerSuccess");
   }
 }

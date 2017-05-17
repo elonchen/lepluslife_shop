@@ -322,7 +322,7 @@
         location.href = "/front/product/weixin/limitDetail?productId=" + id;
     }
     function goProductDetail(productId) { //go爆品详情页
-        location.href = "/weixin/product/" + productId;
+        location.href = "/front/product/weixin/" + productId;
     }
     function goMenu(curIndex) { //go其他菜单页
         if (curIndex == 2) {
@@ -384,7 +384,7 @@
             window.location.href = "http://" + url;
         } else if (afterType == 2) {
             var productId = $(o).prev().prev().prev().val();
-            location.href = "/weixin/product/" + productId;
+            location.href = "/front/product/weixin/" + productId;
         } else if (afterType == 3) {
             var merchantId = $(o).prev().prev().prev().prev().val();
             location.href = "merchant/info/" + merchantId + "?status=0";

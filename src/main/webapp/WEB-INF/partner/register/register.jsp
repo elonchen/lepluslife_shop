@@ -36,7 +36,7 @@
                 <div><input type="tel" id="phone" placeholder="手机号"
                             value="${weiXinUser.leJiaUser.phoneNumber}"></div>
                 <div><input type="number" id="yzm" class="yzm" placeholder="验证码">
-                    <button class="get" disabled="disabled" onclick="sendCode(this)">获取验证码</button>
+                    <button class="get" id="button" disabled="disabled" onclick="sendCode(this)">获取验证码</button>
                 </div>
             </div>
             <div>
@@ -79,6 +79,7 @@
     var nums = 60;
     var btn;
     function sendCode(thisBtn) {
+        $('#button').attr('onclick', '');
         btn = thisBtn;
         btn.disabled = true; //将按钮置为不可点击
         $(btn).html(nums + '秒重新获取');
@@ -99,6 +100,7 @@
         } else {
             clearInterval(clock); //清除js定时器
             btn.disabled = false;
+            $('#button').attr('onclick', 'sendCode(this)');
             $(btn).html('获取验证码');
             nums = 60; //重置时间
         }
@@ -112,9 +114,9 @@
 
         $.post("/front/partner/tt/doRegister", {name:name,phoneNumber: phone, code: code}, function (res) {
             if (res.status == 200) {
-                window.location.href = "/front/partner/register_success"
+                window.location.href = "/front/partner/tt/register_success"
             } else {
-                $('#submit').attr('onclick', 'register()');
+                $('#submit').attr('onclick', 'doRegister()');
                 alert(res.msg)
             }
         })

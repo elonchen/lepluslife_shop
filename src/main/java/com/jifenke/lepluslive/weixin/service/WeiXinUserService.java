@@ -145,7 +145,7 @@ public class WeiXinUserService {
       scoreC.setLeJiaUser(leJiaUser);
       scoreC.setLastUpdateDate(date);
       scoreCRepository.save(scoreC);
-    } else if(weiXinUser.getOpenId() == null){
+    } else if (weiXinUser.getOpenId() == null) {
       result[0] = "null";
     } else {
       result[0] = "unNull";
@@ -173,68 +173,25 @@ public class WeiXinUserService {
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public WeiXinUser saveWeiXinUserBySubscribe(Map<String, Object> userDetail)
+  public void saveWeiXinUserBySubscribe(Map<String, Object> userDetail)
       throws IOException {
     String openid = userDetail.get("openid").toString();
-    String
-        unionId =
-        userDetail.get("unionid") != null ? userDetail.get("unionid").toString() : null;
-    WeiXinUser weiXinUser = weiXinUserRepository.findByUnionId(unionId);
-
-    LeJiaUser leJiaUser = null;
-    Date date = new Date();
-    ScoreA scoreA = null;
-    ScoreB scoreB = null;
-    if (weiXinUser == null) {
-      weiXinUser = new WeiXinUser();
-      weiXinUser.setDateCreated(date);
-      weiXinUser.setLastUpdated(date);
-      leJiaUser = new LeJiaUser();
-      leJiaUser.setHeadImageUrl(userDetail.get("headimgurl").toString());
-      leJiaUser.setWeiXinUser(weiXinUser);
-      RegisterOrigin registerOrigin = new RegisterOrigin();
-      registerOrigin.setId(1L);
-      leJiaUser.setRegisterOrigin(registerOrigin);
-      leJiaUserRepository.save(leJiaUser);
-      weiXinUser.setLeJiaUser(leJiaUser);
-      scoreA = new ScoreA();
-      scoreA.setScore(0L);
-      scoreA.setTotalScore(0L);
-      scoreA.setLeJiaUser(leJiaUser);
-      scoreARepository.save(scoreA);
-      scoreB = new ScoreB();
-      scoreB.setScore(0L);
-      scoreB.setTotalScore(0L);
-      scoreB.setLeJiaUser(leJiaUser);
-      scoreBRepository.save(scoreB);
-      ScoreC scoreC = new ScoreC();
-      scoreC.setLeJiaUser(leJiaUser);
-      scoreC.setLastUpdateDate(date);
-      scoreCRepository.save(scoreC);
+    WeiXinOtherUser user = weiXinOtherUserService.findByOpenId(openid);
+    saveWeiXinUser(userDetail, user);
+    if (user == null) {
+      user = weiXinOtherUserService.findByOpenId(openid);
     }
 
-    weiXinUser.setOpenId(openid);
-    weiXinUser.setUnionId(unionId);
-    weiXinUser.setCity(userDetail.get("city").toString());
-    weiXinUser.setCountry(userDetail.get("country").toString());
-    weiXinUser.setSex(Long.parseLong(userDetail.get("sex").toString()));
-    weiXinUser.setNickname(userDetail.get("nickname").toString());
-    weiXinUser.setLanguage(userDetail.get("language").toString());
-    weiXinUser.setHeadImageUrl(userDetail.get("headimgurl").toString());
-    weiXinUser.setProvince(userDetail.get("province").toString());
-    weiXinUser.setLastUserInfoDate(date);
-    weiXinUser.setLastUpdated(date);
-    weiXinUser.setSubState(1);
-    if (weiXinUser.getSubDate() == null) {
-      weiXinUser.setSubDate(date);
+    user.setSubState(1);
+    if (user.getSubDate() == null) {
+      user.setSubDate(new Date());
     }
 
-    if (weiXinUser.getSubSource() == null || "".equals(weiXinUser.getSubSource())) {
-      weiXinUser.setSubSource(userDetail.get("subSource").toString());
+    if (user.getSubSource() == null || "".equals(user.getSubSource())) {
+      user.setSubSource(userDetail.get("subSource").toString());
     }
 
-    weiXinUserRepository.save(weiXinUser);
-    return weiXinUser;
+    weiXinOtherUserService.saveWeiXinOtherUser(user);
   }
 
   /**

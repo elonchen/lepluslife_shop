@@ -14,7 +14,7 @@ public final class Constants {
 
   public static final String WEI_XIN_TOKEN = "88zctest";
 
-  public static final Long CODE_EXPIRE_SECONDS = 2592000L;
+  public static final Long CODE_EXPIRE_SECONDS = 2592000L; //公众号临时二维码过期时间 30天
 
   public static final String APPID = "wx9a694d7de8b8b081";
 

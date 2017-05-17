@@ -133,7 +133,8 @@ public class ActivityCodeBurseController {
 
   //关注图文链接页面
   @RequestMapping("/subPage")
-  public ModelAndView subPage(HttpServletRequest request, Model model) {
+  public ModelAndView subPage(HttpServletRequest request, Model model,
+                              @RequestParam(required = false) String subSource) {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     //判断是否获得过红包
@@ -149,6 +150,7 @@ public class ActivityCodeBurseController {
     } else {
       model.addAttribute("scoreA", joinLog.getDetail());
       model.addAttribute("status", 1);
+      model.addAttribute("subSource", subSource);
     }
     return MvUtil.go("/activity/subPage");
   }
@@ -322,21 +324,23 @@ public class ActivityCodeBurseController {
 
   /**
    * 充值卡 兑换
+   *
    * @param exchangeCode 充值兑换码
    * @return 状态
    */
   @RequestMapping(value = "/rechargeCard/exchange", method = RequestMethod.POST)
-  public LejiaResult rechargeCardSubmit(@RequestParam String exchangeCode, HttpServletRequest request) {
+  public LejiaResult rechargeCardSubmit(@RequestParam String exchangeCode,
+                                        HttpServletRequest request) {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
 
     try {
-      if (exchangeCode!=null && !exchangeCode.equals("")){
+      if (exchangeCode != null && !exchangeCode.equals("")) {
         List<RechargeCard> list1 = rechargeCardService.findRechargeCardByExchangeCode(exchangeCode);
         List<RechargeCard> list2 = rechargeCardService.findRechargeCardByWeiXinUser(weiXinUser);
-        if(list1.size()>0){
+        if (list1.size() > 0) {
           return LejiaResult.build(499, "兑换码已使用!");
         }
-        if(list2.size()>100){
+        if (list2.size() > 100) {
           return LejiaResult.build(498, "兑换次数超限!");
         }
 
@@ -347,7 +351,7 @@ public class ActivityCodeBurseController {
         rechargeCard.setWeiXinUser(weiXinUser);
         rechargeCardService.saveRechargeCard(rechargeCard);
         return LejiaResult.ok();
-      }else {
+      } else {
 
         return LejiaResult.build(497, "兑换码错误!");
       }
