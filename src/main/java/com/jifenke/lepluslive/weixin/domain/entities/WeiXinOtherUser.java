@@ -37,8 +37,9 @@ public class WeiXinOtherUser {
 
     private Date subDate;       //关注时间
 
-    // 0_0_0表示表示普通关注
+    // 0_0_0表示普通关注
     // 1_0_123表示通过某一个合伙人的推广二维码，合伙人Id为123
+    // 2_0_0表示商品详情页引导关注（一个永久二维码）
     private String subSource;   //关注来源
 
     public Long getId() {

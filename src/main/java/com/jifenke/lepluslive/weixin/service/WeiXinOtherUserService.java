@@ -28,7 +28,7 @@ public class WeiXinOtherUserService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public void saveWeiXinOtherUser(WeiXinOtherUser user) {
-    repository.save(user);
+    repository.saveAndFlush(user);
   }
 
 }
