@@ -51,6 +51,24 @@ public class Partner {
   @ManyToOne
   private PartnerManager partnerManager;
 
+  private Integer origin = 0; //0 后台添加  1 公众号注册
+
+  public PartnerManager getPartnerManager() {
+    return partnerManager;
+  }
+
+  public void setPartnerManager(PartnerManager partnerManager) {
+    this.partnerManager = partnerManager;
+  }
+
+  public Integer getOrigin() {
+    return origin;
+  }
+
+  public void setOrigin(Integer origin) {
+    this.origin = origin;
+  }
+
   public WeiXinUser getWeiXinUser() {
     return weiXinUser;
   }
