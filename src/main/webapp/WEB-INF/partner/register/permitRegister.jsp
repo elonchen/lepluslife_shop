@@ -22,6 +22,30 @@
   <link rel="stylesheet" href="${leplusShopResource}/partner_register/css/register.css">
   <link rel="stylesheet" href="${leplusShopResource}/partner_register/css/swiper.min.css">
 </head>
+<style>
+  .swiper-slide {
+    width: 30%;
+    background-color: #eaddca;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+  }
+
+  .swiper-slide > p {
+    width: 100%;
+    text-align: center;
+    color: #8f7655;
+    font-size: 0.7rem;
+    margin: 10% auto;
+    margin-top: 15%;
+  }
+
+  .swiper-slide > div {
+    width: 60%;
+    margin: 10% auto;
+
+  }
+</style>
 <body>
 <div class="certificate">
   <img src="${leplusShopResource}/partner_register/img/certificate.png" alt="">
@@ -37,21 +61,6 @@
 </div>
 <div class="swiper-container">
   <div class="swiper-wrapper">
-    <div class="swiper-slide">
-      <img src="${leplusShopResource}/partner_register/img/can.png" alt="">
-    </div>
-    <div class="swiper-slide">
-      <img src="${leplusShopResource}/partner_register/img/can.png" alt="">
-    </div>
-    <div class="swiper-slide">
-      <img src="${leplusShopResource}/partner_register/img/can.png" alt="">
-    </div>
-    <div class="swiper-slide">
-      <img src="${leplusShopResource}/partner_register/img/can.png" alt="">
-    </div>
-    <div class="swiper-slide">
-      <img src="${leplusShopResource}/partner_register/img/can.png" alt="">
-    </div>
   </div>
 </div>
 <div>
@@ -62,20 +71,31 @@
 <script src="${leplusShopResource}/partner_register/js/swiper.jquery.js"></script>
 <!--滑动-->
 <script>
-  var swiper = new Swiper('.swiper-container', {
-    pagination: '.swiper-pagination',
-    effect: 'coverflow',
-    initialSlide :2,
-    grabCursor: true,
-    centeredSlides: true,
-    slidesPerView: 'auto',
-    coverflow: {
-      rotate: 0,
-      stretch: 100,
-      depth: 200,
-      modifier: 1,
-      slideShadows : false
+  $.get("/shop/productList?typeId=0&page=0", function (res) {
+    res = res.data
+    var s = ""
+    for (var i = 0; i < 5; i++) {
+      s +=
+      "<div class='swiper-slide' onclick='window.location.href=\"/front/product/weixin/"
+      + res[i].id + "\"'><p>" + res[i].name+
+      "</p><div><img height='70' src='" + res[i].thumb + "'></div></div>"
     }
-  });
+    $("#productList").html(s)
+    var swiper = new Swiper('.swiper-container', {
+      pagination: '.swiper-pagination',
+      effect: 'coverflow',
+      initialSlide: 2,
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: 'auto',
+      coverflow: {
+        rotate: 0,
+        stretch: 100,
+        depth: 200,
+        modifier: 1,
+        slideShadows: false
+      }
+    });
+  })
 </script>
 </html>

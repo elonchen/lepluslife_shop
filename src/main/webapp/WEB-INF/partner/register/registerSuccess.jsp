@@ -21,6 +21,30 @@
   <link rel="stylesheet" href="${leplusShopResource}/partner_register/css/reset.css">
   <link rel="stylesheet" href="${leplusShopResource}/partner_register/css/registerSuccess.css">
 </head>
+<style>
+  .swiper-slide {
+    width: 30%;
+    background-color: #eaddca;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+  }
+
+  .swiper-slide > p {
+    width: 100%;
+    text-align: center;
+    color: #8f7655;
+    font-size: 0.7rem;
+    margin: 10% auto;
+    margin-top: 15%;
+  }
+
+  .swiper-slide > div {
+    width: 60%;
+    margin: 10% auto;
+
+  }
+</style>
 <body>
 <section class="bg">
   <div class="blank">
