@@ -56,7 +56,7 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
            try{
-               response.sendRedirect("/front/partner/weixin/becomePartner");
+               request.getRequestDispatcher("/front/partner/weixin/becomePartner");
            }catch (Exception e) {
                e.printStackTrace();
            }
@@ -88,7 +88,7 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
             try{
-                response.sendRedirect("/front/partner/weixin/becomePartner");
+                request.getRequestDispatcher("/front/partner/weixin/becomePartner");
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -129,7 +129,7 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
             try{
-                response.sendRedirect("/front/partner/weixin/becomePartner");
+                request.getRequestDispatcher("/front/partner/weixin/becomePartner");
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -170,7 +170,7 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
             try{
-                response.sendRedirect("/front/partner/weixin/becomePartner");
+                request.getRequestDispatcher("/front/partner/weixin/becomePartner");
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -198,7 +198,7 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
             try{
-                response.sendRedirect("/front/partner/weixin/becomePartner");
+                request.getRequestDispatcher("/front/partner/weixin/becomePartner");
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -231,7 +231,7 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
             try{
-                response.sendRedirect("/front/partner/weixin/becomePartner");
+                request.getRequestDispatcher("/front/partner/weixin/becomePartner");
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -276,7 +276,7 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
             try{
-                response.sendRedirect("/front/partner/weixin/becomePartner");
+                request.getRequestDispatcher("/front/partner/weixin/becomePartner");
             }catch (Exception e) {
                 e.printStackTrace();
             }
