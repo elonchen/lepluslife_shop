@@ -112,9 +112,9 @@
         var phone = $("#phone").val();
         var code = $("#yzm").val();
 
-        $.post("/front/partner/tt/doRegister", {name:name,phoneNumber: phone, code: code}, function (res) {
+        $.post("/front/partner/weixin/doRegister", {name:name,phoneNumber: phone, code: code}, function (res) {
             if (res.status == 200) {
-                window.location.href = "/front/partner/tt/register_success"
+                window.location.href = "/front/partner/weixin/register_success"
             } else {
                 $('#submit').attr('onclick', 'doRegister()');
                 alert(res.msg)

@@ -65,7 +65,7 @@
   </div>
 </div>
 <div>
-  <div class="button">逛逛商城</div>
+  <div class="button" onclick="window.location.href='/front/product/weixin/productIndex'">逛逛商城</div>
 </div>
 </body>
 <script src="${leplusShopResource}/partner_register/js/jquery.min.js"></script>
