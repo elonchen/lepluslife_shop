@@ -48,7 +48,7 @@
                 <div class="list">
                     <div class="face-img"><img src="${user.weiXinUser.headImageUrl}" alt=""></div>
                     <div class="desc">
-                        <p class="clearfix"><span class="left ttl">${user.weiXinUser.nickname}</span><span class="right time"><fmt:formatDate value="${user.createDate}"    pattern="yyyy-MM-dd hh:mm:ss" type="date" dateStyle="long" /></span>
+                        <p class="clearfix"><span class="left ttl">${user.weiXinUser.nickname}</span><span class="right time"><fmt:formatDate value="${user.bindPartnerDate}"    pattern="yyyy-MM-dd hh:mm:ss" type="date" dateStyle="long" /></span>
                         </p>
                         <p class="tel">${user.phoneNumber}</p>
                     </div>
