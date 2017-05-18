@@ -109,7 +109,7 @@
         });
     }
     function partnerCenter() {
-        location.href = "/front/partnerCenter/weixin";
+        location.href = "/front/partnerCenter/weixin/";
     }
 </script>
 </body>

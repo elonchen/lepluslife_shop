@@ -147,7 +147,7 @@
         location.href = "/front/partnerCenter/weixin/myShops";
     }
     function myMember() {
-        location.href = "/front/partnerCenter/weixinmyMember";
+        location.href = "/front/partnerCenter/weixin/myMember";
     }
     function customerService() {
         location.href = "/front/partnerCenter/weixin/customerService";
