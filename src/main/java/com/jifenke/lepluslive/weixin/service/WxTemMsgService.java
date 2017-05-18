@@ -1,25 +1,17 @@
 package com.jifenke.lepluslive.weixin.service;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jifenke.lepluslive.global.util.HttpUtils;
 import com.jifenke.lepluslive.weixin.domain.entities.WxTemMsg;
 import com.jifenke.lepluslive.weixin.repository.WxTemMsgRepository;
 
 import net.sf.json.JSONObject;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +69,7 @@ public class WxTemMsgService {
     param.put("url", wxTemMsg.getUrl());
     param.put("data", map2);
 
-    sendTemplateMessage(param,57L);
+    sendTemplateMessage(param, 57L);
   }
 
   /**
@@ -95,24 +87,12 @@ public class WxTemMsgService {
       String token = dictionaryService.findDictionaryById(wxId).getValue();
 
       String
-          getUrl =
+          url =
           "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + token;
-      CloseableHttpClient httpclient = HttpClients.createDefault();
-      HttpPost httpPost = new HttpPost(getUrl);
-      httpPost.addHeader("Content-Type", "application/json");
-      httpPost.setEntity(se);
-      CloseableHttpResponse response = null;
+      Map<String, String> headers = new HashMap<>();
+      headers.put("Content-Type", "application/json");
+      Map<String, Object> map = HttpUtils.post(url, headers, se);
 
-      response = httpclient.execute(httpPost);
-      HttpEntity entity = response.getEntity();
-      ObjectMapper mapper = new ObjectMapper();
-      Map<String, Object>
-          map =
-          mapper.readValue(
-              new BufferedReader(new InputStreamReader(entity.getContent(), "utf-8")),
-              Map.class);
-      EntityUtils.consume(entity);
-      response.close();
       System.out.println(map.toString());
     } catch (IOException e) {
       e.printStackTrace();

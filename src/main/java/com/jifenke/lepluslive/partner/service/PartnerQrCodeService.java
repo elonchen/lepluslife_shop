@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -45,8 +46,15 @@ public class PartnerQrCodeService {
   @Inject
   private PartnerService partnerService;
 
-  public PartnerQrCode findById(Long id){
+  public PartnerQrCode findById(Long id) {
     return repository.findOne(id);
+  }
+
+  /**
+   * 找出小于某个日期更新的二维码List 2017/5/18
+   */
+  public List<PartnerQrCode> listByDateUpdate(Date date) {
+    return repository.findByDateUpdateLessThan(date);
   }
 
   /**
@@ -90,11 +98,8 @@ public class PartnerQrCodeService {
             return partnerQrCode != null ? partnerQrCode.getMediaId()
                                          : "fail create scene or media";
           } else {
-            if (DateUtils.getTimeStamp() - 252000 < partnerQrCode.getMediaCreated()) {
-              return partnerQrCode.getMediaId();
-            }
-            //素材已过期，先判断二维码是否过期
-            if (DateUtils.getTimeStamp() - 2505600
+            //先判断二维码是否过期
+            if (DateUtils.getTimeStamp() - 2332800
                 > partnerQrCode.getDateUpdate().getTime() / 1000) {
               //二维码已过期
               partnerQrCode = createScene(partnerQrCode);
@@ -102,9 +107,12 @@ public class PartnerQrCodeService {
                 return "fail create scene";
               }
             }
-            //更新素材
+            //素材未过期，返回
+            if (DateUtils.getTimeStamp() - 252000 < partnerQrCode.getMediaCreated()) {
+              return partnerQrCode.getMediaId();
+            }
+            //素材已过期，更新素材
             partnerQrCode = uploadImage(partnerQrCode);
-
             return partnerQrCode != null ? partnerQrCode.getMediaId()
                                          : "fail create mediaID";
           }

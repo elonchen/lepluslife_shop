@@ -5,6 +5,8 @@ import com.jifenke.lepluslive.partner.domain.entities.PartnerQrCode;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,5 +16,10 @@ import java.util.Optional;
 public interface PartnerQrCodeRepository extends JpaRepository<PartnerQrCode, Long> {
 
   Optional<PartnerQrCode> findByPartner(Partner partner);
+
+  /**
+   * 找出小于某个日期更新的二维码List 2017/5/18
+   */
+  List<PartnerQrCode> findByDateUpdateLessThan(Date date);
 
 }
