@@ -50,6 +50,6 @@ public interface LeJiaUserRepository extends JpaRepository<LeJiaUser, Long> {
    */
   @Query(value="select * from le_jia_user where bind_partner_id  = ?1 limit ?2,10",nativeQuery = true)
   List<LeJiaUser> findByBindPartnerAndPage(Long bindPartner, Integer currPage);
-  @Query(value="select wei_xin_user_id,create_date,phone_number from le_jia_user where bind_partner_id  = ?1 limit ?2,10",nativeQuery = true)
+  @Query(value="select wei_xin_user_id,bind_partner_date,phone_number from le_jia_user where bind_partner_id  = ?1 limit ?2,10",nativeQuery = true)
   List<Object[]> findByBindPartnerAndPageSimple(Long bindPartner, Integer currPage);
 }
