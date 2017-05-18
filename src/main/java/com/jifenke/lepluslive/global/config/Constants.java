@@ -80,6 +80,11 @@ public final class Constants {
 //  public static final String ONLINEORDER_NOTIFY_URL = "http://www.tiegancrm.com/weixin/pay/afterPay";  //商城订单微信回调
 //  public static final String PHONEORDER_NOTIFY_URL = "http://www.tiegancrm.com/weixin/pay/afterPhonePay";  //话费订单微信回调
 
+  public static final String
+      WEIXIN_QRCODE =
+      "gQEr8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyUjhQN3BmM0NmVjExMDAwME0wN1gAAgRV7htZAwQAAAAA";
+      //商品详情关注永久二维码
+
   private Constants() {
   }
 }

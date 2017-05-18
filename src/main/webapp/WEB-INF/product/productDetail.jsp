@@ -31,7 +31,50 @@
 
 
 </head>
+<style>
+    .w-alert {
+        width: 100%;
+        position: fixed;
+        height: 40px;
+        background-color: rgba(211, 170, 114, 0.8);
+        z-index: 99999;
+        display: none;
+    }
 
+    .w-alert > div:first-child {
+        float: left;
+        line-height: 40px;
+        color: #ffffff;
+        font-size: 14px !important;
+        padding-left: 3%
+    }
+
+    .w-alert > div:last-child {
+        float: right;
+        line-height: 40px;
+        width: 19%;
+        margin-right: 3%
+    }
+
+    .w-alert button {
+        width: 100%;
+        margin-top: 6px;
+        font-size: 15px;
+        line-height: 16px;
+        color: #333;
+        border: 0;
+    }
+
+    .w-ewm {
+        width: 50%;
+        margin: 50px auto;
+    }
+
+    .w-ewm img {
+        width: 100%;
+        display: block;
+    }
+</style>
 <body>
 <nav class="mui-bar mui-bar-tab">
 			<span class="mui-pull-left">
@@ -48,6 +91,12 @@
 <div id="pullrefresh" class="mui-content mui-scroll-wrapper">
     <div class="mui-scroll">
         <!--内容部分-->
+        <div class="w-alert clearfix">
+            <div>关注乐+臻品商城，优选好货在等你</div>
+            <div>
+                <button class="gz">关注</button>
+            </div>
+        </div>
         <div class="mui-content">
             <div class="swiper-container swiper-container-horizontal" id="swiper-container2">
                 <!--列表-->
@@ -88,6 +137,7 @@
                                                                                       maxFractionDigits="2"/></font>
                     </p>
                 </c:if>
+                <p>返佣100.00元</p>
                 <p class="ttl_main">
                     <c:if test="${product.postage == 0}">
                         <span>包邮</span>
@@ -100,7 +150,7 @@
                     </c:if>
                 </p>
             </div>
-            <div class="page_more_btn">+规格数量选择</div>
+            <%--<div class="page_more_btn">+规格数量选择</div>--%>
 
             <!--更多详情-->
             <div class="page_more">
@@ -199,6 +249,11 @@
         <div class="yes"></div>
     </div>
 </section>
+<section class="layer-ewm">
+    <div class="w-ewm">
+        <img src="" id="qrImg" alt="">
+    </div>
+</section>
 
 </body>
 <script type="text/javascript" src="${commonResource}/js/mui.min.js"></script>
@@ -213,6 +268,26 @@
         $("#min_price").text(toDecimal($("#min_price").text()));
         $(".moneyNum1").text(toDecimal($(".moneyNum1").text()));
         $(".moneyNum2").text(toDecimal($(".moneyNum2").text()));
+    });
+
+    var shareWxUserId = '${shareWxUserId}',subState = '${subState}';
+    if(subState != 1){
+        $('.w-alert').css('display','block');
+    }
+    $(".gz").click(function () {
+
+        $.post("/front/qrCode/get", {userId: shareWxUserId}, function (res) {
+            $('#qrImg').attr("src",
+                             "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + res.data);
+            layer.open({
+                           type: 1,
+                           area: ['78%', ''], //宽高
+                           content: $(".layer-ewm"),
+                           title: false,
+                           closeBtn: 1,
+                           scrollbar: false
+                       });
+        });
     });
 
     $.ajax({

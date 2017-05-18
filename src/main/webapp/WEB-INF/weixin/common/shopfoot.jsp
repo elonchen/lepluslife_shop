@@ -49,7 +49,7 @@
         });
         $("#product").bind("touchstart",function(){
             localStorage.clear()
-            location.href="/weixin/shop"
+            location.href="/front/product/weixin/productIndex"
         });
         $("#order").bind("touchstart",function(){
             localStorage.clear()

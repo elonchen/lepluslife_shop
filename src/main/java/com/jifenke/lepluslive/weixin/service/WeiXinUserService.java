@@ -14,6 +14,7 @@ import com.jifenke.lepluslive.score.repository.ScoreARepository;
 import com.jifenke.lepluslive.score.repository.ScoreBDetailRepository;
 import com.jifenke.lepluslive.score.repository.ScoreBRepository;
 import com.jifenke.lepluslive.score.repository.ScoreCRepository;
+import com.jifenke.lepluslive.score.service.ScoreCService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.repository.WeiXinUserRepository;
@@ -72,6 +73,9 @@ public class WeiXinUserService {
 
   @Inject
   private WeiXinOtherUserService weiXinOtherUserService;
+
+  @Inject
+  private ScoreCService scoreCService;
 
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
@@ -262,9 +266,9 @@ public class WeiXinUserService {
       throws Exception {
     LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
     ScoreA scoreA = scoreARepository.findByLeJiaUser(leJiaUser).get(0);
-    ScoreB scoreB = scoreBRepository.findByLeJiaUser(leJiaUser);
+    ScoreC scoreC = scoreCService.findScoreCByLeJiaUser(leJiaUser);
     String aRule = dictionaryService.findDictionaryById(34L).getValue(); //返A规则
-    String bRule = dictionaryService.findDictionaryById(35L).getValue(); //返B规则
+    String bRule = dictionaryService.findDictionaryById(63L).getValue(); //返C规则
     int valueA = 0;
     int valueB = 0;
     Date date = new Date();
@@ -298,25 +302,18 @@ public class WeiXinUserService {
 
       //是否返积分|返积分规则
       String[] bRules = bRule.split("_");
-      if (!"0".equals(bRules[1])) {      //发积分
+      if (!"0".equals(bRules[1])) {      //发金币
         int maxB = Integer.valueOf(bRules[1]);
-        if ("0".equals(bRules[0])) {   //固定积分
+        if ("0".equals(bRules[0])) {   //固定金币
           valueB = maxB;
-        } else {//随机积分
+        } else {//随机金币
           int minB = Integer.valueOf(bRules[0]);
-          valueB = new Random().nextInt(maxB - minB) + minB;
+          valueB = new Random().nextInt((maxB - minB) / 10) * 10 + minB;
         }
-        scoreB.setLastUpdateDate(date);
-        scoreB.setScore(scoreB.getScore() + valueB);
-        scoreB.setTotalScore(scoreB.getTotalScore() + valueB);
-        scoreBRepository.save(scoreB);
-        ScoreBDetail scoreBDetail = new ScoreBDetail();
-        scoreBDetail.setNumber((long) valueB);
-        scoreBDetail.setScoreB(scoreB);
-        scoreBDetail.setOperate("注册送礼");
-        scoreBDetail.setOrigin(0);
-        scoreBDetail.setOrderSid("0_" + valueB);
-        scoreBDetailRepository.save(scoreBDetail);
+        scoreCService.saveScoreC(scoreC, 1, (long) valueB);
+        scoreCService
+            .saveScoreCDetail(scoreC, 1, (long) valueB, 0, "注册送礼",
+                              "0_" + valueB);
       }
       weiXinUser.setState(1);
       weiXinUser.setStateDate(date);

@@ -8,8 +8,6 @@ import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
 import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import com.jifenke.lepluslive.partner.service.PartnerService;
-import com.jifenke.lepluslive.product.domain.entities.ProductType;
-import com.jifenke.lepluslive.product.service.ProductService;
 import com.jifenke.lepluslive.score.service.ScoreAService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
@@ -29,7 +27,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -54,9 +51,6 @@ public class WeixinController {
   private WeiXinService weiXinService;
 
   @Inject
-  private ProductService productService;
-
-  @Inject
   private ScoreCService scoreCService;
 
   @Inject
@@ -70,18 +64,6 @@ public class WeixinController {
 
   @Inject
   private WeiXinOtherUserService weiXinOtherUserService;
-
-  @RequestMapping("/shop")
-  public ModelAndView goProductPage(HttpServletRequest request,
-                                    Model model) {
-    LeJiaUser leJiaUser = weiXinService.getCurrentWeiXinUser(request).getLeJiaUser();
-    //商品分类
-    List<ProductType> typeList = productService.findAllProductType();
-    //主打爆品
-    model.addAttribute("scoreC", scoreCService.findScoreCByLeJiaUser(leJiaUser));
-    model.addAttribute("typeList", typeList);
-    return MvUtil.go("/product/productIndex");
-  }
 
   @RequestMapping("/userRegister")
   public String userRegister(@RequestParam String action, @RequestParam String code,

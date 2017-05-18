@@ -150,8 +150,8 @@ public class ActivityCodeBurseController {
     } else {
       model.addAttribute("scoreA", joinLog.getDetail());
       model.addAttribute("status", 1);
-      model.addAttribute("subSource", subSource);
     }
+    model.addAttribute("subSource", subSource);
     return MvUtil.go("/activity/subPage");
   }
 
@@ -161,7 +161,8 @@ public class ActivityCodeBurseController {
    * @param phoneNumber 手机号
    */
   @RequestMapping(value = "/subPage/open")
-  public LejiaResult subPageOpen(@RequestParam String phoneNumber, HttpServletRequest request) {
+  public LejiaResult subPageOpen(@RequestParam String phoneNumber, HttpServletRequest request,
+                                 @RequestParam(required = false) String subSource) {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     LeJiaUser leJiaUser = leJiaUserService.findUserByPhoneNumber(phoneNumber);  //是否已注册
     ActivityJoinLog joinLog = activityJoinLogService.findLogBySubActivityAndOpenId(0, weiXinUser);
@@ -170,20 +171,13 @@ public class ActivityCodeBurseController {
       leJiaUserService.saveUser(leJiaUser);
     }
     if (joinLog == null) {
-      //判断是否需要绑定商户 4_0_123
-      Merchant merchant = leJiaUserService.checkUserBindMerchant(weiXinUser);
+      //判断是否需要绑定合伙人 1_0_3
+      leJiaUserService.checkUserBindPartner(weiXinUser.getLeJiaUser(), subSource);
 
-      //派发红包和积分,填充手机号码成为会员
+      //派发红包和金币,填充手机号码成为会员
       try {
-        Map<String, Integer> map = null;
-        if (merchant != null && merchant.getPartnership() == 2) { //虚拟商户由合伙人发放红包金额
-          map = partnerService.lockGiveScoreToUser(weiXinUser, phoneNumber, merchant);
-          if (map.get("return").equals(0)) { //合伙人红包不足,由乐加生活发放红包
-            map = weiXinUserService.giveScoreAByDefault(weiXinUser, phoneNumber);
-          }
-        } else {
-          map = weiXinUserService.giveScoreAByDefault(weiXinUser, phoneNumber);
-        }
+        Map<String, Integer> map = weiXinUserService.giveScoreAByDefault(weiXinUser, phoneNumber);
+
         //添加参加记录
         activityJoinLogService.addCodeBurseLogByDefault(weiXinUser, map.get("scoreA"));
         return LejiaResult.ok(map);

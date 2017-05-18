@@ -102,7 +102,7 @@
 </header>
 <div class="mui-content" style="background: #fff;">
     <div class="success-top">
-        <span>获得<font>${payBackScore/100}</font>元乐+红包</span>
+        <span>获得<font>${payBackScore/100}</font>元鼓励金</span>
     </div>
     <p class="success-ttl">乐+生活会尽快为您安排发货的！</p>
 

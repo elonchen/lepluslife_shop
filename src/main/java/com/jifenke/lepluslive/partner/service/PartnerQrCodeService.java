@@ -45,12 +45,38 @@ public class PartnerQrCodeService {
   @Inject
   private PartnerService partnerService;
 
+  public PartnerQrCode findById(Long id){
+    return repository.findOne(id);
+  }
+
+  /**
+   * 获取二维码  2017/5/17
+   *
+   * @param partner 合伙人
+   */
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public PartnerQrCode findByPartner(Partner partner) {
+    PartnerQrCode partnerQrCode = repository.findByPartner(partner).orElse(null);
+    if (partnerQrCode == null) {
+      partnerQrCode = insertQrCode(partner);
+    } else if (DateUtils.getTimeStamp() - 2505600
+               > partnerQrCode.getDateUpdate().getTime() / 1000) {
+      //二维码已过期
+      partnerQrCode = createScene(partnerQrCode);
+      if (partnerQrCode == null) {
+        return null;
+      }
+    }
+    return partnerQrCode;
+  }
+
   /**
    * 点击推广二维码菜单返回临时图片消息的素材ID
    *
    * @param openId 合伙人对应的微信openId
    * @return mediaId 素材ID
    */
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public String getMediaId(String openId) throws IOException {
     WeiXinOtherUser otherUser = weiXinOtherUserService.findByOpenId(openId);
     if (otherUser != null) {
@@ -94,6 +120,7 @@ public class PartnerQrCodeService {
    *
    * @param partner 合伙人
    */
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public PartnerQrCode getQrCode(Partner partner) throws IOException {
 
     PartnerQrCode partnerQrCode = insertQrCode(partner); //创建记录并获取临时二维码

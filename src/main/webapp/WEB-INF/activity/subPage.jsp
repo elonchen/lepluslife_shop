@@ -3,7 +3,7 @@
   User: wcg
   Date: 16/3/24
   Time: 上午10:05
-  content:关注领取红包
+  content:关注领取鼓励金
   To change this template use File | Settings | File Templates.
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -46,7 +46,7 @@
         <div class="hb-text">
             <p>恭喜您</p>
 
-            <p>获得<span id="scoreA">2.5</span>红包和<span id="scoreB">10</span>积分</p>
+            <p>获得<span id="scoreA">2.5</span>鼓励金和<span id="scoreB">10</span>金币</p>
         </div>
         <img id="headImg" src="${resourceUrl}/frontRes/activity/subPage/img/hb4.png" alt=""/>
 
@@ -89,7 +89,8 @@
     $(".checkDown").css("margin-top", -($(window).width() / 375 * 125 - 25) + "px");
     //count判断是第几次加载
     var imgLength = 10, url = '/merchant/list', gps = {}, shopList = $(".hb");
-    var pic = '${resourceUrl}/frontRes/activity/subPage/img/lightning.png', hasHot = 0, hasMerchant = 0;
+    var pic = '${resourceUrl}/frontRes/activity/subPage/img/lightning.png', hasHot = 0,
+        hasMerchant = 0;
     function initPage() {
         var status = '${status}';
         if (status == 1) {
@@ -126,7 +127,8 @@
                 break;
             case"hb":
                 if (hasMerchant == 0) {
-                    shopList.html('<div class="loading"><span></span><span></span><span></span><span></span><span></span></div>');
+                    shopList.html(
+                        '<div class="loading"><span></span><span></span><span></span><span></span><span></span></div>');
                     getLocation()
                 }
                 $(".hb").show();
@@ -183,16 +185,17 @@
                            }
                            for (var i = 0; i < length; i++) {
                                content +=
-                               '<div  onclick="goHotDetail(' + list[i].id
-                               + ')"><div><img class="w-imgSize" src="' + list[i].picture
-                               + '" alt=""></div><div class="information"><p>' + list[i].name
-                               + '</p><div>' + toDecimal(list[i].minPrice / 100)
-                               + '<span style="font-size: 12px;">元</span>+<span style="color: #fb991a;">'
-                               + list[i].minScore
-                               + '<span style="font-size: 12px;">积分</span></span><span style ="font-size: 11px;color: #AEAEAE;margin-left: 2%;text-decoration:line-through;">市场价'
-                               + toDecimal(list[i].price / 100)
-                               + '元</span></div><div><div><img src = "' + pic + '"></div><div>还剩'
-                               + list[i].repository + '份</div><div>马上抢</div></div></div></div>'
+                                   '<div  onclick="goHotDetail(' + list[i].id
+                                   + ')"><div><img class="w-imgSize" src="' + list[i].picture
+                                   + '" alt=""></div><div class="information"><p>' + list[i].name
+                                   + '</p><div>' + toDecimal(list[i].minPrice / 100)
+                                   + '<span style="font-size: 12px;">元</span>+<span style="color: #fb991a;">'
+                                   + toDecimal(list[i].minScore / 100)
+                                   + '<span style="font-size: 12px;">金币</span></span><span style ="font-size: 11px;color: #AEAEAE;margin-left: 2%;text-decoration:line-through;">市场价'
+                                   + toDecimal(list[i].price / 100)
+                                   + '元</span></div><div><div><img src = "' + pic
+                                   + '"></div><div>还剩'
+                                   + list[i].repository + '份</div><div>马上抢</div></div></div></div>'
                            }
                            $(".jf").html(content);
                            $(".w-imgSize").css("height", $(".w-imgSize").width() + "px")
@@ -218,39 +221,52 @@
                                                                                           "aaa-"
                                                                                           + data[i].id
                                                                                           + "-"
-                                                                                          + data[i].distance).append($("<div></div>").append($("<img>").attr("src",
-                                                                                                                                                             (data[i].picture
-                                                                                                                                                              == null
-                                                                                                                                                              || data[i].picture
-                                                                                                                                                                 == "null"
-                                                                                                                                                              || data[i].picture
-                                                                                                                                                                 == "")
-                                                                                                                                                                     ? "${resourceUrl}/frontRes/merchant/img/listLogo.jpg"
-                                                                                                                                                                     : data[i].picture))).append($("<div></div>").attr("class",
-                                                                                                                                                                                                                       "shopInformation").append($("<div></div>").append($("<div></div>").html(data[i].name))).append($("<div></div>").attr("class",
-                                                                                                                                                                                                                                                                                                                                            "star").attr("id",
-                                                                                                                                                                                                                                                                                                                                                         "merchant"
-                                                                                                                                                                                                                                                                                                                                                         + data[i].id)).append($("<div></div>").attr("class",
-                                                                                                                                                                                                                                                                                                                                                                                                     "w").append($("<div></div>").attr("class",
-                                                                                                                                                                                                                                                                                                                                                                                                                                       "tabb").append($("<div></div>").append($("<img>").attr("src",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "${resourceUrl}/frontRes/merchant/img/food.png"))).append($("<div></div>").html(data[i].typeName))).append($("<div></div>").attr("class",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               "tabb").append($("<div></div>").append($("<img>").attr("src",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "${resourceUrl}/frontRes/merchant/img/address.png"))).append($("<div></div>").html(data[i].areaName))).append($("<div></div>").attr("class",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "tabb").append($("<div></div>").attr("style",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               "margin-right:9px;color:#8d8d8d;").append(gps.status
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         == 1
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ? $("<img>").attr("src",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "${resourceUrl}/frontRes/merchant/img/juli.png")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 : "")).append(gps.status
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               == 1
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ? $("<span></span>").html(data[i].distance
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 > 1000
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ? ((data[i].distance
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             / 1000).toFixed(1)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            + "km")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         : data[i].distance
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           + "m")
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       : "")))));
+                                                                                          + data[i].distance).append(
+                        $("<div></div>").append($("<img>").attr("src",
+                                                                (data[i].picture
+                                                                 == null
+                                                                 || data[i].picture
+                                                                    == "null"
+                                                                 || data[i].picture
+                                                                    == "")
+                                                                    ? "${resourceUrl}/frontRes/merchant/img/listLogo.jpg"
+                                                                    : data[i].picture))).append(
+                        $("<div></div>").attr("class",
+                                              "shopInformation").append(
+                            $("<div></div>").append($("<div></div>").html(data[i].name))).append(
+                            $("<div></div>").attr("class",
+                                                  "star").attr("id",
+                                                               "merchant"
+                                                               + data[i].id)).append(
+                            $("<div></div>").attr("class",
+                                                  "w").append($("<div></div>").attr("class",
+                                                                                    "tabb").append(
+                                $("<div></div>").append($("<img>").attr("src",
+                                                                        "${resourceUrl}/frontRes/merchant/img/food.png"))).append(
+                                $("<div></div>").html(data[i].typeName))).append(
+                                $("<div></div>").attr("class",
+                                                      "tabb").append(
+                                    $("<div></div>").append($("<img>").attr("src",
+                                                                            "${resourceUrl}/frontRes/merchant/img/address.png"))).append(
+                                    $("<div></div>").html(data[i].areaName))).append(
+                                $("<div></div>").attr("class",
+                                                      "tabb").append($("<div></div>").attr("style",
+                                                                                           "margin-right:9px;color:#8d8d8d;").append(
+                                    gps.status
+                                    == 1
+                                        ? $("<img>").attr("src",
+                                                          "${resourceUrl}/frontRes/merchant/img/juli.png")
+                                        : "")).append(gps.status
+                                                      == 1
+                                                          ? $("<span></span>").html(data[i].distance
+                                                                                    > 1000
+                                                                                        ? ((data[i].distance
+                                                                                            / 1000).toFixed(
+                                            1)
+                                                                                           + "km")
+                                                                                        : data[i].distance
+                                                                                          + "m")
+                                                          : "")))));
                     <%--var tests = "aaa-" + data[i].id + "-" + data[i].distance;--%>
                     <%--document.getElementById(tests).addEventListener('tap', function () {--%>
                     <%--var str = $(this).attr("id").split('-');--%>
@@ -305,6 +321,7 @@
         }
         return s
     }
+    var subSource = '${subSource}';
     function openHongbao() {
         var phoneNumber = $("input[name='phoneNumber']").val();
         var code = $("input[name='validateCode']").val();
@@ -320,12 +337,13 @@
             if (res.status == 200) {
                 $.ajax({
                            type: "get",
-                           url: "/weixin/subPage/open?phoneNumber=" + phoneNumber,
+                           url: "/weixin/subPage/open?phoneNumber=" + phoneNumber + "&subSource="
+                                + subSource,
                            success: function (data) {
                                if (data.status == 200) {
                                    var map = data.data;
                                    $("#scoreA").html(map.scoreA / 100);
-                                   $("#scoreB").html(map.scoreB);
+                                   $("#scoreB").html(map.scoreB / 100);
                                    hotList(1);
                                    $(".headHb").hide();
                                    $(".headHbEd").show();
