@@ -182,7 +182,7 @@ public class PartnerCenterController {
         }
         merchantCriteria.setPartner(partner);
         List<Object[]> list = partnerService.findMerchantDataByPartner(merchantCriteria);
-        Long totalBind = partnerService.findUserBindByPartner(partner);
+        Long totalBind = partnerService.findMerchantBindCountByPartner(partner);
         model.addAttribute("list", list);
         model.addAttribute("totalBind", totalBind);
         return MvUtil.go("/partner/partnerCenter/myShop");

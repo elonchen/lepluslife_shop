@@ -3,6 +3,9 @@ package com.jifenke.lepluslive.partner.service;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.partner.domain.entities.*;
 import com.jifenke.lepluslive.partner.repository.*;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
+import com.jifenke.lepluslive.weixin.repository.WeiXinOtherUserRepository;
+import com.jifenke.lepluslive.weixin.service.WeiXinOtherUserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,8 @@ public class WeiXinWithdrawBillService {
     private PartnerWalletOnlineRepository partnerWalletOnlineRepository;
     @Inject
     private PartnerWalletOnlineLogRepository partnerWalletOnlineLogRepository;
+    @Inject
+    private WeiXinOtherUserService weiXinOtherUserService;
 
     /**
      *  合伙人中心 - 提现记录
@@ -76,6 +81,8 @@ public class WeiXinWithdrawBillService {
             String orderSid  ="1358860502" + format.format(date) + MvUtil.getRandomNumber(10);
             weiXinWithdrawBill.setMchBillno(orderSid);
             weiXinWithdrawBill.setWithdrawBillSid(orderSid);
+            WeiXinOtherUser otherUser = weiXinOtherUserService.findByWeiXinUser(partner.getWeiXinUser());
+            weiXinWithdrawBill.setWeiXinOtherUser(otherUser);
             weiXinWithdrawBillRepository.save(weiXinWithdrawBill);
             // 3 -  修改钱包金额 , 生成日志
             if(sumOnLine>price) {
