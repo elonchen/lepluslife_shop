@@ -393,14 +393,17 @@ public class PartnerService {
         if (leJiaUser.getRegisterOrigin() == null) {
             leJiaUser.setRegisterOrigin(new RegisterOrigin(1L));
         }
-        leJiaUser.setPhoneBindDate(new Date());
+        Date date = new Date();
+        leJiaUser.setPhoneBindDate(date);
         leJiaUser.setPhoneNumber(phoneNumber);
         leJiaUserRepository.save(leJiaUser);
         if (leJiaUser.getBindMerchant() == null) {
             leJiaUser.setBindMerchant(new Merchant(1226L));
+            leJiaUser.setBindMerchantDate(date);
         }
         if (leJiaUser.getBindPartner() == null) {
             leJiaUser.setBindPartner(partner);
+            leJiaUser.setBindPartnerDate(date);
         } else {//为会员绑定合伙人发一笔福利
             PartnerWalletOnline
                     wallet =

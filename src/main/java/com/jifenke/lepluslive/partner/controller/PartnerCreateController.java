@@ -111,7 +111,7 @@ public class PartnerCreateController {
   /**
    * 合伙人注册成功接口
    */
-  @RequestMapping(value = "/weixin/register_success", method = RequestMethod.POST)
+  @RequestMapping(value = "/weixin/register_success", method = RequestMethod.GET)
   public ModelAndView goRegisterSuccessPage(Model model,HttpServletRequest request) {
         WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
 //    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
