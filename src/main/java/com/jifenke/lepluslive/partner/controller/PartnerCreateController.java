@@ -55,8 +55,8 @@ public class PartnerCreateController {
    */
   @RequestMapping(value = "/weixin/becomePartner", method = RequestMethod.GET)
   public ModelAndView goBecomePartnerPage(HttpServletRequest request, Model model) {
-//    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
+    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+//    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
     Optional partnerByWeiXinUser = partnerService.findPartnerByWeiXinUser(weiXinUser);
     if (partnerByWeiXinUser.isPresent()) {
       model.addAttribute("weiXinUser", weiXinUser);
@@ -80,8 +80,8 @@ public class PartnerCreateController {
    */
   @RequestMapping(value = "/weixin/register", method = RequestMethod.GET)
   public ModelAndView partnerRegisterPage(HttpServletRequest request, Model model) {
-//    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
+    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+//    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
     model.addAttribute("weiXinUser", weiXinUser);
     return MvUtil.go("/partner/register/register");
   }
@@ -95,8 +95,8 @@ public class PartnerCreateController {
     try {
       Boolean b = validateCodeService.findByPhoneNumberAndCode(phoneNumber, code); //验证码是否正确
       if(b){
-        //    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-        WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
+            WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+//        WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
          partnerService.registerPartner(phoneNumber, name, weiXinUser); //创建合伙人
         return LejiaResult.build(200, "注册成功");
       }else {
@@ -112,9 +112,9 @@ public class PartnerCreateController {
    * 合伙人注册成功接口
    */
   @RequestMapping(value = "/weixin/register_success", method = RequestMethod.POST)
-  public ModelAndView goRegisterSuccessPage(Model model) {
-    //    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
+  public ModelAndView goRegisterSuccessPage(Model model,HttpServletRequest request) {
+        WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+//    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
     model.addAttribute("weiXinUser", weiXinUser);
     return MvUtil.go("/partner/register/registerSuccess");
   }
