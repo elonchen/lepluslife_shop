@@ -55,7 +55,7 @@
   </div>
 </div>
 <div>
-  <div class="button" onclick="window.location.href='/front/partner/tt/register'">立即注册</div>
+  <div class="button" onclick="window.location.href='/front/partner/weixin/register'">立即注册</div>
 </div>
 </body>
 <script src="${leplusShopResource}/partner_register/js/jquery.min.js"></script>

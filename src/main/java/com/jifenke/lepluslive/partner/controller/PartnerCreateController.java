@@ -49,13 +49,11 @@ public class PartnerCreateController {
   @Inject
   private ValidateCodeService validateCodeService;
 
-  @Inject
-  private LeJiaUserService leJiaUserService;
 
   /**
    * 进入合伙人页面
    */
-  @RequestMapping(value = "/tt/becomePartner", method = RequestMethod.GET)
+  @RequestMapping(value = "/weixin/becomePartner", method = RequestMethod.GET)
   public ModelAndView goBecomePartnerPage(HttpServletRequest request, Model model) {
 //    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
@@ -80,7 +78,7 @@ public class PartnerCreateController {
   /**
    * 进入合伙人注册页面
    */
-  @RequestMapping(value = "/tt/register", method = RequestMethod.GET)
+  @RequestMapping(value = "/weixin/register", method = RequestMethod.GET)
   public ModelAndView partnerRegisterPage(HttpServletRequest request, Model model) {
 //    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
@@ -91,7 +89,7 @@ public class PartnerCreateController {
   /**
    * 合伙人注册接口
    */
-  @RequestMapping(value = "/tt/doRegister", method = RequestMethod.POST)
+  @RequestMapping(value = "/weixin/doRegister", method = RequestMethod.POST)
   public LejiaResult partnerRegister(@RequestParam(required = false) String name,@RequestParam(required = false) String phoneNumber,
                                       @RequestParam(required = false) String code,HttpServletRequest request) {
     try {
@@ -113,7 +111,7 @@ public class PartnerCreateController {
   /**
    * 合伙人注册成功接口
    */
-  @RequestMapping(value = "/tt/register_success", method = RequestMethod.POST)
+  @RequestMapping(value = "/weixin/register_success", method = RequestMethod.POST)
   public ModelAndView goRegisterSuccessPage(Model model) {
     //    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
