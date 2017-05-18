@@ -199,6 +199,11 @@ public class PartnerService {
         return partnerRepository.findByWeiXinUser(weiXinUser);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public Partner findPartnerById(Long id) {
+        return partnerRepository.findOne(id);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Boolean bindWeiXinUser(Partner partner, WeiXinUser weiXinUser) {
         if (partner != null && weiXinUser != null) {

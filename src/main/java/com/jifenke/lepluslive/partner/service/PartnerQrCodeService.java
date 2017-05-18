@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
@@ -78,6 +77,31 @@ public class PartnerQrCodeService {
     return partnerQrCode;
   }
 
+  private void sendImg(String openId, Long id, int type) {
+
+    System.out.println(openId + "====" + id + "======" + type);
+    PartnerQrCode partnerQrCode = null;
+    try {
+      if (type == 1) {
+        partnerQrCode = getQrCode(partnerService.findPartnerById(id));
+      } else {
+        partnerQrCode = repository.findOne(id);
+        WeiXinUser weiXinUser = partnerQrCode.getPartner().getWeiXinUser();
+        partnerQrCode =
+            uploadImage(partnerQrCode, weiXinUser.getHeadImageUrl(), weiXinUser.getNickname());
+      }
+      //发送图片消息
+      Map<String, Object>
+          map =
+          weiXinService.sendImg(openId, partnerQrCode.getMediaId());
+
+      System.out.println(map);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+  }
+
   /**
    * 点击推广二维码菜单返回临时图片消息的素材ID
    *
@@ -94,9 +118,10 @@ public class PartnerQrCodeService {
         if (partner != null) {
           PartnerQrCode partnerQrCode = repository.findByPartner(partner).orElse(null);
           if (partnerQrCode == null) { //创建一个
-            partnerQrCode = getQrCode(partner);
-            return partnerQrCode != null ? partnerQrCode.getMediaId()
-                                         : "fail create scene or media";
+            Long id = partner.getId();
+            //素材已过期，更新素材
+            new Thread(() -> sendImg(openId, id, 1)).start();
+            return "send:图片合成中,请稍后...";
           } else {
             //先判断二维码是否过期
             if (DateUtils.getTimeStamp() - 2332800
@@ -111,10 +136,10 @@ public class PartnerQrCodeService {
             if (DateUtils.getTimeStamp() - 252000 < partnerQrCode.getMediaCreated()) {
               return partnerQrCode.getMediaId();
             }
+            Long id = partnerQrCode.getId();
             //素材已过期，更新素材
-            partnerQrCode = uploadImage(partnerQrCode);
-            return partnerQrCode != null ? partnerQrCode.getMediaId()
-                                         : "fail create mediaID";
+            new Thread(() -> sendImg(openId, id, 2)).start();
+            return "send:图片合成中,请稍后...";
           }
         }
       }
@@ -132,8 +157,9 @@ public class PartnerQrCodeService {
   public PartnerQrCode getQrCode(Partner partner) throws IOException {
 
     PartnerQrCode partnerQrCode = insertQrCode(partner); //创建记录并获取临时二维码
+    WeiXinUser weiXinUser = partner.getWeiXinUser();
     if (partnerQrCode != null) {
-      return uploadImage(partnerQrCode);
+      return uploadImage(partnerQrCode, weiXinUser.getHeadImageUrl(), weiXinUser.getNickname());
     }
     return null;
   }
@@ -142,19 +168,28 @@ public class PartnerQrCodeService {
   /**
    * 合成合伙人二维码海报  2017/5/12
    */
-  public BufferedImage compoundQrCode(String ticket) throws IOException {
-    String sourceFilePath = "I://image//qrcode//bei.png";
+  public BufferedImage compoundQrCode(String ticket, String headImgUrl, String text)
+      throws IOException {
+    String sourceFilePath = Constants.WEIXIN_CODE_BACKIMG_URL;
+    if (headImgUrl == null) {
+      headImgUrl = Constants.WEIXIN_CODE_HEAD_URL;
+    }
+    if (text == null) {
+      text = "乐加生活";
+    }
     String
         waterFilePath =
         "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
 
-    String saveFilePath = "I://image//qrcode//" + System.currentTimeMillis() + ".png";
-    // 构建叠加层
+    // 添加二维码
     BufferedImage
         buffImg =
-        ImageUtils.watermark(new File(sourceFilePath), new URL(waterFilePath), 400, 600, 1.0f);
-    // 输出水印图片
-    ImageUtils.generateWaterFile(buffImg, saveFilePath);
+        ImageUtils
+            .watermark(new URL(sourceFilePath), new URL(waterFilePath), new URL(headImgUrl), text,
+                       1.0f);
+//    String saveFilePath = "I://image//qrcode//" + System.currentTimeMillis() + ".png";
+//    ImageUtils.generateWaterFile(buffImg, saveFilePath);
+
     return buffImg;
   }
 
@@ -201,9 +236,10 @@ public class PartnerQrCodeService {
    * 创建某合伙人临时素材并保存(包括合成图片)  2017/5/12
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public PartnerQrCode uploadImage(PartnerQrCode qrCode) throws IOException {
+  public PartnerQrCode uploadImage(PartnerQrCode qrCode, String headImgUrl, String text)
+      throws IOException {
 
-    BufferedImage image = compoundQrCode(qrCode.getTicket());
+    BufferedImage image = compoundQrCode(qrCode.getTicket(), headImgUrl, text);
 
     Map<String, Object>
         result =

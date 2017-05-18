@@ -83,7 +83,17 @@ public final class Constants {
   public static final String
       WEIXIN_QRCODE =
       "gQEr8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyUjhQN3BmM0NmVjExMDAwME0wN1gAAgRV7htZAwQAAAAA";
-      //商品详情关注永久二维码
+  //商品详情关注永久二维码
+
+  public static final String
+      WEIXIN_CODE_BACKIMG_URL =
+      "http://image.lepluslife.com/leplus_shop/partner_code/back.png";
+  //合成推广二维码背景图片地址
+
+  public static final String
+      WEIXIN_CODE_HEAD_URL =
+      "http://image.lepluslife.com/leplus_shop/partner_code/back.png";
+  //头像为空时的默认头像
 
   private Constants() {
   }

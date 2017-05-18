@@ -170,6 +170,8 @@ public class WeixinReplyService {
       return returnText(map, "请先注册成为合伙人");
     } else if (mediaId.startsWith("fail")) { //接口调用异常，返回文本消息
       return returnText(map, "接口调用异常，请稍后再试");
+    } else if (mediaId.startsWith("send")) { //接口调用异常，返回文本消息
+      return returnText(map, mediaId.split(":")[1]);
     }
 
     return returnImage(map, mediaId);

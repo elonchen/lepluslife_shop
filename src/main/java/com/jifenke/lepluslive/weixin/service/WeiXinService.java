@@ -154,4 +154,25 @@ public class WeiXinService {
 
     return HttpUtils.send(url, fileName, image);
   }
+
+  /**
+   * 客服接口，发送图片 2017/5/18
+   *
+   * @param openId  接受会员openId
+   * @param mediaId 素材ID
+   */
+  public Map<String, Object> sendImg(String openId, String mediaId)
+      throws IOException {
+    String
+        body =
+        "{\"touser\":\"" + openId + "\",\"msgtype\":\"image\",\"image\":{\"media_id\":\"" + mediaId
+        + "\"}}";
+    String
+        url =
+        "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + dictionaryService
+            .findDictionaryById(57L).getValue();
+    Map<String, String> headers = new HashMap<>();
+    headers.put("Content-Type", "application/json");
+    return HttpUtils.post(url, headers, new StringEntity(body));
+  }
 }
