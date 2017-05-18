@@ -23,6 +23,30 @@
     <link rel="stylesheet" href="${leplusShopResource}/partner_register/css/partner.css">
     <link rel="stylesheet" href="${leplusShopResource}/partner_register/css/swiper.min.css">
 </head>
+<style>
+    .swiper-slide {
+        width: 30%;
+        background-color: #eaddca;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
+
+    .swiper-slide > p {
+        width: 100%;
+        text-align: center;
+        color: #8f7655;
+        font-size: 0.7rem;
+        margin: 10% auto;
+        margin-top: 15%;
+    }
+
+    .swiper-slide > div {
+        width: 60%;
+        margin: 10% auto;
+
+    }
+</style>
 <body>
 <div class="headRound">
     <img src="${leplusShopResource}/partner_register/img/round.png" alt="">
@@ -54,11 +78,12 @@
 <script>
     $.get("/shop/productList?typeId=0&page=0", function (res) {
         res = res.data
-        var s=""
+        var s = ""
         for (var i = 0; i < 5; i++) {
-            s += "<div style='width:30%;' class='swiper-slide' onclick='window.location.href=\"/front/product/weixin/"+res[i].id+"\"'><img  src='" + res[i].thumb + "'></div>"
-//            s += "<div class='swiper-slide' onclick='window.location.href="+"/shop/product/"
-//                 + res[i].id + "'><img src='" + res[i].thumb + "'></div>"
+            s +=
+            "<div class='swiper-slide' onclick='window.location.href=\"/front/product/weixin/"
+            + res[i].id + "\"'><p>" + res[i].name+
+            "</p><div><img height='70' src='" + res[i].thumb + "'></div></div>"
         }
         $("#productList").html(s)
         var swiper = new Swiper('.swiper-container', {
@@ -77,7 +102,6 @@
             }
         });
     })
-
 
 
 </script>
