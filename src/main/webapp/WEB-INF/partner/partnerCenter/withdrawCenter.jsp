@@ -28,7 +28,7 @@
     </div>
     <div class="prompt">提现金额将以微信红包的形式发给您当前使用的微信号</div>
     <div class="chooseMoney">
-        <div class="item active" data-val="50">
+        <div class="item" data-val="50">
             <div class="moneyWrapper">
                 <h3 class="money">50元</h3>
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/50@2x.png" alt=""></div>

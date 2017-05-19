@@ -260,7 +260,7 @@ public class PartnerCenterController {
         Partner partner = null;
         WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
         Optional<Partner> partnerByWeiXinUser = partnerService.findPartnerByWeiXinUser(weiXinUser);
-        WeiXinOtherUser otherUser = weiXinOtherUserService.findByWeiXinUser(partner.getWeiXinUser());
+        WeiXinOtherUser otherUser = weiXinOtherUserService.findByWeiXinUser(weiXinUser);
         if(partnerByWeiXinUser.isPresent()) {
             partner = partnerByWeiXinUser.get();
         }
