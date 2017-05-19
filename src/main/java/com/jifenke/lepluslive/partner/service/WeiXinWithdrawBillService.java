@@ -32,8 +32,6 @@ public class WeiXinWithdrawBillService {
     private PartnerWalletOnlineRepository partnerWalletOnlineRepository;
     @Inject
     private PartnerWalletOnlineLogRepository partnerWalletOnlineLogRepository;
-    @Inject
-    private WeiXinOtherUserService weiXinOtherUserService;
 
     /**
      *  合伙人中心 - 提现记录
@@ -59,7 +57,7 @@ public class WeiXinWithdrawBillService {
      *  发起提现   17/15/17
      */
     @Transactional(readOnly = false,propagation = Propagation.REQUIRED)
-    public boolean createWithdraw(Partner partner,Long price) {
+    public boolean createWithdraw(Partner partner,Long price,WeiXinOtherUser otherUser) {
         try {
             // 1 - 判断用户钱包佣金总额是否满足提现的金额
             PartnerWalletOnline walletOnline = partnerWalletOnlineRepository.findByPartner(partner);
@@ -81,7 +79,6 @@ public class WeiXinWithdrawBillService {
             String orderSid  ="1358860502" + format.format(date) + MvUtil.getRandomNumber(10);
             weiXinWithdrawBill.setMchBillno(orderSid);
             weiXinWithdrawBill.setWithdrawBillSid(orderSid);
-            WeiXinOtherUser otherUser = weiXinOtherUserService.findByWeiXinUser(partner.getWeiXinUser());
             weiXinWithdrawBill.setWeiXinOtherUser(otherUser);
             weiXinWithdrawBillRepository.save(weiXinWithdrawBill);
             // 3 -  修改钱包金额 , 生成日志

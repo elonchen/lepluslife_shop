@@ -121,8 +121,6 @@ public class WeixinController {
             .append(callbackUrl).append("&unionId=")
             .append(result[1]);
         response.sendRedirect(redirectUrl.toString());
-      } else {
-        response.sendRedirect(action);
       }
       response.sendRedirect(action);
     }
