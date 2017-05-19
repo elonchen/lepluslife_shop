@@ -349,6 +349,7 @@ public class OrderService {
           (long) Math.ceil((double) (onLineOrder.getTruePrice() * PAY_BACK_SCALE) / 100);
       onLineOrder.setState(1);
       onLineOrder.setPayState(1);
+      onLineOrder.setSource(2);
       onLineOrder.setPayDate(new Date());
       onLineOrder.setPayBackA(payBackScore);
       LeJiaUser user = onLineOrder.getLeJiaUser();
@@ -405,6 +406,7 @@ public class OrderService {
     if (onLineOrder.getState() == 0) {
       onLineOrder.setState(1);
       onLineOrder.setPayState(1);
+      onLineOrder.setSource(2);
       onLineOrder.setPayDate(new Date());
       LeJiaUser user = onLineOrder.getLeJiaUser();
       try {
