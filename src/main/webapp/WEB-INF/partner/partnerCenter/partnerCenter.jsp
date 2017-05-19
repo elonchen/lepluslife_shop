@@ -105,7 +105,7 @@
             <h3 class="ttl">如需申请扩容，请联系乐加客服</h3>
             <div class="btn">
                 <div class="btn-cancel">取消</div>
-                <div class="btn-tokefu">前往客服中心</div>
+                <div class="btn-tokefu" onclick="customerService()">前往客服中心</div>
             </div>
         </div>
     </div>
@@ -122,7 +122,9 @@
         e.stopPropagation();//阻止事件向上冒泡
     });
     $(".shadow .btn-cancel").on("touchstart", function () {
-        popupHide();
+        setTimeout(function () {
+            popupHide();
+        },300);
     });
     function popupShow() {
         $(".shadow").css("display","block");

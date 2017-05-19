@@ -58,6 +58,9 @@ public class WeiXinPayService {
   @Inject
   private WeiXinService weiXinService;
 
+  @Inject
+  private WeiXinOtherUserService weiXinOtherUserService;
+
   /**
    * 返回微信APP支付或公众号支付所需要的参数  2017/4/5
    *
@@ -112,7 +115,8 @@ public class WeiXinPayService {
     orderParams.put("notify_url", notifyUrl);
     orderParams.put("trade_type", "JSAPI");
     orderParams.put("input_charset", "UTF-8");
-    orderParams.put("openid", weiXinService.getCurrentWeiXinUser(request).getOpenId());
+    orderParams.put("openid", weiXinOtherUserService
+        .findByWeiXinUser(weiXinService.getCurrentWeiXinUser(request)).getOpenId());
     String sign = createSign("UTF-8", orderParams, "JSAPI");
     orderParams.put("sign", sign);
     return orderParams;

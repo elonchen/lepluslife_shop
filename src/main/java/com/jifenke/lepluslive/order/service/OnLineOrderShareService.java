@@ -37,13 +37,18 @@ public class OnLineOrderShareService {
   @Inject
   private PartnerWalletOnlineService partnerWalletOnlineService;
 
+  @Inject
+  private OrderService onlineOrderService;
+
   /**
    * 线上订单分润    16/11/05
    *
-   * @param order 线上订单
+   * @param orderId 线上订单ID
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public void onLineOrderShare(OnLineOrder order) {
+  public void onLineOrderShare(Long orderId) {
+
+    OnLineOrder order = onlineOrderService.findOnLineOrderById(orderId);
 
     List<OrderDetail> list = order.getOrderDetails();
     Long toMerchant = 0L;
@@ -69,16 +74,15 @@ public class OnLineOrderShareService {
       orderShare.setOnLineOrder(order);
 
       if (user.getBindMerchant() != null && toMerchant > 0) {
-        merchantWalletOnline = merchantWalletOnlineService.findByMercahnt(user.getBindMerchant());
-        merchant = merchantWalletOnline.getMerchant();
-
+        merchant = user.getBindMerchant();
         //分润给绑定商户
         orderShare.setToLockMerchant(toMerchant);
         if (merchant.getPartnership() == 2) {//如果是虚拟商户分润方式改变
-         // orderShare.setToLockMerchant(0L);
+          // orderShare.setToLockMerchant(0L);
           toPartner += toMerchant;
           //toMerchant = 0L;
         } else {
+          merchantWalletOnline = merchantWalletOnlineService.findByMercahnt(user.getBindMerchant());
           merchantWalletOnlineService.shareToMerchant(toMerchant, merchant, merchantWalletOnline,
                                                       order.getOrderSid(), type);
           orderShare.setLockMerchant(merchant);

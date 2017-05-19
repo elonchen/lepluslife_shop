@@ -9,12 +9,7 @@ import com.jifenke.lepluslive.order.repository.OrderRepository;
 import com.jifenke.lepluslive.product.domain.entities.Product;
 import com.jifenke.lepluslive.product.domain.entities.ProductSpec;
 import com.jifenke.lepluslive.product.service.ProductService;
-import com.jifenke.lepluslive.score.domain.entities.ScoreB;
-import com.jifenke.lepluslive.score.domain.entities.ScoreBDetail;
 import com.jifenke.lepluslive.score.domain.entities.ScoreC;
-import com.jifenke.lepluslive.score.repository.ScoreBDetailRepository;
-import com.jifenke.lepluslive.score.repository.ScoreBRepository;
-import com.jifenke.lepluslive.score.service.ScoreBService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
 import com.jifenke.lepluslive.weixin.controller.dto.CartDetailDto;
 import com.jifenke.lepluslive.weixin.service.JobThread;
@@ -48,15 +43,6 @@ public class OnlineOrderService {
 
   @Inject
   private OrderRepository orderRepository;
-
-  @Inject
-  private ScoreBRepository scoreBRepository;
-
-  @Inject
-  private ScoreBDetailRepository scoreBDetailRepository;
-
-  @Inject
-  private ScoreBService scoreBService;
 
   @Inject
   private Scheduler scheduler;
@@ -341,8 +327,9 @@ public class OnlineOrderService {
       scoreCService.saveScoreC(scoreC, 0, trueScore);
       scoreCService.saveScoreCDetail(scoreC, 0, trueScore, 2, "臻品商城消费", order.getOrderSid());
       orderRepository.save(order);
+      final long id = order.getId();
       new Thread(() -> { //合伙人和商家分润
-        orderShareService.onLineOrderShare(order);
+        orderShareService.onLineOrderShare(id);
       }).start();
       result.put("status", 200);
       result.put("data", order.getId());
@@ -549,7 +536,7 @@ public class OnlineOrderService {
 //    }
 //  }
 
-  public Long sumOrderPriceByLeJiaUser(Long id){
+  public Long sumOrderPriceByLeJiaUser(Long id) {
     return orderRepository.sumOrderPriceByLeJiaUser(id);
   }
 

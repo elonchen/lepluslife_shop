@@ -25,7 +25,7 @@ public class IdentifyUserFilter implements HandlerInterceptor {
   public boolean preHandle(HttpServletRequest request,
                            HttpServletResponse response, Object o) throws Exception {
 
-    String unionId = CookieUtils.getCookieValue(request, "leJiaShopUnionId");
+    String unionId = CookieUtils.getCookieValue(request, "leJia_ShopUnionId");
     if (unionId != null) {
       WeiXinUser weiXinUser = weiXinUserService.findWeiXinUserByUnionId(unionId);
       if (weiXinUser != null) {

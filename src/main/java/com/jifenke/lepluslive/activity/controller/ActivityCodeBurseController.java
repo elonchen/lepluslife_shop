@@ -12,7 +12,6 @@ import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
-import com.jifenke.lepluslive.merchant.domain.entities.Merchant;
 import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.score.service.ScoreAService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;

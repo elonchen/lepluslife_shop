@@ -105,7 +105,7 @@ public class WeixinController {
           }
         }
       }
-      CookieUtils.setCookie(request, response, "leJiaShopUnionId", result[1],
+      CookieUtils.setCookie(request, response, "leJia_ShopUnionId", result[1],
                             Constants.COOKIE_DISABLE_TIME);
       if ("null".equals(result[0])) {
         //需要静默获取乐加生活的openId

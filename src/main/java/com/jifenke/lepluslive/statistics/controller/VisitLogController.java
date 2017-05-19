@@ -38,7 +38,7 @@ public class VisitLogController {
   @RequestMapping(value = "/{category}/{target}", method = RequestMethod.GET)
   public LejiaResult submit(HttpServletRequest request, @PathVariable String category,
                             @PathVariable String target) {
-    String unionId = CookieUtils.getCookieValue(request, "leJiaShopUnionId");
+    String unionId = CookieUtils.getCookieValue(request, "leJia_ShopUnionId");
     if (unionId == null) {
       unionId = "null";
     }

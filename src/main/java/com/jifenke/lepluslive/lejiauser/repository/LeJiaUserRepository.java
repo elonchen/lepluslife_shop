@@ -2,7 +2,6 @@ package com.jifenke.lepluslive.lejiauser.repository;
 
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 
-import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -384,8 +384,9 @@ public class OrderService {
       } catch (Exception e) {
         e.printStackTrace();
       }
+      final long id = onLineOrder.getId();
       new Thread(() -> { //合伙人和商家分润
-        orderShareService.onLineOrderShare(onLineOrder);
+        orderShareService.onLineOrderShare(id);
       }).start();
 
       System.out.println(onLineOrder.getState() + "之后");

@@ -2,8 +2,15 @@ package com.jifenke.lepluslive.partner.domain.entities;
 
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
 
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Created by xf on 2016/9/18.

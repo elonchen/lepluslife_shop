@@ -2,10 +2,8 @@ package com.jifenke.lepluslive.partner.controller;
 
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
-import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
 import com.jifenke.lepluslive.lejiauser.service.ValidateCodeService;
 import com.jifenke.lepluslive.order.service.OnlineOrderService;
-import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.repository.WeiXinUserRepository;

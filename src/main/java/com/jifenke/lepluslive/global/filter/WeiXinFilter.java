@@ -37,7 +37,7 @@ public class WeiXinFilter implements HandlerInterceptor {
             .equals("/weixin/pay/afterPhonePay")) {
       return true;
     }
-    String unionId = CookieUtils.getCookieValue(request, "leJiaShopUnionId");
+    String unionId = CookieUtils.getCookieValue(request, "leJia_ShopUnionId");
     if (unionId != null) {
       return true;
     }

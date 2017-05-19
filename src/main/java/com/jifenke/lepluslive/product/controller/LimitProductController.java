@@ -14,8 +14,6 @@ import com.jifenke.lepluslive.product.domain.entities.ProductType;
 import com.jifenke.lepluslive.product.domain.entities.ScrollPicture;
 import com.jifenke.lepluslive.product.service.ProductService;
 import com.jifenke.lepluslive.product.service.ScrollPictureService;
-import com.jifenke.lepluslive.score.domain.entities.ScoreB;
-import com.jifenke.lepluslive.score.service.ScoreBService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;

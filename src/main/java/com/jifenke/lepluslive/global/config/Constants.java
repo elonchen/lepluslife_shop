@@ -20,8 +20,8 @@ public final class Constants {
 
   public static final String WEI_XIN_URL = "http://shop.tiegancrm.com";
 
-//  public static final String WEI_XIN_LIFE_URL = "http://www.tiegancrm.com"; //测试
-  public static final String WEI_XIN_LIFE_URL = "http://www.lepluslife.com"; //线上
+  public static final String WEI_XIN_LIFE_URL = "http://www.tiegancrm.com"; //测试
+//  public static final String WEI_XIN_LIFE_URL = "http://www.lepluslife.com"; //线上
 
 
   public static final String CARD_CHECK_KEY = "8001808eb38443d35671c7c6f8c7ddc0";

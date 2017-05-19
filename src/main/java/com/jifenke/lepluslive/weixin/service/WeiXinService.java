@@ -83,7 +83,7 @@ public class WeiXinService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public WeiXinUser getCurrentWeiXinUser(HttpServletRequest request) {
-    String unionId = CookieUtils.getCookieValue(request, "leJiaShopUnionId");
+    String unionId = CookieUtils.getCookieValue(request, "leJia_ShopUnionId");
     return weiXinUserService.findWeiXinUserByUnionId(unionId);
   }
 
