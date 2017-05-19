@@ -137,7 +137,10 @@
                                                                                       maxFractionDigits="2"/></font>
                     </p>
                 </c:if>
-                <p>返佣100.00元</p>
+                <p>返佣<fmt:formatNumber type="number"
+                                       value="${product.backPartner/100}"
+                                       pattern="0.00"
+                                       maxFractionDigits="2"/>元</p>
                 <p class="ttl_main">
                     <c:if test="${product.postage == 0}">
                         <span>包邮</span>
