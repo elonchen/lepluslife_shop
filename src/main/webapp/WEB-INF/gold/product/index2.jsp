@@ -895,7 +895,7 @@
     function goRecharge() {
         /** 点击话费充值事件统计*/
         $.get("/front/visit/recharge/0");
-        window.location.href = '/front/order/weixin/recharge';
+        window.location.href = 'http://www.lepluslife.com/front/order/weixin/recharge';
     }
     /*********************** 查看订单 *************************/
     function goOrderList() {

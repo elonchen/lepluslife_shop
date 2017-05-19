@@ -52,10 +52,10 @@ public class OnLineOrderShareService {
     Long toPartner = 0L;
     Partner partner = null;
     PartnerWalletOnline partnerWalletOnline = null;
-    long type = 2; //1代表app线上订单分润  2代表公众号线上订单分润
+    long type = 16001; //1代表app线上订单分润  2代表公众号线上订单分润
     PayOrigin payOrigin = order.getPayOrigin();
     if (payOrigin.getPayFrom() == 1) { //app
-      type = 1;
+      type = 16006;
     }
     LeJiaUser user = order.getLeJiaUser();
     for (OrderDetail detail : list) {
