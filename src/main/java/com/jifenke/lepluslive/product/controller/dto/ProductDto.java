@@ -59,6 +59,8 @@ public class ProductDto {
 
   private Integer markType;  //商品角标
 
+  private Integer backPartner = 0;  //合伙人展示用分佣金额
+
   public Integer getFreePrice() {
     return freePrice;
   }
@@ -226,5 +228,13 @@ public class ProductDto {
 
   public void setProductDetails(List<ProductDetail> productDetails) {
     this.productDetails = productDetails;
+  }
+
+  public Integer getBackPartner() {
+    return backPartner;
+  }
+
+  public void setBackPartner(Integer backPartner) {
+    this.backPartner = backPartner;
   }
 }

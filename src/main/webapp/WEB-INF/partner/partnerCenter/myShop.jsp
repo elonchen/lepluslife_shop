@@ -23,7 +23,7 @@
 <body>
 <div class="main">
     <div class="summary clearfix">
-        <span class="left">累计锁定</span>
+        <span class="left">累计锁定（门店）</span>
         <span class="right">${totalBind}</span>
     </div>
     <div class="tab">

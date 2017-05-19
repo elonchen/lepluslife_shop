@@ -28,19 +28,19 @@
     </div>
     <div class="prompt">提现金额将以微信红包的形式发给您当前使用的微信号</div>
     <div class="chooseMoney">
-        <div class="item active">
+        <div class="item" data-val="50">
             <div class="moneyWrapper">
                 <h3 class="money">50元</h3>
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/50@2x.png" alt=""></div>
             </div>
         </div>
-        <div class="item">
+        <div class="item" data-val="100">
             <div class="moneyWrapper">
                 <h3 class="money">100元</h3>
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/100@2x.png" alt=""></div>
             </div>
         </div>
-        <div class="item">
+        <div class="item" data-val="200">
             <div class="moneyWrapper">
                 <h3 class="money">200元</h3>
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/200@2x.png" alt=""></div>
@@ -61,19 +61,30 @@
 </div>
 <script>
     var totalCommission = "${totalCommission}";
-    alert(totalCommission);
+
+    var trueVal = totalCommission/100.0;
+    var choiceNum = 0;
+    var btnState = 0;
     $(".chooseMoney .item").on("touchstart", function () {
-        $(".chooseMoney .item").removeClass("active");
-        $(this).addClass("active");
+        if ($(this)[0].dataset.val <= trueVal) {
+            $(".chooseMoney .item").removeClass("active");
+            $(this).addClass("active");
+            choiceNum = $(this)[0].dataset.val;
+        } else {
+            alert("金额不足，请选择其他选项！")
+        }
     });
 
     $(".btn-tx").on("touchstart", function (e) {
-       /* popupShow();
-        $('.shadow').on('touchstart', function () {
-            popupHide();
-        });
-        e.stopPropagation();//阻止事件向上冒泡*/
-        withdraw(10000);
+        if(btnState == 0){
+            if(choiceNum==0) {
+                alert("请选择提现金额!");
+                return;
+            }else {
+                withdraw(choiceNum*100);
+                btnState = 1;
+            }
+        }
     });
     $(".shadow .popup").on("touchstart", function (e) {
         e.stopPropagation();//阻止事件向上冒泡

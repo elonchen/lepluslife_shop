@@ -35,19 +35,19 @@
     width: 100%;
     text-align: center;
     color: #8f7655;
-    font-size: 0.7rem;
-    margin: 10% auto;
+    font-size: 0.8rem;
+    margin: 0 auto;
     margin-top: 15%;
+    display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
 
   .swiper-slide > div {
     width: 60%;
-    margin: 10% auto;
-
+    margin: 0 auto;
   }
 </style>
 <body>
-<div class="${leplusShopResource}/partner_register/headRound">
+<div class="headRound" class="${leplusShopResource}/partner_register/headRound">
   <img src="${leplusShopResource}/partner_register/img/round.png" alt="">
 </div>
 <div id="loader"></div>
@@ -67,10 +67,10 @@
   <div>
     <img src="${leplusShopResource}/partner_register/img/partner.png" alt="">
   </div>
-  <div>臻品商城消费满<span>${limit/100.0}元</span>,即可免费成为乐+合伙人</div>
+  <div>臻品商城消费满<span>${limit/100.0}元</span>即可成为乐+合伙人</div>
 </div>
 <div class="swiper-container">
-  <div class="swiper-wrapper">
+  <div class="swiper-wrapper" id="productList">
   </div>
 </div>
 <div>
@@ -87,8 +87,8 @@
     var totalKb = ${limit/100.0};
     var kb = 0;
     $loader  = $("#loader").percentageLoader({
-                                               width : 160,
-                                               height : 160,
+                                               width : $(window).width()*0.43,
+                                               height : $(window).width()*0.43,
                                                progress : 0
                                              });
 
@@ -115,7 +115,7 @@
       s +=
       "<div class='swiper-slide' onclick='window.location.href=\"/front/product/weixin/"
       + res[i].id + "\"'><p>" + res[i].name+
-      "</p><div><img height='70' src='" + res[i].thumb + "'></div></div>"
+      "</p><div><img src='" + res[i].thumb + "'></div></div>"
     }
     $("#productList").html(s)
     var swiper = new Swiper('.swiper-container', {

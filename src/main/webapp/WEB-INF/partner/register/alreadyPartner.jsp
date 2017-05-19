@@ -36,15 +36,15 @@
         width: 100%;
         text-align: center;
         color: #8f7655;
-        font-size: 0.7rem;
-        margin: 10% auto;
+        font-size: 0.8rem;
+        margin: 0 auto;
         margin-top: 15%;
+        display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
 
     .swiper-slide > div {
         width: 60%;
-        margin: 10% auto;
-
+        margin: 0 auto;
     }
 </style>
 <body>
@@ -83,7 +83,7 @@
             s +=
             "<div class='swiper-slide' onclick='window.location.href=\"/front/product/weixin/"
             + res[i].id + "\"'><p>" + res[i].name+
-            "</p><div><img height='70' src='" + res[i].thumb + "'></div></div>"
+            "</p><div><img src='" + res[i].thumb + "'></div></div>"
         }
         $("#productList").html(s)
         var swiper = new Swiper('.swiper-container', {

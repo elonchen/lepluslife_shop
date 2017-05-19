@@ -37,7 +37,7 @@
                     <span class="right"><span class="font">${userCount}</span>/${userLimit}</span>
                 </div>
                 <div class="progress">
-                    <span style="width:30%"></span>
+                    <span style="width:${userCount/userLimit*100}%"></span>
                 </div>
             </div>
             <div class="line"></div>
@@ -47,7 +47,7 @@
                     <span class="right"><span class="font">${merchantCount}</span>/${merchantLimit}</span>
                 </div>
                 <div class="progress">
-                    <span style="width:30%"></span>
+                    <span style="width:${merchantCount/merchantLimit*100}%"></span>
                 </div>
             </div>
 
@@ -85,7 +85,7 @@
                 <h3>我的好店</h3>
             </div>
         </div>
-        <div class="item border-right">
+        <div class="item border-right" onclick="alert('暂未开通！')">
             <div class="menu-wrapper">
                 <div class="icon"><img src="${leplusShopResource}/partner_center/images/shourupaiming@2x.png" alt=""></div>
                 <h3>收入排名</h3>

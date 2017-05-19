@@ -8,10 +8,9 @@ import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import com.jifenke.lepluslive.partner.domain.entities.WeiXinWithdrawBill;
 import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.partner.service.WeiXinWithdrawBillService;
+import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
-import com.jifenke.lepluslive.weixin.service.DictionaryService;
-import com.jifenke.lepluslive.weixin.service.WeiXinService;
-import com.jifenke.lepluslive.weixin.service.WeiXinUserService;
+import com.jifenke.lepluslive.weixin.service.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,10 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by xf on 2017/5/11.
@@ -40,6 +37,13 @@ public class PartnerCenterController {
     private WeiXinWithdrawBillService weiXinWithdrawBillService;
     @Inject
     private WeiXinService weiXinService;
+    @Inject
+    private WxTemMsgService wxTemMsgService;
+    @Inject
+    private WeiXinOtherUserService weiXinOtherUserService;
+    @Inject
+    private WeiXinUserService weiXinUserService;
+
 
 
     /**
@@ -57,6 +61,7 @@ public class PartnerCenterController {
         }else {
            try{
                request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);
+               return null;
            }catch (Exception e) {
                e.printStackTrace();
            }
@@ -89,6 +94,7 @@ public class PartnerCenterController {
         }else {
             try{
                 request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);;
+                return null;
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -130,6 +136,7 @@ public class PartnerCenterController {
         }else {
             try{
                 request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);;
+                return null;
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -170,7 +177,8 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
             try{
-                request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);;
+                request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);
+                return null;
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -199,6 +207,7 @@ public class PartnerCenterController {
         }else {
             try{
                 request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);;
+                return null;
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -232,6 +241,7 @@ public class PartnerCenterController {
         }else {
             try{
                 request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);;
+                return null;
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -250,11 +260,19 @@ public class PartnerCenterController {
         Partner partner = null;
         WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
         Optional<Partner> partnerByWeiXinUser = partnerService.findPartnerByWeiXinUser(weiXinUser);
+        WeiXinOtherUser otherUser = weiXinOtherUserService.findByWeiXinUser(weiXinUser);
         if(partnerByWeiXinUser.isPresent()) {
             partner = partnerByWeiXinUser.get();
         }
-        boolean result = weiXinWithdrawBillService.createWithdraw(partner, price);
+        boolean result = weiXinWithdrawBillService.createWithdraw(partner, price,otherUser);
         if(result) {
+            //给用户发充值模板通知
+            String[] keys = new String[4];
+            keys[0] = partner.getName();
+            keys[1] = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
+            keys[2] = price/ 100.0 + "元";
+            keys[3] = "公众号红包";
+            wxTemMsgService.sendTemMessage(otherUser.getOpenId(), 11L, keys);
             return LejiaResult.ok();
         }else {
             return LejiaResult.build(500,"发起提现失败，请联系乐+客服！");
@@ -276,7 +294,8 @@ public class PartnerCenterController {
             partner = partnerByWeiXinUser.get();
         }else {
             try{
-                request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);;
+                request.getRequestDispatcher("/front/partner/weixin/becomePartner").forward(request,response);
+                return null;
             }catch (Exception e) {
                 e.printStackTrace();
             }
