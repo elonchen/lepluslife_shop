@@ -11,9 +11,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;">
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="telephone=yes"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -49,7 +50,7 @@
     <div class="fixedClear">
         <div>佣金费率</div>
         <div>
-            <input type="text" id="rate" placeholder="请输入数字">
+            <input type="number" id="rate" placeholder="请输入数字">
         </div>
         <div>%</div>
     </div>
@@ -116,7 +117,7 @@
             $(".layerClose").html("知道了");
         } else {
             $(".layerImg").attr("src", "${leplusShopResource}partner_invite/img/becomePartner.png");
-            $(".layerText").html("需要先成为合伙人才能锁定门店呦");
+            $(".layerText").html("需要先成为合伙人才能锁定门店呦!");
             $(".layerClose").html("我要成为合伙人");
         }
     }
@@ -125,7 +126,7 @@
         layer.open({
                        type: 1,
                        title: false,
-                       area: ['80%', '39%'], //宽高
+                       area: ['80%', '41%'], //宽高
                        content: $(".success")
                    });
     }

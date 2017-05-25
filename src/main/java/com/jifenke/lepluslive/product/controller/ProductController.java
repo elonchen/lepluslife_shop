@@ -17,6 +17,7 @@ import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
 import com.jifenke.lepluslive.weixin.service.WeiXinOtherUserService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
+import com.jifenke.lepluslive.weixin.service.WeiXinUserService;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.http.MediaType;
@@ -62,6 +63,9 @@ public class ProductController {
 
   @Inject
   private WeiXinOtherUserService weiXinOtherUserService;
+
+  @Inject
+  private WeiXinUserService weiXinUserService;
 
   @ApiOperation(value = "获取所有的商品类别名称及顶部图片")
   @RequestMapping(value = "/type", method = RequestMethod.GET)
@@ -187,6 +191,13 @@ public class ProductController {
     model.addAttribute("currWxUserId", weiXinUser.getId());
     model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     model.addAttribute("share", productShareService.findByProduct(product));
+    //如果是分享的商品，则触发绑定流程
+    if (shareWxUserId != null) {
+      final long shareId = shareWxUserId;
+      final long currId = weiXinUser.getId();
+      new Thread(() -> weiXinUserService.bindPartnerByShareProduct(shareId, currId)).start();
+    }
+
     return MvUtil.go("/product/productDetail");
   }
 

@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 微信接口相关
@@ -86,6 +88,18 @@ public class WeiXinService {
     String unionId = CookieUtils.getCookieValue(request, "leJia_ShopUnionId");
     return weiXinUserService.findWeiXinUserByUnionId(unionId);
   }
+//
+//  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+//  public WeiXinUser getCurrentWeiXinUser(HttpServletRequest request, HttpServletResponse response) {
+//    Cookie[] cookies = request.getCookies();
+//
+//    for (Cookie cookie : cookies) {
+//      cookie.setMaxAge(0);
+//      cookie.setPath("/");
+//      response.addCookie(cookie);
+//    }
+//    return null;
+//  }
 
   @Transactional(readOnly = true)
   public boolean checkWeiXinRequest(String signature, String timestamp, String nonce) {

@@ -19,14 +19,53 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <c:set var="resourceUrl" value="http://www.lepluslife.com/resource"></c:set>
     <c:set var="wxRootUrl" value="http://www.lepluslife.com"></c:set>
+    <c:set var="leplusShopResource" value="http://image.tiegancrm.com/leplus_shop/"></c:set>
     <!--App自定义的css-->
     <link rel="stylesheet" href="${resourceUrl}/frontRes/css/reset.css">
-    <link rel="stylesheet" href="${resourceUrl}/frontRes/order/confirmOrder/css/pay.css">
+    <link rel="stylesheet" href="${leplusShopResource}/order/common_confirm/css/pay.css">
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <%--以下代替jquery--%>
     <script src="${resourceUrl}/js/zepto.min.js"></script>
 </head>
+<style>
+    input:not([type=checkbox]) {
+        -webkit-appearance: none;
+    }
 
+    .joinLe {
+        background-color: #ffffff;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    .joinLe > p {
+        width: 94%;
+        line-height: 20px;
+        margin-left: 6%;
+        /*text-align: center;*/
+    }
+
+    .joinLe > div > div {
+        float: left;
+    }
+
+    .joinLe > div > div:first-child {
+        width: 4%;
+        margin-right: 2%;
+        margin-top: 0.5%;
+    }
+
+    .joinLe img {
+        width: 100%;
+        display: block;
+    }
+
+    .clearfix:after {
+        content: '\20';
+        display: block;
+        clear: both;
+    }
+</style>
 <body>
 <section class="address" onclick="goAddressEdit()">
     <div>
@@ -55,6 +94,17 @@
         </div>
     </div>
 </section>
+<c:if test="${order.address != null && userState == 0}">
+    <section class="joinLe">
+        <div class="clearfix">
+            <div><img id="w-check" src="${leplusShopResource}/order/common_confirm/img/1.png"
+                      alt=""></div>
+            <div>使用<span id="phone">${order.address.phoneNumber}</span>注册成为乐+会员</div>
+        </div>
+        <p>成为乐+会员，消费后能得鼓励金呦！</p>
+    </section>
+</c:if>
+
 <section class="goodsList">
     <c:forEach items="${order.orderDetails}" var="orderDetail">
         <div>
@@ -154,6 +204,27 @@
     </div>
 </div>
 </body>
+<script>
+    var checked = true;
+    $(".w-check").click(function () {
+        if (checked) {
+            $("#w-check").attr("src", "${leplusShopResource}/order/common_confirm/img/0.png");
+            checked = false;
+        } else {
+            $("#w-check").attr("src", "${leplusShopResource}/order/common_confirm/img/1.png");
+            checked = true;
+        }
+    });
+    $(".joinLe").on("click", function () {
+        if (checked) {
+            $("#w-check").attr("src", "${leplusShopResource}/order/common_confirm/img/0.png");
+            checked = false;
+        } else {
+            $("#w-check").attr("src", "${leplusShopResource}/order/common_confirm/img/1.png");
+            checked = true;
+        }
+    });
+</script>
 <script>
     var canUseScore = eval('${canUseScore}'), orderTotalScore = eval('${order.totalScore}'); //用户可用金币和订单可用金币
     var maxScore = 0, minPrice = eval('${order.totalPrice}'),
@@ -324,12 +395,11 @@
                 alert("请正确输入使用金币");
                 return false;
             }
-//            if (isNaN(trueScore)) {
-//                alert("请正确输入使用金币");
-//                return false;
-//            }
+            //判断是否注册（异步）
+            if ($('.joinLe').length > 0) {
+                $.post('/front/weixin/weixin/register', {phoneNumber: $('#phone').html()});
+            }
             var price = eval(truePrice * 100);
-
 //            首先提交请求，生成预支付订单
             $.post('/weixin/pay/weixinpay', {
                 orderId: '${order.id}',

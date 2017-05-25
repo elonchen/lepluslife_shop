@@ -52,6 +52,7 @@ public class WeixinOrderController {
   public ModelAndView orderPay(@PathVariable Long orderId, HttpServletRequest request,
                                Model model) {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+    model.addAttribute("userState", weiXinUser.getState());
     model.addAttribute("scoreB",
                        scoreBService.findScoreBByWeiXinUser(weiXinUser.getLeJiaUser()).getScore());
     model.addAttribute("order", orderService.findOnLineOrderById(orderId));

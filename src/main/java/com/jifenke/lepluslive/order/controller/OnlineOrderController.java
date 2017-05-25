@@ -11,6 +11,7 @@ import com.jifenke.lepluslive.order.service.OrderDetailService;
 import com.jifenke.lepluslive.order.service.OrderService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
+import com.jifenke.lepluslive.weixin.service.DictionaryService;
 import com.jifenke.lepluslive.weixin.service.WeiXinPayService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
 
@@ -91,6 +92,9 @@ public class OnlineOrderController {
     }
   }
 
+  @Inject
+  private DictionaryService dictionaryService;
+
   /**
    * 订单确认页 16/09/22
    *
@@ -102,6 +106,7 @@ public class OnlineOrderController {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     OnLineOrder order = orderService.findOnLineOrderById(orderId);
     model.addAttribute("order", order);
+    model.addAttribute("userState", weiXinUser.getState());
     model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
     model.addAttribute("canUseScore",
                        scoreCService.findScoreCByLeJiaUser(weiXinUser.getLeJiaUser())
@@ -126,9 +131,8 @@ public class OnlineOrderController {
   @RequestMapping(value = "/weixin/orderList", method = RequestMethod.POST)
   public
   @ResponseBody
-  LejiaResult getCurrentUserAllOrder(HttpServletRequest request,
-                                     @RequestParam(required = true) Integer currPage,
-                                     @RequestParam(required = true) Integer state) {
+  LejiaResult getCurrentUserAllOrder(HttpServletRequest request, @RequestParam Integer currPage,
+                                     @RequestParam Integer state) {
     if (currPage == null || currPage < 1) {
       currPage = 1;
     }

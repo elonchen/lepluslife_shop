@@ -11,13 +11,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
-  <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,minimum-scale=1.0,user-scalable=no">
+  <%--<meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">--%>
   <meta name="format-detection" content="telephone=no">
   <meta name="format-detection" content="telephone=yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <title>Title</title>
+  <title>注册成功</title>
   <link rel="stylesheet" href="${leplusShopResource}/partner_register/css/reset.css">
   <link rel="stylesheet" href="${leplusShopResource}/partner_register/css/registerSuccess.css">
 </head>
@@ -74,6 +74,6 @@
 </body>
 <script src="${leplusShopResource}/partner_register/js/jquery.min.js"></script>
 <script>
-  $(".bg").css("height",$(window).height() - $(window).width()*0.27 + "px");
+  $(".bg").css("height",$(window).height() - $(window).width()*0.24 + "px");
 </script>
 </html>

@@ -12,8 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
-    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+          content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;">
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="telephone=yes"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -36,7 +35,9 @@
                 <div><input type="tel" id="phone" placeholder="手机号"
                             value="${weiXinUser.leJiaUser.phoneNumber}"></div>
                 <div><input type="number" id="yzm" class="yzm" placeholder="验证码">
-                    <button class="get" id="button" disabled="disabled" onclick="sendCode(this)">获取验证码</button>
+                    <button class="get" id="button" disabled="disabled" onclick="sendCode(this)">
+                        获取验证码
+                    </button>
                 </div>
             </div>
             <div>
@@ -59,7 +60,8 @@
         var length = $('.yzm').val().length;
         var name = $("#name").val();
         var phone = $("#phone").val();
-        if (phone != '' && phone.match(/\d/g).length === 11&&((/^1[3|4|5|6|7|8]\d{9}$/.test(phone)))) {
+        if (phone != '' && phone.match(/\d/g).length === 11 && ((/^1[3|4|5|6|7|8]\d{9}$/.test(
+                phone)))) {
             $(".get").removeAttr("disabled").addClass("active");
         } else {
             $(".get").attr("disabled", "disabled").removeClass("active");
@@ -106,20 +108,21 @@
         }
     }
 
-    function doRegister(){
+    function doRegister() {
         $('#submit').attr('onclick', '');
         var name = $("#name").val();
         var phone = $("#phone").val();
         var code = $("#yzm").val();
 
-        $.post("/front/partner/weixin/doRegister", {name:name,phoneNumber: phone, code: code}, function (res) {
-            if (res.status == 200) {
-                window.location.href = "/front/partner/weixin/register_success"
-            } else {
-                $('#submit').attr('onclick', 'doRegister()');
-                alert(res.msg)
-            }
-        })
+        $.post("/front/partner/weixin/doRegister", {name: name, phoneNumber: phone, code: code},
+               function (res) {
+                   if (res.status == 200) {
+                       window.location.href = "/front/partner/weixin/register_success"
+                   } else {
+                       $('#submit').attr('onclick', 'doRegister()');
+                       alert(res.msg)
+                   }
+               })
     }
 </script>
 </html>

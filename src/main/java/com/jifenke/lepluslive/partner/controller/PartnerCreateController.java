@@ -88,16 +88,18 @@ public class PartnerCreateController {
    * 合伙人注册接口
    */
   @RequestMapping(value = "/weixin/doRegister", method = RequestMethod.POST)
-  public LejiaResult partnerRegister(@RequestParam(required = false) String name,@RequestParam(required = false) String phoneNumber,
-                                      @RequestParam(required = false) String code,HttpServletRequest request) {
+  public LejiaResult partnerRegister(@RequestParam(required = false) String name,
+                                     @RequestParam(required = false) String phoneNumber,
+                                     @RequestParam(required = false) String code,
+                                     HttpServletRequest request) {
     try {
       Boolean b = validateCodeService.findByPhoneNumberAndCode(phoneNumber, code); //验证码是否正确
-      if(b){
-            WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+      if (b) {
+        WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
 //        WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
-         partnerService.registerPartner(phoneNumber, name, weiXinUser); //创建合伙人
+        partnerService.registerPartner(phoneNumber, name, weiXinUser); //创建合伙人
         return LejiaResult.build(200, "注册成功");
-      }else {
+      } else {
         return LejiaResult.build(3001, "验证码错误");
       }
     } catch (Exception e) {
@@ -110,8 +112,8 @@ public class PartnerCreateController {
    * 合伙人注册成功接口
    */
   @RequestMapping(value = "/weixin/register_success", method = RequestMethod.GET)
-  public ModelAndView goRegisterSuccessPage(Model model,HttpServletRequest request) {
-        WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+  public ModelAndView goRegisterSuccessPage(Model model, HttpServletRequest request) {
+    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
 //    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
     model.addAttribute("weiXinUser", weiXinUser);
     return MvUtil.go("/partner/register/registerSuccess");

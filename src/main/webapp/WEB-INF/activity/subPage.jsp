@@ -101,7 +101,7 @@
             $(".js").hide();
             $(".sj").show();
             $('#headImg').attr('src', '${resourceUrl}/frontRes/activity/subPage/img/hb3.png');
-            hotList(1);
+            hotList();
         } else {
             $(".headHb").show();
         }
@@ -120,7 +120,7 @@
         switch (name) {
             case"jf":
                 if (hasHot == 0) {
-                    hotList(1)
+                    hotList()
                 }
                 $(".jf").show();
                 $(".hb").hide();
@@ -171,10 +171,10 @@
         $(".tab > div > img:last-child").attr("src",
                                               "${resourceUrl}/frontRes/activity/subPage/img/hhb-1.png")
     }
-    function hotList(currPage) {
+    function hotList() {
         $.ajax({
                    type: "get",
-                   url: "/front/product/hotList?page=" + currPage,
+                   url: "/shop/productList?page=1&typeId=0",
                    success: function (data) {
                        hasHot = 1;
                        var list = data.data, content = '';
@@ -185,7 +185,7 @@
                            }
                            for (var i = 0; i < length; i++) {
                                content +=
-                                   '<div  onclick="goHotDetail(' + list[i].id
+                                   '<div  onclick="goProductDetail(' + list[i].id
                                    + ')"><div><img class="w-imgSize" src="' + list[i].picture
                                    + '" alt=""></div><div class="information"><p>' + list[i].name
                                    + '</p><div>' + toDecimal(list[i].minPrice / 100)
@@ -194,8 +194,8 @@
                                    + '<span style="font-size: 12px;">金币</span></span><span style ="font-size: 11px;color: #AEAEAE;margin-left: 2%;text-decoration:line-through;">市场价'
                                    + toDecimal(list[i].price / 100)
                                    + '元</span></div><div><div><img src = "' + pic
-                                   + '"></div><div>还剩'
-                                   + list[i].repository + '份</div><div>马上抢</div></div></div></div>'
+                                   + '"></div><div>已售'
+                                   + list[i].saleNumber + '份</div><div>马上抢</div></div></div></div>'
                            }
                            $(".jf").html(content);
                            $(".w-imgSize").css("height", $(".w-imgSize").width() + "px")
@@ -301,8 +301,8 @@
             $(merId).append($("<div></div>").append($("<img>").attr("src", url)))
         }
     }
-    function goHotDetail(id) {
-        location.href = "/front/product/weixin/limitDetail?productId=" + id
+    function goProductDetail(id) {
+        location.href = "/front/product/weixin/" + id;
     }
     function toDecimal(x) {
         var f = parseFloat(x);
@@ -344,7 +344,7 @@
                                    var map = data.data;
                                    $("#scoreA").html(map.scoreA / 100);
                                    $("#scoreB").html(map.scoreB / 100);
-                                   hotList(1);
+                                   hotList();
                                    $(".headHb").hide();
                                    $(".headHbEd").show();
                                    $(".js").hide();

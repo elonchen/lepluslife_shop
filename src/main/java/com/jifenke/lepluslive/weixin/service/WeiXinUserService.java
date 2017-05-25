@@ -4,6 +4,9 @@ import com.jifenke.lepluslive.activity.service.ActivityJoinLogService;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.domain.entities.RegisterOrigin;
 import com.jifenke.lepluslive.lejiauser.repository.LeJiaUserRepository;
+import com.jifenke.lepluslive.merchant.domain.entities.Merchant;
+import com.jifenke.lepluslive.partner.domain.entities.Partner;
+import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.score.domain.entities.ScoreA;
 import com.jifenke.lepluslive.score.domain.entities.ScoreADetail;
 import com.jifenke.lepluslive.score.domain.entities.ScoreB;
@@ -76,6 +79,9 @@ public class WeiXinUserService {
 
   @Inject
   private ScoreCService scoreCService;
+
+  @Inject
+  private PartnerService partnerService;
 
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
@@ -300,7 +306,7 @@ public class WeiXinUserService {
         scoreADetailRepository.save(scoreADetail);
       }
 
-      //是否返积分|返积分规则
+      //是否返金币|返金币规则
       String[] bRules = bRule.split("_");
       if (!"0".equals(bRules[1])) {      //发金币
         int maxB = Integer.valueOf(bRules[1]);
@@ -389,6 +395,7 @@ public class WeiXinUserService {
    *
    * @param leJiaUser leJiaUser
    */
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public void setWeiXinState(LeJiaUser leJiaUser) {
     WeiXinUser w = findWeiXinUserByLeJiaUser(leJiaUser);
     if (w != null) {
@@ -397,5 +404,59 @@ public class WeiXinUserService {
         weiXinUserRepository.save(w);
       }
     }
+  }
+
+  /**
+   * 分享商品链接点击触发绑定流程  2017/05/23
+   *
+   * @param shareWxUserId 分享者的微信ID
+   * @param clickWxUserId 点击者的微信ID
+   */
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public void bindPartnerByShareProduct(Long shareWxUserId, Long clickWxUserId) {
+    WeiXinUser shareUser = weiXinUserRepository.findOne(shareWxUserId);
+    WeiXinUser clickUser = weiXinUserRepository.findOne(clickWxUserId);
+    if (shareUser != null && clickUser != null) {
+      Partner partner = partnerService.findPartnerByWeiXinUser(shareUser).orElse(null);
+      if (partner != null) {
+        Date date = new Date();
+        LeJiaUser leJiaUser = clickUser.getLeJiaUser();
+        long partnerUserLimit = leJiaUserRepository.countPartnerBindLeJiaUser(partner.getId());
+        if (partner.getUserLimit() > partnerUserLimit) {
+          //如果不是会员或没有绑定，切换绑定合伙人和虚拟商户
+          if (clickUser.getState() == 0 || (leJiaUser.getBindMerchant() == null
+                                            && leJiaUser.getBindPartner() == null)) {
+            leJiaUser.setBindPartner(partner);
+            leJiaUser.setBindPartnerDate(date);
+            leJiaUser.setBindMerchant(new Merchant(1226L)); //统一虚拟商户
+            leJiaUser.setBindMerchantDate(date);
+            leJiaUserRepository.save(leJiaUser);
+          } else if (leJiaUser.getBindMerchant() != null && leJiaUser.getBindPartner() == null
+                     && partner.getId().equals(leJiaUser.getBindMerchant().getPartner().getId())) {
+            //是会员，只绑定了门店，但门店合伙人和链接合伙人属于同一个,绑定合伙人
+            leJiaUser.setBindPartner(partner);
+            leJiaUser.setBindPartnerDate(date);
+            leJiaUserRepository.save(leJiaUser);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * 订单页面将该用户变为会员  2017/05/24
+   *
+   * @param weiXinUser weiXinUser
+   */
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public void setWeiXinStateAndPhone(WeiXinUser weiXinUser, String phone) {
+    LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
+    Date date = new Date();
+    weiXinUser.setState(1);
+    weiXinUser.setStateDate(date);
+    leJiaUser.setPhoneNumber(phone);
+    leJiaUser.setPhoneBindDate(date);
+    weiXinUserRepository.save(weiXinUser);
+    leJiaUserRepository.save(leJiaUser);
   }
 }
