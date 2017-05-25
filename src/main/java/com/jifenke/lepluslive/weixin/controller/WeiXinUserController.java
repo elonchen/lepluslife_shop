@@ -37,6 +37,7 @@ public class WeiXinUserController {
   private LeJiaUserService leJiaUserService;
 
   /**
+   * 订单页面将该用户变为会员  2017/05/24
    */
   @RequestMapping(value = "/weixin/register", method = RequestMethod.POST)
   public LejiaResult register(HttpServletRequest request, @RequestParam String phoneNumber) {
