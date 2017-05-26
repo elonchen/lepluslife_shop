@@ -14,7 +14,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title></title>
+    <title>${product.name}</title>
     <meta name="viewport"
           content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -66,13 +66,30 @@
     }
 
     .w-ewm {
-        width: 50%;
+        width: 70%;
         margin: 50px auto;
+        margin-bottom: 10px;
     }
 
     .w-ewm img {
         width: 100%;
         display: block;
+    }
+
+    .w-text {
+        width: 100%;
+        text-align: center;
+        color: #333;
+        font-size: 16px;
+        margin-bottom: 20%;
+    }
+
+    .layui-layer-setwin .layui-layer-close2 {
+        right: -9px !important;
+        top: -9px !important;
+    }
+    .layui-layer-ico {
+        opacity: 0.3;
     }
 </style>
 <body>
@@ -137,10 +154,12 @@
                                                                                       maxFractionDigits="2"/></font>
                     </p>
                 </c:if>
-                <p>返佣<fmt:formatNumber type="number"
-                                       value="${product.backPartner/100}"
-                                       pattern="0.00"
-                                       maxFractionDigits="2"/>元</p>
+                <c:if test="${isPartner == 1}">
+                    <p>返佣<fmt:formatNumber type="number"
+                                           value="${product.backPartner/100}"
+                                           pattern="0.00"
+                                           maxFractionDigits="2"/>元</p>
+                </c:if>
                 <p class="ttl_main">
                     <c:if test="${product.postage == 0}">
                         <span>包邮</span>
@@ -256,6 +275,7 @@
     <div class="w-ewm">
         <img src="" id="qrImg" alt="">
     </div>
+    <p class="w-text">请长按识别二维码</p>
 </section>
 
 </body>
@@ -273,9 +293,9 @@
         $(".moneyNum2").text(toDecimal($(".moneyNum2").text()));
     });
 
-    var shareWxUserId = '${shareWxUserId}',subState = '${subState}';
-    if(subState != 1){
-        $('.w-alert').css('display','block');
+    var shareWxUserId = '${shareWxUserId}', subState = '${subState}';
+    if (subState != 1) {
+        $('.w-alert').css('display', 'block');
     }
     $(".gz").click(function () {
 
@@ -287,8 +307,9 @@
                            area: ['78%', ''], //宽高
                            content: $(".layer-ewm"),
                            title: false,
-                           closeBtn: 1,
-                           scrollbar: false
+                           closeBtn: 2,
+                           scrollbar: false,
+                           offset: '22%'
                        });
         });
     });

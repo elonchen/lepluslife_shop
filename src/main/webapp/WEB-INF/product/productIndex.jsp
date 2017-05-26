@@ -20,7 +20,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <title>臻品</title>
     <c:set var="resourceUrl" value="http://www.lepluslife.com/resource"></c:set>
-    <c:set var="wxRootUrl" value="http://www.lepluslife.com"></c:set>
     <link rel="stylesheet" href="${resource}/product/index/css/reset.css">
     <link rel="stylesheet" href="${leplusShopResource}/product/index/css/bastMain2.css">
     <link rel="stylesheet" href="${commonResource}/css/swiper.min.css">

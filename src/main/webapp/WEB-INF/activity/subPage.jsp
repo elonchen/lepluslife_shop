@@ -27,7 +27,7 @@
 <body>
 <section class="headBg">
     <div class="headHb" style="display: none;">
-        <img src="${resourceUrl}/frontRes/activity/subPage/img/hb.png" alt=""/>
+        <img src="${resourceUrl}/frontRes/activity/subPage/img/before.png" alt=""/>
 
         <div class="checkPhone">
             <div>
@@ -46,9 +46,9 @@
         <div class="hb-text">
             <p>恭喜您</p>
 
-            <p>获得<span id="scoreA">2.5</span>鼓励金和<span id="scoreB">10</span>金币</p>
+            <p>获得<span id="A_status"><span id="scoreA">2.5</span>鼓励金和</span><span id="scoreB">10</span>金币</p>
         </div>
-        <img id="headImg" src="${resourceUrl}/frontRes/activity/subPage/img/hb4.png" alt=""/>
+        <img id="headImg" src="${resourceUrl}/frontRes/activity/subPage/img/after.png" alt=""/>
 
         <div class="checkDown">
             <button onclick="goUser()">查看我的钱包</button>
@@ -342,6 +342,9 @@
                            success: function (data) {
                                if (data.status == 200) {
                                    var map = data.data;
+                                   if (map.scoreA == 0) {
+                                       $("#A_status").css('display', 'none');
+                                   }
                                    $("#scoreA").html(map.scoreA / 100);
                                    $("#scoreB").html(map.scoreB / 100);
                                    hotList();

@@ -83,7 +83,7 @@ public class BankCardController {
 
   //获取银行卡列表 todo:带删除，更换接口，隐藏卡号返回数据
   @RequestMapping(value = "/user/card/list", method = RequestMethod.POST)
-  public LejiaResult list(@RequestParam(required = true) String token) {
+  public LejiaResult list(@RequestParam String token) {
     return LejiaResult
         .ok(bankCardService.findByLeJiaUser(leJiaUserService.findUserByUserSid(token)));
   }

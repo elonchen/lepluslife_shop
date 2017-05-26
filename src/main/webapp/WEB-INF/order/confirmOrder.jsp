@@ -18,7 +18,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <c:set var="resourceUrl" value="http://www.lepluslife.com/resource"></c:set>
-    <c:set var="wxRootUrl" value="http://www.lepluslife.com"></c:set>
     <c:set var="leplusShopResource" value="http://image.tiegancrm.com/leplus_shop/"></c:set>
     <!--App自定义的css-->
     <link rel="stylesheet" href="${resourceUrl}/frontRes/css/reset.css">

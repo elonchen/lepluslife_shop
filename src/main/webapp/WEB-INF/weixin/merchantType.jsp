@@ -13,7 +13,7 @@
 <html>
 <script type="application/javascript">
     function goPage(page) {
-        location.href = "${wxRootUrl}/weixin/" + page;
+        window.location.href = "/weixin/" + page;
     }
 </script>
 <head>
@@ -54,7 +54,7 @@
 
 <script>
     //count判断是第几次加载
-    var count = 1, imgLength = 10, shangshu, yushu, url = '${wxRootUrl}/merchant/list', gps = {};
+    var count = 1, imgLength = 10, shangshu, yushu, url = '/merchant/list', gps = {};
     function initPage() {
         gps.status = '${status}';
         gps.lat = '${lat}';
@@ -94,77 +94,76 @@
                     imgLength = data.length;
                     for (var i = 0; i < data.length; i++) {
                         shopList.append(
-                                $("<div></div>").attr("id", "aaa-" + data[i].id + "-"
-                                                            + data[i].distance).append(
-                                        $("<div></div>").append(
-                                                $("<img>").attr("src",
-                                                                (data[i].picture == null
-                                                                 || data[i].picture == "null"
-                                                                 || data[i].picture == "")
-                                                                        ? "${resourceUrl}/frontRes/merchant/img/listLogo.jpg"
-                                                                        : data[i].picture)
-                                        )
-                                ).append(
-                                        $("<div></div>").attr("class",
-                                                              "shopInformation").append(
-                                                $("<div></div>").append(
-                                                        $("<div></div>").html(data[i].name)
-                                                )
-                                        ).append(
-                                                $("<div></div>").attr("class",
-                                                                      "star").attr("id",
-                                                                                   "merchant"
-                                                                                   + data[i].id)
-                                        ).append(
-                                                $("<div></div>").attr("class", "w").append(
-                                                        $("<div></div>").attr("class",
-                                                                              "tabb").append(
-                                                                $("<div></div>").append(
-                                                                        $("<img>").attr("src",
-                                                                                        "${resourceUrl}/frontRes/merchant/img/food.png")
-                                                                )
-                                                        ).append(
-                                                                $("<div></div>").html(data[i].typeName)
-                                                        )
-                                                ).append(
-                                                        $("<div></div>").attr("class",
-                                                                              "tabb").append(
-                                                                $("<div></div>").append(
-                                                                        $("<img>").attr("src",
-                                                                                        "${resourceUrl}/frontRes/merchant/img/address.png")
-                                                                )
-                                                        ).append(
-                                                                $("<div></div>").html(data[i].areaName)
-                                                        )
-                                                ).append(
-                                                        $("<div></div>").attr("class",
-                                                                              "tabb").append(
-                                                                $("<div></div>").attr("style",
-                                                                                      "margin-right:9px;color:#8d8d8d;").append(
-                                                                        gps.status == 1 ?
-                                                                        $("<img>").attr("src",
-                                                                                        "${resourceUrl}/frontRes/merchant/img/juli.png")
-                                                                                : ""
-                                                                )
-                                                        ).append(
-                                                                gps.status == 1
-                                                                        ? $("<span></span>").html(data[i].distance
-                                                                                                  > 1000
-                                                                                                          ? ((data[i].distance
-                                                                                                              / 1000).toFixed(1)
-                                                                                                             + "km")
-                                                                                                          : data[i].distance
-                                                                                                            + "m"
-                                                                ) : ""
-                                                        )
-                                                )
-                                        )
+                            $("<div></div>").attr("id", "aaa-" + data[i].id + "-"
+                                                        + data[i].distance).append(
+                                $("<div></div>").append(
+                                    $("<img>").attr("src",
+                                                    (data[i].picture == null
+                                                     || data[i].picture == "null"
+                                                     || data[i].picture == "")
+                                                        ? "${resourceUrl}/frontRes/merchant/img/listLogo.jpg"
+                                                        : data[i].picture)
                                 )
+                            ).append(
+                                $("<div></div>").attr("class",
+                                                      "shopInformation").append(
+                                    $("<div></div>").append(
+                                        $("<div></div>").html(data[i].name)
+                                    )
+                                ).append(
+                                    $("<div></div>").attr("class",
+                                                          "star").attr("id",
+                                                                       "merchant"
+                                                                       + data[i].id)
+                                ).append(
+                                    $("<div></div>").attr("class", "w").append(
+                                        $("<div></div>").attr("class",
+                                                              "tabb").append(
+                                            $("<div></div>").append(
+                                                $("<img>").attr("src",
+                                                                "${resourceUrl}/frontRes/merchant/img/food.png")
+                                            )
+                                        ).append(
+                                            $("<div></div>").html(data[i].typeName)
+                                        )
+                                    ).append(
+                                        $("<div></div>").attr("class",
+                                                              "tabb").append(
+                                            $("<div></div>").append(
+                                                $("<img>").attr("src",
+                                                                "${resourceUrl}/frontRes/merchant/img/address.png")
+                                            )
+                                        ).append(
+                                            $("<div></div>").html(data[i].areaName)
+                                        )
+                                    ).append(
+                                        $("<div></div>").attr("class",
+                                                              "tabb").append(
+                                            $("<div></div>").attr("style",
+                                                                  "margin-right:9px;color:#8d8d8d;").append(
+                                                gps.status == 1 ? $("<img>").attr("src",
+                                                                                  "${resourceUrl}/frontRes/merchant/img/juli.png")
+                                                    : ""
+                                            )
+                                        ).append(
+                                            gps.status == 1
+                                                ? $("<span></span>").html(data[i].distance
+                                                                          > 1000
+                                                                              ? ((data[i].distance
+                                                                                  / 1000).toFixed(1)
+                                                                                 + "km")
+                                                                              : data[i].distance
+                                                                                + "m"
+                                            ) : ""
+                                        )
+                                    )
+                                )
+                            )
                         );
                         var tests = "aaa-" + data[i].id + "-" + data[i].distance;
                         document.getElementById(tests).addEventListener('tap', function () {
                             var str = $(this).attr("id").split('-');
-                            location.href = "${wxRootUrl}/weixin/merchant/info/" + str[1]
+                            location.href = "/weixin/merchant/info/" + str[1]
                                             + "?distance="
                                             + str[2] + "&status=" + gps.status;
                         }, false);
@@ -194,9 +193,9 @@
     function drawStar(num, url, merId) {
         for (var i = 0; i < num; i++) {
             $(merId).append(
-                    $("<div></div>").append(
-                            $("<img>").attr("src", url)
-                    )
+                $("<div></div>").append(
+                    $("<img>").attr("src", url)
+                )
             )
         }
     }

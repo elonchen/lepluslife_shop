@@ -66,7 +66,7 @@
         <div>恭喜您注册成功！</div>
       </div>
       <div>
-        <div class="button">前往合伙人中心</div>
+        <div class="button" onclick="window.location.href='/front/partnerCenter/weixin/'">前往合伙人中心</div>
       </div>
     </div>
   </div>

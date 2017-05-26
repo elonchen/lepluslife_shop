@@ -20,7 +20,6 @@
           content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <title></title>
     <c:set var="resourceUrl" value="http://www.lepluslife.com/resource"></c:set>
-    <c:set var="wxRootUrl" value="http://www.lepluslife.com"></c:set>
     <link rel="stylesheet" href="${resourceUrl}/frontRes/css/reset.css">
     <link rel="stylesheet" href="${resourceUrl}/frontRes/css/swiper.min.css">
     <link rel="stylesheet" href="${resourceUrl}/frontRes/product/hotDetail/css/hot.css">

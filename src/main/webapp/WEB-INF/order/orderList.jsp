@@ -20,7 +20,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <title>我的订单</title>
     <c:set var="resourceUrl" value="http://www.lepluslife.com/resource"></c:set>
-    <c:set var="wxRootUrl" value="http://www.lepluslife.com"></c:set>
     <link rel="stylesheet" href="${resourceUrl}/frontRes/css/reset.css">
     <link rel="stylesheet" href="${resourceUrl}/frontRes/order/orderList/css/orderlist.css">
 </head>

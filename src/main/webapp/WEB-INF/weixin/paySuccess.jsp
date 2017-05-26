@@ -115,7 +115,7 @@
 
 <script type="application/javascript">
     function goPage(page) {
-        location.href = "${wxRootUrl}/weixin/" + page;
+        window.location.href = "/weixin/" + page;
     }
 
 </script>

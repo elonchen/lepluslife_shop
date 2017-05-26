@@ -3,7 +3,6 @@ package com.jifenke.lepluslive.global.filter;
 import com.jifenke.lepluslive.global.config.Constants;
 import com.jifenke.lepluslive.global.util.CookieUtils;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,12 +17,6 @@ import javax.servlet.http.HttpSession;
  * Created by wcg on 16/4/1.
  */
 public class WeiXinFilter implements HandlerInterceptor {
-
-  @Value("${weixin.appId}")
-  private String APPID;
-
-  @Value("${weixin.rootUrl}")
-  private String URL;
 
   @Override
   public boolean preHandle(HttpServletRequest request,

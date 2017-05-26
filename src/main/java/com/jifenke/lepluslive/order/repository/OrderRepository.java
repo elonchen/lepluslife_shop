@@ -43,6 +43,6 @@ public interface OrderRepository extends JpaRepository<OnLineOrder, Long> {
   @Query(value = "SELECT state,COUNT(state) FROM on_line_order WHERE le_jia_user_id=?1 AND state IN(0,1,2) GROUP BY state", nativeQuery = true)
   List<Object[]> getOrdersCount(Long leJiaUserId);
 
-  @Query(value = "select ifnull(sum(total_price),0) from on_line_order where le_jia_user_id = ?1 and pay_state = 1",nativeQuery = true)
+  @Query(value = "select ifnull(sum(true_price),0) from on_line_order where le_jia_user_id = ?1 and pay_state = 1",nativeQuery = true)
   Long sumOrderPriceByLeJiaUser(Long id);
 }

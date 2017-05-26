@@ -4,6 +4,7 @@ package com.jifenke.lepluslive.product.controller;
 import com.jifenke.lepluslive.global.util.JsonUtils;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
+import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.product.controller.dto.ProductDto;
 import com.jifenke.lepluslive.product.domain.entities.Product;
 import com.jifenke.lepluslive.product.domain.entities.ProductDetail;
@@ -66,6 +67,9 @@ public class ProductController {
 
   @Inject
   private WeiXinUserService weiXinUserService;
+
+  @Inject
+  private PartnerService partnerService;
 
   @ApiOperation(value = "获取所有的商品类别名称及顶部图片")
   @RequestMapping(value = "/type", method = RequestMethod.GET)
@@ -197,6 +201,9 @@ public class ProductController {
       final long currId = weiXinUser.getId();
       new Thread(() -> weiXinUserService.bindPartnerByShareProduct(shareId, currId)).start();
     }
+    model.addAttribute("isPartner",
+                       partnerService.findPartnerByWeiXinUser(weiXinUser).orElse(null) == null ? 0
+                                                                                               : 1);
 
     return MvUtil.go("/product/productDetail");
   }

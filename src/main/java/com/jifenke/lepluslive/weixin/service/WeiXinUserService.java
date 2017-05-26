@@ -274,7 +274,7 @@ public class WeiXinUserService {
     ScoreA scoreA = scoreARepository.findByLeJiaUser(leJiaUser).get(0);
     ScoreC scoreC = scoreCService.findScoreCByLeJiaUser(leJiaUser);
     String aRule = dictionaryService.findDictionaryById(34L).getValue(); //返A规则
-    String bRule = dictionaryService.findDictionaryById(63L).getValue(); //返C规则
+    String bRule = dictionaryService.findDictionaryById(35L).getValue(); //返C规则
     int valueA = 0;
     int valueB = 0;
     Date date = new Date();
