@@ -389,6 +389,7 @@ public class PartnerService {
         Partner partner = new Partner();
         partner.setPhoneNumber(phoneNumber);
         partner.setPartnerName(name);
+        partner.setName(name);
         partner.setWeiXinUser(weiXinUser);
         partner.setUserLimit(Long.parseLong(dictionaryService.findDictionaryById(60L).getValue()));
         partner.setMerchantLimit(Long.parseLong(dictionaryService.findDictionaryById(61L).getValue()));
