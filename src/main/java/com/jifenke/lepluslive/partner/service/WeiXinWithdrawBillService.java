@@ -106,6 +106,8 @@ public class WeiXinWithdrawBillService {
                 onlineLog.setOrderSid(orderSid);
                 onlineLog.setPartnerId(partner.getId());
                 partnerWalletOnlineLogRepository.save(onlineLog);
+                weiXinWithdrawBill.setOnlineWallet(price);              // 设置提现单  线上线下金额
+                weiXinWithdrawBill.setOfflineWallet(0L);
             } else if(sumOnLine<price && sumOnLine!=0) {
                 Long onAfterAvail = 0L ;
                 Long offAfterAvail = walletOff.getAvailableBalance()-(price-sumOnLine);
@@ -135,6 +137,8 @@ public class WeiXinWithdrawBillService {
                 offlineLog.setPartnerId(partner.getId());
                 partnerWalletOnlineLogRepository.save(onlineLog);
                 partnerWalletLogRepository.save(offlineLog);
+                weiXinWithdrawBill.setOnlineWallet(sumOnLine);              // 设置提现单  线上线下金额
+                weiXinWithdrawBill.setOfflineWallet(price-sumOnLine);
             }else {
                 Long afterAvail = walletOff.getAvailableBalance()-price;
                 walletOff.setAvailableBalance(afterAvail);                               //  只减线下钱包
@@ -150,7 +154,10 @@ public class WeiXinWithdrawBillService {
                 offlineLog.setOrderSid(orderSid);
                 offlineLog.setPartnerId(partner.getId());
                 partnerWalletLogRepository.save(offlineLog);
+                weiXinWithdrawBill.setOnlineWallet(0L);              // 设置提现单  线上线下金额
+                weiXinWithdrawBill.setOfflineWallet(price);
             }
+            weiXinWithdrawBillRepository.save(weiXinWithdrawBill);
             return true;
         }catch (Exception e) {
             e.printStackTrace();

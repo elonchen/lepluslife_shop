@@ -4,16 +4,10 @@ import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
- * Created by xf on 2016/9/18.
+ * Created by xf on 2017/5/18.
  */
 @Entity
 @Table(name = "WEIXIN_WITHDRAW_BILL")
@@ -24,6 +18,9 @@ public class WeiXinWithdrawBill {
     private Long id;
 
     private String withdrawBillSid;
+
+    @Version
+    private Long version = 0L;
 
     @ManyToOne
     private Partner partner;
@@ -45,7 +42,7 @@ public class WeiXinWithdrawBill {
 
     private String note;//备注微信接口的返回码
 
-    @Column(unique=true)
+    @Column(unique = true)
     private String mchBillno; //商户订单号 每生成一个结算单就会对应一个唯一随机号 不可修改!!!
 
 
@@ -146,4 +143,11 @@ public class WeiXinWithdrawBill {
         this.withdrawBillSid = withdrawBillSid;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 }
