@@ -46,12 +46,13 @@
         <div class="hb-text">
             <p>恭喜您</p>
 
-            <p>获得<span id="A_status"><span id="scoreA">2.5</span>鼓励金和</span><span id="scoreB">10</span>金币</p>
+            <p>获得<span id="A_status"><span id="scoreA">2.5</span>鼓励金和</span><span
+                    id="scoreB">10</span>金币</p>
         </div>
         <img id="headImg" src="${resourceUrl}/frontRes/activity/subPage/img/after.png" alt=""/>
 
         <div class="checkDown">
-            <button onclick="goUser()">查看我的钱包</button>
+            <button onclick="goRecharge()">马上冲话费</button>
         </div>
         <div class="dang"></div>
     </div>
@@ -362,12 +363,13 @@
             }
         })
     }
-    function goMerchant() {
-        window.location.href = "/merchant/index"
+    /*********************** 话费充值 *************************/
+    function goRecharge() {
+        /** 点击话费充值事件统计*/
+        $.get("/front/visit/recharge/2");
+        window.location.href = 'http://www.lepluslife.com/front/order/weixin/recharge';
     }
-    function goUser() {
-        window.location.href = "/weixin/user"
-    }
+
     function getVerify() {
         var phoneNumber = $("input[name='phoneNumber']").val();
         if ((!(/^1[3|4|5|6|7|8]\d{9}$/.test(phoneNumber)))) {
