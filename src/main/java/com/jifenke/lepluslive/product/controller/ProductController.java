@@ -8,6 +8,7 @@ import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.product.controller.dto.ProductDto;
 import com.jifenke.lepluslive.product.domain.entities.Product;
 import com.jifenke.lepluslive.product.domain.entities.ProductDetail;
+import com.jifenke.lepluslive.product.domain.entities.ProductSpec;
 import com.jifenke.lepluslive.product.domain.entities.ProductType;
 import com.jifenke.lepluslive.product.domain.entities.ScrollPicture;
 import com.jifenke.lepluslive.product.service.ProductService;
@@ -173,7 +174,8 @@ public class ProductController {
         productDetails =
         productService.findAllProductDetailsByProduct(product);
     ProductDto productDto = new ProductDto();
-    productDto.setProductSpecs(productService.findAllProductSpec(product));
+    List<ProductSpec> specList = productService.findAllProductSpec(product);
+    productDto.setProductSpecs(specList);
 
     try {
       BeanUtils.copyProperties(productDto, product);
@@ -204,7 +206,26 @@ public class ProductController {
     model.addAttribute("isPartner",
                        partnerService.findPartnerByWeiXinUser(weiXinUser).orElse(null) == null ? 0
                                                                                                : 1);
-
+    //如果只有一个规格，页面展示一个价格，如果有多个，且价格不一致，则展示价格区间
+    long minPrice = 100000000L;
+    long maxPrice = 0L;
+    if (specList != null) {
+      if (specList.size() == 1) {
+        minPrice = specList.get(0).getMinPrice() + specList.get(0).getMinScore();
+        maxPrice = minPrice;
+      } else {
+        for (ProductSpec spec : specList) {
+          if (minPrice > (spec.getMinScore() + spec.getMinPrice())) {
+            minPrice = spec.getMinScore() + spec.getMinPrice();
+          }
+          if (maxPrice < (spec.getMinScore() + spec.getMinPrice())) {
+            maxPrice = spec.getMinScore() + spec.getMinPrice();
+          }
+        }
+      }
+    }
+    model.addAttribute("minPrice", minPrice);
+    model.addAttribute("maxPrice", maxPrice);
     return MvUtil.go("/product/productDetail");
   }
 

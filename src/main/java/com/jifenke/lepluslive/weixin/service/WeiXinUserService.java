@@ -4,6 +4,7 @@ import com.jifenke.lepluslive.activity.service.ActivityJoinLogService;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.domain.entities.RegisterOrigin;
 import com.jifenke.lepluslive.lejiauser.repository.LeJiaUserRepository;
+import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
 import com.jifenke.lepluslive.merchant.domain.entities.Merchant;
 import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import com.jifenke.lepluslive.partner.service.PartnerService;
@@ -76,6 +77,9 @@ public class WeiXinUserService {
 
   @Inject
   private WeiXinOtherUserService weiXinOtherUserService;
+
+  @Inject
+  private LeJiaUserService leJiaUserService;
 
   @Inject
   private ScoreCService scoreCService;
@@ -179,6 +183,13 @@ public class WeiXinUserService {
     weiXinUser.setLastUpdated(date);
     weiXinUserRepository.save(weiXinUser);
     result[1] = unionId;
+
+    //判断是否需要绑定合伙人 1_0_3
+    if (weiXinUser.getState() == 0) {
+      leJiaUserService.checkUserBindPartner(weiXinUser.getLeJiaUser(),
+                                            String.valueOf(userDetail.get("subSource")));
+    }
+
     return result;
   }
 

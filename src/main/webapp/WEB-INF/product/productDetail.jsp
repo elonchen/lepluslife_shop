@@ -88,6 +88,7 @@
         right: -9px !important;
         top: -9px !important;
     }
+
     .layui-layer-ico {
         opacity: 0.3;
     }
@@ -134,22 +135,22 @@
                 <p class="ttl_name">${product.name}</p>
 
                 <p class="ttl_practice">${product.description}</p>
-                <c:if test="${product.minPrice != product.price}">
+                <c:if test="${minPrice != maxPrice}">
                     <p class="ttl_price">￥<font id="min_price"><fmt:formatNumber type="number"
-                                                                                 value="${product.minPrice/100}"
+                                                                                 value="${minPrice/100}"
                                                                                  pattern="0.00"
                                                                                  maxFractionDigits="2"/></font>
                         ~
                         ￥<font
                                 class="total_price"><fmt:formatNumber type="number"
-                                                                      value="${product.price/100}"
+                                                                      value="${maxPrice/100}"
                                                                       pattern="0.00"
                                                                       maxFractionDigits="2"/></font>
                     </p>
                 </c:if>
-                <c:if test="${product.minPrice == product.price}">
+                <c:if test="${minPrice == maxPrice}">
                     <p class="ttl_price">￥<font class="total_price"><fmt:formatNumber type="number"
-                                                                                      value="${product.price/100}"
+                                                                                      value="${maxPrice/100}"
                                                                                       pattern="0.00"
                                                                                       maxFractionDigits="2"/></font>
                     </p>
@@ -172,7 +173,7 @@
                     </c:if>
                 </p>
             </div>
-            <%--<div class="page_more_btn">+规格数量选择</div>--%>
+            <div class="page_more_btn">+规格数量选择</div>
 
             <!--更多详情-->
             <div class="page_more">

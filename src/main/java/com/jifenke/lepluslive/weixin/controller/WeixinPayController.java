@@ -11,10 +11,11 @@ import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.order.domain.entities.OnLineOrder;
 import com.jifenke.lepluslive.order.service.OnlineOrderService;
 import com.jifenke.lepluslive.order.service.OrderService;
+import com.jifenke.lepluslive.partner.domain.entities.Partner;
+import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.product.domain.entities.ProductType;
 import com.jifenke.lepluslive.product.service.ProductService;
 import com.jifenke.lepluslive.score.service.ScoreAService;
-import com.jifenke.lepluslive.score.service.ScoreBService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
@@ -41,6 +42,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 
 import javax.inject.Inject;
@@ -72,7 +74,7 @@ public class WeixinPayController {
   private ScoreAService scoreAService;
 
   @Inject
-  private ScoreBService scoreBService;
+  private PartnerService partnerService;
 
   @Inject
   private ScoreCService scoreCService;
@@ -318,10 +320,16 @@ public class WeixinPayController {
     }
   }
 
+  /**
+   * 臻品商城支付成功
+   *
+   * @param orderId 订单号
+   */
   @RequestMapping(value = "/paySuccess/{orderId}")
   public ModelAndView goPaySuccessPage(@PathVariable Long orderId, Model model,
                                        HttpServletRequest request) {
-    LeJiaUser leJiaUser = weiXinService.getCurrentWeiXinUser(request).getLeJiaUser();
+    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+    LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
 
     OnLineOrder order = orderService.findOnLineOrderById(orderId);
     if (order != null) {
@@ -336,11 +344,11 @@ public class WeixinPayController {
                            (long) Math
                                .ceil((double) (order.getTruePrice() * PAY_BACK_SCALE) / 100));
         model.addAttribute("truePrice", order.getTruePrice());
+        //判断是否是合伙人
+        Optional<Partner> partner = partnerService.findPartnerByWeiXinUser(weiXinUser);
+        model.addAttribute("isPartner", partner.orElse(null) == null ? 0 : 1);
         //商品分类
         List<ProductType> typeList = productService.findAllProductType();
-        //主打爆品
-//        Map product = productService.findMainHotProduct();
-//        model.addAttribute("product", product);
         model.addAttribute("scoreC", scoreCService.findScoreCByLeJiaUser(leJiaUser));
         model.addAttribute("typeList", typeList);
         return MvUtil.go("/product/productIndex");

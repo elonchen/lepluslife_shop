@@ -2,6 +2,7 @@ package com.jifenke.lepluslive.weixin.service;
 
 import com.jifenke.lepluslive.global.config.Constants;
 import com.jifenke.lepluslive.partner.service.PartnerQrCodeService;
+import com.jifenke.lepluslive.statistics.service.RedisCacheService;
 import com.jifenke.lepluslive.weixin.domain.entities.AutoReplyRule;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
 import com.jifenke.lepluslive.weixin.domain.entities.WeixinMessage;
@@ -43,6 +44,9 @@ public class WeixinReplyService {
 
   @Inject
   private WeiXinOtherUserService weiXinOtherUserService;
+
+  @Inject
+  private RedisCacheService redisCacheService;
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public String routeWeixinEvent(Map map) {
@@ -117,41 +121,57 @@ public class WeixinReplyService {
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   private String buildFocusMessageReply(Map map, Integer eventType) {
-    WeiXinOtherUser
-        user =
-        weiXinOtherUserService.findByOpenId(map.get("FromUserName").toString());
-    AutoReplyRule rule = autoReplyService.findByReplyType("focusReply");
-    String str = "";
+//    WeiXinOtherUser
+//        user =
+//        weiXinOtherUserService.findByOpenId(map.get("FromUserName").toString());
+//    AutoReplyRule rule = autoReplyService.findByReplyType("focusReply_2");
+    String result = "";
     String subSource = "0_0_0";
     if (eventType == 1) {
-      if (rule != null) {
-        WeixinReply reply = null;
-        if (null != rule.getReplyText() && (!"".equals(rule.getReplyText()))) {
-          reply = new WeixinReplyText(map, rule);
-          str = reply.buildReplyXmlString(null);
-        } else {
-          reply = new WeixinReplyImageText(map, rule);
-          HashMap<String, String> buildMap = new HashMap<>();
-          //判断是不是临时二维码
-          if (map.get("EventKey") != null && (!"".equals(map.get("EventKey").toString()))) {
-            String eventKey = map.get("EventKey").toString().split("_")[1];
-            if (eventKey.startsWith("M")) {
-              subSource = "2_0_0";
-            } else {
-              subSource = "1_0_" + eventKey;
-            }
+      result = redisCacheService.getByKey("reply:sub");
+      //判断是不是临时二维码
+      if (map.get("EventKey") != null && (!"".equals(map.get("EventKey").toString()))) {
+        String keyType = map.get("EventKey").toString().split("_")[0];
+        if ("qrscene".equals(keyType)) {
+          String eventKey = map.get("EventKey").toString().split("_")[1];
+          if (eventKey.startsWith("M")) {
+            subSource = "2_0_0";
+          } else {
+            subSource = "1_0_" + eventKey;
           }
-          buildMap.put("title", "感谢您的关注，恭喜您获得臻品商城红包一个");
-          buildMap.put("description", "↑↑↑戳这里，累计5000人领取");
-          buildMap.put("url", Constants.WEI_XIN_URL + "/weixin/subPage?subSource=" + subSource);
-          str = reply.buildReplyXmlString(buildMap);
         }
       }
+      result =
+          result
+              .replaceAll("&1&", Constants.WEI_XIN_URL + "/weixin/subPage?subSource=" + subSource);
+//      if (rule != null) {
+//        WeixinReply reply = null;
+//        if (null != rule.getReplyText() && (!"".equals(rule.getReplyText()))) {
+//          reply = new WeixinReplyText(map, rule);
+//          str = reply.buildReplyXmlString(null);
+//        } else {
+//          reply = new WeixinReplyImageText(map, rule);
+//          HashMap<String, String> buildMap = new HashMap<>();
+//          //判断是不是临时二维码
+//          if (map.get("EventKey") != null && (!"".equals(map.get("EventKey").toString()))) {
+//            String eventKey = map.get("EventKey").toString().split("_")[1];
+//            if (eventKey.startsWith("M")) {
+//              subSource = "2_0_0";
+//            } else {
+//              subSource = "1_0_" + eventKey;
+//            }
+//          }
+//          buildMap.put("title", "感谢您的关注，恭喜您获得臻品商城红包一个");
+//          buildMap.put("description", "↑↑↑戳这里，累计5000人领取");
+//          buildMap.put("url", Constants.WEI_XIN_URL + "/weixin/subPage?subSource=" + subSource);
+//          str = reply.buildReplyXmlString(buildMap);
+//        }
+//      }
     }
 
     //关注公众号后查询数据库有没有该用户信息，没有的话主动获取
     subscribeWeiXinUser(map, subSource, eventType);
-    return str;
+    return returnText(map, result);
   }
 
   /**
