@@ -41,42 +41,109 @@
         color: #FFF;
         font-size: 10px;
     }
+
+    #mask-success {
+        background-color: rgba(0, 0, 0, 0.7) !important;
+        position: fixed !important;
+    }
+
+    #mask-success .mask-top {
+        background: none;
+        background-size: 100% 100%;
+        position: relative;
+    }
+
+    .mask-top img {
+        width: 100%;
+        display: block;
+    }
+
+    .mask-text {
+        width: 100%;
+        position: absolute;
+        top: 0;
+    }
+
+    .mask-text > p:first-child {
+        text-align: center;
+        font-size: 16px !important;
+        color: #cca97a !important;
+    }
+
+    .mask-text > p:first-child span {
+        font-size: 24px;
+    }
+
+    .mask-text > p:last-child {
+        text-align: center;
+        top: 20vw !important;
+        color: #666 !important;
+        font-size: 12px !important;
+    }
+
+    .mask-btn {
+        width: 80% !important;
+        margin: 0 auto !important;
+        top: 85vw !important;
+    }
+
+    .mask-btn * {
+        border: 0 !important;
+    }
+
+    .mask-btn > div {
+        float: none !important;
+        width: 100% !important;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        height: 11.33vw !important;
+        line-height: 11.33vw !important;
+    }
+
+    .mask-btn > div:first-child {
+        border: 1px solid #cca97a !important;
+        background-color: #cca97a !important;
+    }
+
+    .mask-btn > div:nth-child(2) {
+        border: 1px solid #cca97a !important;
+        margin: 20px 0 !important;
+        color: #cca97a;
+    }
+
+    .mask-btn > div:last-child {
+        width: 12% !important;
+        margin: 0 auto !important;
+        margin-top: 30px !important;
+        border: 0 !important;
+    }
+
+    .mask-btn > div:last-child img {
+        width: 100%;
+        display: block;
+    }
 </style>
 <body>
-<c:if test="${orderId!=null}">
-    <div id="mask-failed">
-        <div class="mask-top"></div>
-        <p class="mask-ttl">您本次付款失败了<br>请在15分钟内完成付款</p>
-
-        <div class="mask-btn">
-            <div><a style="color: #fff;width: 100%;height: 100%;display: block"
-                    href="/front/order/weixin/confirmOrder?orderId=${orderId}">重新付款</a></div>
-            <div onclick="hideModel('mask-failed')">继续逛逛</div>
-        </div>
-    </div>
-</c:if>
 <c:if test="${truePrice!=null}">
     <div id="mask-success">
         <div class="mask-top">
-            <p>￥<font><fmt:formatNumber type="number"
-                                        value="${payBackScore/100}"
-                                        pattern="0.00"
-                                        maxFractionDigits="2"/></font></p>
-
-            <p>您在乐+商城的消费获得<font><fmt:formatNumber type="number"
-                                                  value="${payBackScore/100}"
-                                                  pattern="0.00"
-                                                  maxFractionDigits="2"/></font>元鼓励金</p>
-
-            <p>累计鼓励金：￥<font><fmt:formatNumber type="number"
-                                              value="${totalScore/100}"
-                                              pattern="0.00"
-                                              maxFractionDigits="2"/></font></p>
+            <img src="${leplusShopResource}/product/index/img/hb-bg.png" alt="">
+            <div class="mask-text">
+                <p>返<span><fmt:formatNumber type="number"
+                                            value="${payBackScore/100}"
+                                            pattern="0.00"
+                                            maxFractionDigits="2"/></span>元鼓励金</p>
+                <p>可在乐+联盟商家消费使用</p>
+            </div>
         </div>
         <div class="mask-btn">
-            <div><a style="color: #fff;width: 100%;height: 100%;display: block"
-                    href="/front/order/weixin/orderList">查看订单</a></div>
-            <div onclick="hideModel('mask-success')">继续逛逛</div>
+            <c:if test="${isPartner == 0}">
+                <div><a style="color: #fff;width: 100%;height: 100%;display: block"
+                        href="/front/partner/weixin/becomePartner">成为合伙人</a></div>
+            </c:if>
+            <div onclick="hideModel('mask-success')">查看订单</div>
+            <div><img src="${leplusShopResource}/product/index/img/cha.png" alt=""></div>
         </div>
     </div>
 </c:if>
@@ -352,6 +419,7 @@
 
     function hideModel(idName) {
         $("#" + idName).css('display', 'none');
+        location.href = "/front/order/weixin/orderList";
     }
 
     function ajaxProductList(contentId, typeId, page) {

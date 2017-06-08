@@ -94,7 +94,7 @@
 
     /**跳转到臻品商城*/
     function goldIndex() {
-        window.location.href = "/front/gold/weixin";
+        window.location.href = "/front/product/weixin/productIndex";
     }
     /**跳转到周边好店*/
     function shopIndex() {

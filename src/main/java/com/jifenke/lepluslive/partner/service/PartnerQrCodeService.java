@@ -2,12 +2,13 @@ package com.jifenke.lepluslive.partner.service;
 
 import com.jifenke.lepluslive.global.config.Constants;
 import com.jifenke.lepluslive.global.util.DateUtils;
-import com.jifenke.lepluslive.global.util.ImageUtils;
+import com.jifenke.lepluslive.global.util.ImageUtil;
 import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import com.jifenke.lepluslive.partner.domain.entities.PartnerQrCode;
 import com.jifenke.lepluslive.partner.repository.PartnerQrCodeRepository;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinOtherUser;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
+import com.jifenke.lepluslive.weixin.service.DictionaryService;
 import com.jifenke.lepluslive.weixin.service.WeiXinOtherUserService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
 
@@ -44,6 +45,9 @@ public class PartnerQrCodeService {
 
   @Inject
   private PartnerService partnerService;
+
+  @Inject
+  private DictionaryService dictionaryService;
 
   public PartnerQrCode findById(Long id) {
     return repository.findOne(id);
@@ -154,7 +158,7 @@ public class PartnerQrCodeService {
    * @param partner 合伙人
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public PartnerQrCode getQrCode(Partner partner) throws IOException {
+  private PartnerQrCode getQrCode(Partner partner) throws IOException {
 
     PartnerQrCode partnerQrCode = insertQrCode(partner); //创建记录并获取临时二维码
     WeiXinUser weiXinUser = partner.getWeiXinUser();
@@ -168,7 +172,7 @@ public class PartnerQrCodeService {
   /**
    * 合成合伙人二维码海报  2017/5/12
    */
-  public BufferedImage compoundQrCode(String ticket, String headImgUrl, String text)
+  private BufferedImage compoundQrCode(String ticket, String headImgUrl, String text)
       throws IOException {
     String sourceFilePath = Constants.WEIXIN_CODE_BACKIMG_URL;
     if (headImgUrl == null) {
@@ -180,17 +184,18 @@ public class PartnerQrCodeService {
     String
         waterFilePath =
         "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket;
-
     // 添加二维码
-    BufferedImage
-        buffImg =
-        ImageUtils
-            .watermark(new URL(sourceFilePath), new URL(waterFilePath), new URL(headImgUrl), text,
-                       1.0f);
+//    BufferedImage
+//        buffImg =
+//        ImageUtil
+//            .mergeImage(new URL(sourceFilePath), new URL(waterFilePath), new URL(headImgUrl), text,
+//                        dictionaryService.findDictionaryById(55L).getValue());
 //    String saveFilePath = "I://image//qrcode//" + System.currentTimeMillis() + ".png";
-//    ImageUtils.generateWaterFile(buffImg, saveFilePath);
+//    ImageUtil.generateWaterFile(buffImg, saveFilePath);
 
-    return buffImg;
+    return ImageUtil
+        .mergeImage(new URL(sourceFilePath), new URL(waterFilePath), new URL(headImgUrl), text,
+                    dictionaryService.findDictionaryById(55L).getValue());
   }
 
   /**
@@ -200,7 +205,7 @@ public class PartnerQrCodeService {
    * @return 二维码
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public PartnerQrCode insertQrCode(Partner partner) {
+  private PartnerQrCode insertQrCode(Partner partner) {
     PartnerQrCode qrCode = new PartnerQrCode();
     qrCode.setPartner(partner);
     repository.saveAndFlush(qrCode);
@@ -211,7 +216,7 @@ public class PartnerQrCodeService {
    * 创建临时二维码  2017/5/15
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public PartnerQrCode createScene(PartnerQrCode qrCode) {
+  private PartnerQrCode createScene(PartnerQrCode qrCode) {
     //获取ID作为场景值ID
     int i = 3;
     while (i > 0) {
@@ -236,7 +241,7 @@ public class PartnerQrCodeService {
    * 创建某合伙人临时素材并保存(包括合成图片)  2017/5/12
    */
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public PartnerQrCode uploadImage(PartnerQrCode qrCode, String headImgUrl, String text)
+  private PartnerQrCode uploadImage(PartnerQrCode qrCode, String headImgUrl, String text)
       throws IOException {
 
     BufferedImage image = compoundQrCode(qrCode.getTicket(), headImgUrl, text);
