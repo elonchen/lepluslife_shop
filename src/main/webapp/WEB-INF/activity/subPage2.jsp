@@ -41,17 +41,17 @@
         </div>
     </div>
 </section>
-<section class="success">
+<section class="success" style="display: none;">
     <div class="register">
         <div class="titleImg">
-            <img src="${leplusShopResource}user_register/img/success.png" alt="">
+            <img id="successImg" src="${leplusShopResource}user_register/img/success.png" alt="">
         </div>
-        <p class="text">您已获得8.8金币</p>
+        <p class="text" id="successText">您已获得<span id="scoreC"></span>金币</p>
         <div class="from toImg">
             <img src="${leplusShopResource}user_register/img/partner.png" alt="">
         </div>
         <div class="button">
-            <div>注册成为合伙人</div>
+            <div onclick="window.location.href='/front/partner/weixin/becomePartner';">注册成为合伙人</div>
         </div>
     </div>
 </section>
@@ -69,22 +69,237 @@
 <script src="${commonResource}/js/jquery.min.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script>
+    function drawStar(num, url, merId) {
+        for (var i = 0; i < num; i++) {
+            $(merId).append($("<div></div>").append(
+                $("<img style='width: 13px !important;'>").attr("src", url)));
+//            $(merId).append($("<div></div>").append($("<img>").attr("src", url)))
+        }
+    }
+    //商品列表
+    function addJb(list, len) {
+        for (var i = 0; i < len; i++) {
+            $(".addAppend").append(
+                $("<div></div>").attr('onclick', 'goProductDetail(' + list[i].id + ')').attr(
+                    "class", "DIV fixClear").append(
+                    $("<div></div>").append(
+                        $("<img>").attr("src", list[i].picture)
+                    )
+                ).append(
+                    $("<div></div>").attr("class", "DIV_").append(
+                        $("<p></p>").html(list[i].name)
+                    ).append(
+                        $("<p></p>").append(
+                            $("<span></span>").html(toDecimal(list[i].minPrice / 100) + '元')
+                        ).append(
+                            $("<span></span>").html("市场价：" + toDecimal(list[i].price / 100) + "元")
+                        )
+                    ).append(
+                        $("<div></div>").attr("class", "fixClear").append(
+                            $("<div></div>").attr("class", "fixClear").append(
+                                $("<div></div>").append(
+                                    $("<img>").attr("src",
+                                                    "${leplusShopResource}user_register/img/rob.png")
+                                )
+                            ).append(
+                                $("<div></div>").html("已售" + list[i].saleNumber + "份")
+                            )
+                        ).append(
+                            $("<div></div>").html("马上抢")
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    //周边商家
+    function addGlj(data, len) {
+
+        for (var i = 0; i < len; i++) {
+            $(".addAppend").append(
+                $("<div></div>").attr("onclick",
+                                      "merchantInfo('" + data[i].id + "-"
+                                      + data[i].distance + "')").attr("id",
+                                                                      "aaa-"
+                                                                      + data[i].id
+                                                                      + "-"
+                                                                      + data[i].distance).attr(
+                    "class", "DIV fixClear").append(
+                    $("<div></div>").append(
+                        $("<img>").attr("src", data[i].picture)
+                    )
+                ).append(
+                    $("<div></div>").attr("class", "glj").append(
+                        $("<p></p>").html(data[i].name)
+                    ).append(
+                        $("<p></p>").attr("class", "star fixClear").attr("id",
+                                                                "merchant"
+                                                                + data[i].id)
+                    ).append(
+                        $("<div></div>").attr("class", "fixClear").append(
+                            $("<div></div>").append(
+                                $("<img>").attr("src",
+                                                "${leplusShopResource}user_register/img/food.png")
+                            )
+                        ).append(
+                            $("<div></div>").html(data[i].typeName)
+                        ).append(
+                            $("<div></div>").append(
+                                $("<img>").attr("src",
+                                                "${leplusShopResource}user_register/img/position.png")
+                            )
+                        ).append(
+                            $("<div></div>").html(data[i].areaName)
+                        ).append(
+                            $("<div></div>").append(
+                                gps.status
+                                == 1
+                                    ? $("<img>").attr("src",
+                                                      "${leplusShopResource}user_register/img/juli.png")
+                                    : ""
+                            )
+                        ).append(
+                            gps.status
+                            == 1
+                                ? $("<div></div>").html(data[i].distance
+                                                        > 1000
+                                                            ? ((data[i].distance
+                                                                / 1000).toFixed(
+                                    1)
+                                                               + "km")
+                                                            : data[i].distance
+                                                              + "m")
+                                : ""
+                        )
+                    )
+                ))
+            var star = parseInt(data[i].star);
+            var merId = "#merchant" + data[i].id;
+            if (star > 5) {
+                star = 5
+            } else if (star < 0) {
+                star = 0
+            }
+            drawStar(star, "${leplusShopResource}user_register/img/starf.png", merId);
+            drawStar(5 - star, "${leplusShopResource}user_register/img/no_star.png", merId)
+        }
+    }
+    function hotList() {
+        $.ajax({
+                   type: "get",
+                   url: "/shop/productList?page=1&typeId=0",
+                   success: function (data) {
+                       var list = data.data;
+                       if (list != null) {
+                           var length = list.length > 5 ? 5 : list.length;
+                           addJb(list, length);
+                       }
+                   }
+               })
+    }
+    function merchantList() {
+        gps.partnership = 1;
+        $.ajax('/merchant/list?page=1', {
+            dataType: 'json',
+            type: 'post',
+            data: gps,
+            timeout: 10000,
+            success: function (data) {
+                var imgLength = data.length > 5 ? 5 : data.length;
+                addGlj(data, imgLength);
+            },
+            error: function (xhr, type, errorThrown) {
+                console.log(type)
+            }
+        })
+    }
+    function getLocation() {
+        wx.config({
+                      debug: false,
+                      appId: '${wxConfig.appId}',
+                      timestamp: '${wxConfig.timestamp}',
+                      nonceStr: '${wxConfig.noncestr}',
+                      signature: '${wxConfig.signature}',
+                      jsApiList: ['getLocation']
+                  });
+        wx.ready(function () {
+            wx.getLocation({
+                               type: 'wgs84', success: function (res) {
+                    var latitude = res.latitude;
+                    var longitude = res.longitude;
+                    gps.status = 1;
+                    gps.lat = latitude;
+                    gps.lon = longitude;
+                    merchantList()
+                }, fail: function (res) {
+                    gps.status = 0;
+                    merchantList()
+                }, cancel: function (res) {
+                    gps.status = 0;
+                    merchantList()
+                }
+                           })
+        });
+        wx.error(function (res) {
+        })
+    }
+    function toDecimal(x) {
+        var f = parseFloat(x);
+        if (isNaN(f)) {
+            return false
+        }
+        f = Math.round(x * 100) / 100;
+        var s = f.toString();
+        var rs = s.indexOf('.');
+        if (rs < 0) {
+            rs = s.length;
+            s += '.'
+        }
+        while (s.length <= rs + 2) {
+            s += '0'
+        }
+        return s
+    }
+
+    function merchantInfo(val) {
+        var str = val.split('-');
+        window.location.href = "/front/shop/weixin/m?id=" + str[0]
+                               + "&distance="
+                               + str[1] + "&status=" + gps.status;
+    }
+
+    function goProductDetail(id) {
+        location.href = "/front/product/weixin/" + id;
+    }
+    $(".state").click(function () {
+        if ($(this).hasClass("jb")) { //商家
+            $(".addAppend").empty();
+            $(this).removeClass("jb").addClass("glj");
+            $(".state img").attr("src", "${leplusShopResource}user_register/img/reedgold.png");
+            getLocation();
+        } else {
+            $(".addAppend").empty();
+            $(this).removeClass("glj").addClass("jb");
+            $(".state img").attr("src", "${leplusShopResource}user_register/img/flowergold.png");
+            hotList();
+        }
+    });
+</script>
+<script>
     //count判断是第几次加载
-    var imgLength = 10, url = '/merchant/list', gps = {}, shopList = $(".hb");
-    var pic = '${resourceUrl}/frontRes/activity/subPage/img/lightning.png', hasHot = 0,
-        hasMerchant = 0;
+    var gps = {}, shopList = $(".hb");
+    var pic = '${resourceUrl}/frontRes/activity/subPage/img/lightning.png';
     function initPage() {
         var status = '${status}';
         if (status == 1) {
-            $(".headHb").hide();
-            $(".hb-text").hide();
-            $(".headHbEd").show();
-            $(".js").hide();
-            $(".sj").show();
-            $('#headImg').attr('src', '${resourceUrl}/frontRes/activity/subPage/img/hb3.png');
+            $('#successImg').attr('src', '${leplusShopResource}user_register/img/secondIn.png');
+            $('#successText').html('无法再次领取会员奖励');
+            $(".success").show();
             hotList();
         } else {
-            $(".headHb").show();
+            $(".registering").show();
+            $(".main").hide();
         }
     }
     window.onload = initPage;//不要括号
@@ -96,7 +311,7 @@
      *
      */
     setInterval(function () {
-        var length = $('.yzm').val().length;
+//        var length = $('.yzm').val().length;
         var phone = $("#phone").val();
         if (phone != '' && phone.match(/\d/g).length === 11 && ((/^1[3|4|5|6|7|8]\d{9}$/.test(
                 phone)))) {
@@ -104,11 +319,6 @@
         } else {
             $(".get").attr("disabled", "disabled").removeClass("active");
         }
-//        if (length == 6 && phone != '') {
-//            $(".button")
-//        } else {
-//            $(".button")
-//        }
     }, 100);
     /**
      *
@@ -162,13 +372,11 @@
                function (data) {
                    if (data.status == 200) {
                        var map = data.data;
-                       $("#scoreA").html(map.scoreA / 100);
-                       $("#scoreB").html(map.scoreB / 100);
+                       $(".registering").hide();
+                       $("#scoreC").html(map.scoreC / 100);
+                       $(".success").show();
+                       $(".main").show();
                        hotList();
-                       $(".headHb").hide();
-                       $(".headHbEd").show();
-                       $(".js").hide();
-                       $(".sj").show()
                    } else {
                        alert(data.msg);
                        $('#submit').attr('onclick', 'doRegister()');
@@ -176,94 +384,5 @@
                })
     }
 </script>
-<script>
-    addJb();
-    $(".state").click(function () {
-        if ($(this).hasClass("jb")) {
-            $(".addAppend").empty();
-            $(this).removeClass("jb").addClass("glj");
-            $(".state img").attr("src", "img/reedgold.png");
-            addGlj();
-        } else {
-            $(".addAppend").empty();
-            $(this).removeClass("glj").addClass("jb");
-            $(".state img").attr("src", "img/flowergold.png");
-            addJb();
-        }
-    });
-    function addJb() {
-        for (var i = 0; i < 3; i++) {
-            $(".addAppend").append(
-                $("<div></div>").attr("class", "DIV fixClear").append(
-                    $("<div></div>").append(
-                        $("<img>").attr("src", "img/can1.png")
-                    )
-                ).append(
-                    $("<div></div>").attr("class", "DIV_").append(
-                        $("<p></p>").html("农家自产原生态中华野山蜂蜜")
-                    ).append(
-                        $("<p></p>").append(
-                            $("<span></span>").html("116.00元")
-                        ).append(
-                            $("<span></span>").html("市场价：128.00元")
-                        )
-                    ).append(
-                        $("<div></div>").attr("class", "fixClear").append(
-                            $("<div></div>").attr("class", "fixClear").append(
-                                $("<div></div>").append(
-                                    $("<img>").attr("src", "img/rob.png")
-                                )
-                            ).append(
-                                $("<div></div>").html("已售6份")
-                            )
-                        ).append(
-                            $("<div></div>").html("马上抢")
-                        )
-                    )
-                )
-            )
-        }
-    }
-    function addGlj() {
-        for (var i = 0; i < 3; i++) {
-            $(".addAppend").append(
-                $("<div></div>").attr("class", "DIV fixClear").append(
-                    $("<div></div>").append(
-                        $("<img>").attr("src", "img/can1.png")
-                    )
-                ).append(
-                    $("<div></div>").attr("class", "glj").append(
-                        $("<p></p>").html("农家自产原生态中华野山蜂蜜")
-                    ).append(
-                        $("<p></p>").attr("class", "star")
-                    ).append(
-                        $("<div></div>").attr("class", "fixClear").append(
-                            $("<div></div>").append(
-                                $("<img>").attr("src", "img/food.png")
-                            )
-                        ).append(
-                            $("<div></div>").html("美食")
-                        ).append(
-                            $("<div></div>").append(
-                                $("<img>").attr("src", "img/position.png")
-                            )
-                        ).append(
-                            $("<div></div>").html("朝阳")
-                        ).append(
-                            $("<div></div>").append(
-                                $("<img>").attr("src", "img/juli.png")
-                            )
-                        ).append(
-                            $("<div></div>").html("1600.70km")
-                        )
-                    )
-                )
-            )
-        }
-    }
 
-    $(".star").append(
-        $("<img style='width: 13px !important;'>").attr("src", "img/starf.png")
-    )
-</script>
 </html>

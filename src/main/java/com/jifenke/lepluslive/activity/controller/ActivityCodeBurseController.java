@@ -5,13 +5,13 @@ import com.jifenke.lepluslive.activity.domain.entities.ActivityJoinLog;
 import com.jifenke.lepluslive.activity.domain.entities.RechargeCard;
 import com.jifenke.lepluslive.activity.service.ActivityCodeBurseService;
 import com.jifenke.lepluslive.activity.service.ActivityJoinLogService;
-import com.jifenke.lepluslive.activity.service.ActivityShareLogService;
 import com.jifenke.lepluslive.activity.service.RechargeCardService;
 import com.jifenke.lepluslive.global.service.MessageService;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
+import com.jifenke.lepluslive.lejiauser.service.ValidateCodeService;
 import com.jifenke.lepluslive.score.service.ScoreAService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
@@ -63,68 +63,13 @@ public class ActivityCodeBurseController {
   private LeJiaUserService leJiaUserService;
 
   @Inject
-  private ActivityShareLogService activityShareLogService;
-
-  @Inject
   private MessageService messageService;
+
   @Inject
   private RechargeCardService rechargeCardService;
 
-  //分享页面 06/09/02
-  @RequestMapping(value = "/share/{id}", method = RequestMethod.GET)
-  public ModelAndView sharePage(@PathVariable String id, HttpServletRequest request,
-                                HttpServletResponse response,
-                                Model model) {
-    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-    model.addAttribute("token", id); //记录邀请人的token
-    //判断是否有手机号码
-    LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
-    int flag = 0;
-    if (leJiaUser != null) {
-      if (leJiaUser.getPhoneNumber() == null || leJiaUser.getPhoneNumber().equals("")) {
-        //判断是否被邀请过，防止手机号互相挤掉刷红包
-        flag = activityShareLogService.findLogByLeJiaUser(leJiaUser.getId());
-      } else {
-        flag = 1;
-      }
-      if (flag == 1) {
-        //已被邀请过或有手机号
-        try {
-          response.sendRedirect("/resource/frontRes/activity/share2/register.html");
-          return null;
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-      //判断是否是自己打开的自己的分享页面
-      if (leJiaUser.getUserSid().equals(id)) {
-        model.addAttribute("self", 1);
-      }
-    }
-    return MvUtil.go("/activity/share2");
-  }
-
-//  /**
-//   * 分享页面提交  16/09/07
-//   *
-//   * @param phoneNumber 被邀请的手机号码
-//   * @param token       邀请人的token
-//   * @param request     请求
-//   * @return 状态
-//   */
-//  @RequestMapping(value = "/share/submit", method = RequestMethod.GET)
-//  public LejiaResult shareSubmit(@RequestParam String phoneNumber, @RequestParam String token,
-//                                 HttpServletRequest request) {
-//    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-//
-//    //给双方派发红包和积分,填充手机号码成为会员，修改邀请人邀请记录(info)并记录shareLog
-//    try {
-//      activityShareLogService.giveScoreByShare(weiXinUser, token, phoneNumber);
-//      return LejiaResult.ok();
-//    } catch (Exception e) {
-//      return LejiaResult.build(202, "服务器异常");
-//    }
-//  }
+  @Inject
+  private ValidateCodeService validateCodeService;
 
   //关注图文链接页面
   @RequestMapping("/subPage")
@@ -138,16 +83,16 @@ public class ActivityCodeBurseController {
       if (weiXinUser.getLeJiaUser().getPhoneNumber() != null && !""
           .equals(weiXinUser.getLeJiaUser().getPhoneNumber())) {
         model.addAttribute("status", 1);
-        model.addAttribute("scoreA", 200);
+//        model.addAttribute("scoreA", 200);
       } else {
         model.addAttribute("status", 0);
       }
     } else {
-      model.addAttribute("scoreA", joinLog.getDetail());
+//      model.addAttribute("scoreA", joinLog.getDetail());
       model.addAttribute("status", 1);
     }
     model.addAttribute("subSource", subSource);
-    return MvUtil.go("/activity/subPage");
+    return MvUtil.go("/activity/subPage2");
   }
 
   /**
@@ -159,6 +104,10 @@ public class ActivityCodeBurseController {
   public LejiaResult subPageOpen(@RequestParam String phoneNumber, @RequestParam String code,
                                  HttpServletRequest request,
                                  @RequestParam(required = false) String subSource) {
+    Boolean b = validateCodeService.findByPhoneNumberAndCode(phoneNumber, code); //验证码是否正确
+    if (!b) {
+      return LejiaResult.build(3001, "验证码错误");
+    }
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     LeJiaUser leJiaUser = leJiaUserService.findUserByPhoneNumber(phoneNumber);  //是否已注册
     ActivityJoinLog joinLog = activityJoinLogService.findLogBySubActivityAndOpenId(0, weiXinUser);
@@ -175,7 +124,7 @@ public class ActivityCodeBurseController {
         Map<String, Integer> map = weiXinUserService.giveScoreAByDefault(weiXinUser, phoneNumber);
 
         //添加参加记录
-        activityJoinLogService.addCodeBurseLogByDefault(weiXinUser, map.get("scoreA"));
+        activityJoinLogService.addCodeBurseLogByDefault(weiXinUser, map.get("scoreC"));
         return LejiaResult.ok(map);
       } catch (Exception e) {
         e.printStackTrace();

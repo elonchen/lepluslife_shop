@@ -63,7 +63,7 @@ public class MerchantController {
     return MvUtil.go("/weixin/merchantType");
   }
 
-  //分页 todo:待删除
+  //分页 关注页面在使用
   @RequestMapping(value = "/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
   public List<MerchantDto> findPageMerchant(
       @RequestParam(value = "page", required = false) Integer offset,
