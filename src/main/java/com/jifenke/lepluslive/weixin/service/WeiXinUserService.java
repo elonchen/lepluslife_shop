@@ -282,55 +282,29 @@ public class WeiXinUserService {
   public Map<String, Integer> giveScoreAByDefault(WeiXinUser weiXinUser, String phoneNumber)
       throws Exception {
     LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
-    ScoreA scoreA = scoreARepository.findByLeJiaUser(leJiaUser).get(0);
     ScoreC scoreC = scoreCService.findScoreCByLeJiaUser(leJiaUser);
-    String aRule = dictionaryService.findDictionaryById(34L).getValue(); //返A规则
     String bRule = dictionaryService.findDictionaryById(35L).getValue(); //返C规则
-    int valueA = 0;
-    int valueB = 0;
+    int valueC = 0;
     Date date = new Date();
     Map<String, Integer> map = new HashMap<>();
     try {
       leJiaUser.setPhoneNumber(phoneNumber);
       leJiaUserRepository.save(leJiaUser);
 
-      //是否返红包|返红包规则
-      String[] aRules = aRule.split("_");
-      if (!"0".equals(aRules[1])) {      //发红包
-        int maxA = Integer.valueOf(aRules[1]);
-        if ("0".equals(aRules[0])) {   //固定红包
-          valueA = maxA;
-        } else {//随机红包
-          int minA = Integer.valueOf(aRules[0]);
-          valueA = new Random().nextInt((maxA - minA) / 10) * 10 + minA;
-        }
-        scoreA.setScore(scoreA.getScore() + valueA);
-        scoreA.setTotalScore(scoreA.getTotalScore() + valueA);
-        scoreA.setLastUpdateDate(date);
-        scoreARepository.save(scoreA);
-        ScoreADetail scoreADetail = new ScoreADetail();
-        scoreADetail.setNumber(Long.valueOf(String.valueOf(valueA)));
-        scoreADetail.setScoreA(scoreA);
-        scoreADetail.setOperate("注册送礼");
-        scoreADetail.setOrigin(0);
-        scoreADetail.setOrderSid("0_" + valueA);
-        scoreADetailRepository.save(scoreADetail);
-      }
-
       //是否返金币|返金币规则
       String[] bRules = bRule.split("_");
       if (!"0".equals(bRules[1])) {      //发金币
         int maxB = Integer.valueOf(bRules[1]);
         if ("0".equals(bRules[0])) {   //固定金币
-          valueB = maxB;
+          valueC = maxB;
         } else {//随机金币
           int minB = Integer.valueOf(bRules[0]);
-          valueB = new Random().nextInt((maxB - minB) / 10) * 10 + minB;
+          valueC = new Random().nextInt((maxB - minB) / 10) * 10 + minB;
         }
-        scoreCService.saveScoreC(scoreC, 1, (long) valueB);
+        scoreCService.saveScoreC(scoreC, 1, (long) valueC);
         scoreCService
-            .saveScoreCDetail(scoreC, 1, (long) valueB, 0, "注册送礼",
-                              "0_" + valueB);
+            .saveScoreCDetail(scoreC, 1, (long) valueC, 0, "注册送礼",
+                              "0_" + valueC);
       }
       weiXinUser.setState(1);
       weiXinUser.setStateDate(date);
@@ -338,8 +312,7 @@ public class WeiXinUserService {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    map.put("scoreA", valueA);
-    map.put("scoreB", valueB);
+    map.put("scoreC", valueC);
     return map;
   }
 

@@ -9,8 +9,6 @@ public class LeJiaUserDto {
 
   private Long scoreB;
 
-  private String userOneBarCode;
-
   private String token;   //sid
 
   private String headImageUrl;
@@ -19,11 +17,10 @@ public class LeJiaUserDto {
 
   private String phoneNumber;
 
-  public LeJiaUserDto(Long scoreA, Long scoreB, String userOneBarCode, String token,
+  public LeJiaUserDto(Long scoreA, Long scoreB, String token,
                       String headImageUrl, String userName, String phoneNumber) {
     this.scoreA = scoreA;
     this.scoreB = scoreB;
-    this.userOneBarCode = userOneBarCode;
     this.token = token;
     this.headImageUrl = headImageUrl;
     this.userName = userName;
@@ -64,12 +61,6 @@ public class LeJiaUserDto {
   }
 
 
-  public LeJiaUserDto(Long scoreA, Long scoreB, String userOneBarCode) {
-    this.scoreA = scoreA;
-    this.scoreB = scoreB;
-    this.userOneBarCode = userOneBarCode;
-  }
-
   public LeJiaUserDto() {
   }
 
@@ -89,11 +80,4 @@ public class LeJiaUserDto {
     this.scoreB = scoreB;
   }
 
-  public String getUserOneBarCode() {
-    return userOneBarCode;
-  }
-
-  public void setUserOneBarCode(String userOneBarCode) {
-    this.userOneBarCode = userOneBarCode;
-  }
 }

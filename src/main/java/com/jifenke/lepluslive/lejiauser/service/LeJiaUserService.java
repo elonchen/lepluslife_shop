@@ -144,8 +144,7 @@ public class LeJiaUserService {
     scoreB.setLeJiaUser(leJiaUser);
     scoreBRepository.save(scoreB);
 
-    return new LeJiaUserDto(scoreA.getScore(), scoreB.getScore(),
-                            leJiaUser.getOneBarCodeUrl(), leJiaUser.getUserSid(),
+    return new LeJiaUserDto(scoreA.getScore(), scoreB.getScore(), leJiaUser.getUserSid(),
                             leJiaUser.getHeadImageUrl(), leJiaUser.getPhoneNumber(),
                             leJiaUser.getPhoneNumber());
   }
