@@ -31,7 +31,7 @@ public class ScoreB {
 
   private Long totalScore = 0L;
 
-  private Date lastUpdateDate;
+  private Date lastUpdateDate = new Date();
 
   public Long getTotalScore() {
     return totalScore;

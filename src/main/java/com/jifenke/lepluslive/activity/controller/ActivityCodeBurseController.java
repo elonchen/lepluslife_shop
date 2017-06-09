@@ -64,9 +64,6 @@ public class ActivityCodeBurseController {
   private LeJiaUserService leJiaUserService;
 
   @Inject
-  private PartnerService partnerService;
-
-  @Inject
   private ActivityShareLogService activityShareLogService;
 
   @Inject
@@ -160,7 +157,8 @@ public class ActivityCodeBurseController {
    * @param phoneNumber 手机号
    */
   @RequestMapping(value = "/subPage/open")
-  public LejiaResult subPageOpen(@RequestParam String phoneNumber, HttpServletRequest request,
+  public LejiaResult subPageOpen(@RequestParam String phoneNumber, @RequestParam String code,
+                                 HttpServletRequest request,
                                  @RequestParam(required = false) String subSource) {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
     LeJiaUser leJiaUser = leJiaUserService.findUserByPhoneNumber(phoneNumber);  //是否已注册

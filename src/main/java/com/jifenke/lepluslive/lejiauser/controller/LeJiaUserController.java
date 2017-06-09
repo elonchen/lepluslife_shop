@@ -1,8 +1,10 @@
 package com.jifenke.lepluslive.lejiauser.controller;
 
+import com.aliyun.oss.internal.OSSUtils;
 import com.jifenke.lepluslive.global.service.MessageService;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MD5Util;
+import com.jifenke.lepluslive.global.util.SignUtil;
 import com.jifenke.lepluslive.lejiauser.controller.dto.LeJiaUserDto;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
@@ -31,8 +33,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -169,31 +174,31 @@ public class LeJiaUserController {
 
   }
 
-  /**
-   * app登录1.0
-   */
-  @ApiOperation(value = "点击登录按钮")
-  @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public LejiaResult login(@RequestParam(required = true) String phoneNumber,
-                           @RequestParam(required = true) String pwd,
-                           @ApiParam(value = "推送token") @RequestParam(required = false) String token) {
-    LeJiaUser leJiaUser = leJiaUserService.findUserByPhoneNumber(phoneNumber);
-    if (leJiaUser == null) {
-      return LejiaResult.build(2005, "该手机号未注册");
-    }
-    leJiaUser = leJiaUserService.login(leJiaUser, pwd, token);
-    if (leJiaUser == null) {
-      return LejiaResult.build(2004, "密码错误");
-    }
-    ScoreA scoreA = scoreAService.findScoreAByLeJiaUser(leJiaUser);
-    ScoreB scoreB = scoreBService.findScoreBByWeiXinUser(leJiaUser);
-    return LejiaResult.build(200, "登录成功", new LeJiaUserDto(scoreA.getScore(), scoreB.getScore(),
-                                                           leJiaUser.getOneBarCodeUrl(),
-                                                           leJiaUser.getUserSid(),
-                                                           leJiaUser.getHeadImageUrl(),
-                                                           leJiaUser.getPhoneNumber(),
-                                                           leJiaUser.getPhoneNumber()));
-  }
+//  /**
+//   * app登录1.0
+//   */
+//  @ApiOperation(value = "点击登录按钮")
+//  @RequestMapping(value = "/login", method = RequestMethod.POST)
+//  public LejiaResult login(@RequestParam(required = true) String phoneNumber,
+//                           @RequestParam(required = true) String pwd,
+//                           @ApiParam(value = "推送token") @RequestParam(required = false) String token) {
+//    LeJiaUser leJiaUser = leJiaUserService.findUserByPhoneNumber(phoneNumber);
+//    if (leJiaUser == null) {
+//      return LejiaResult.build(2005, "该手机号未注册");
+//    }
+//    leJiaUser = leJiaUserService.login(leJiaUser, pwd, token);
+//    if (leJiaUser == null) {
+//      return LejiaResult.build(2004, "密码错误");
+//    }
+//    ScoreA scoreA = scoreAService.findScoreAByLeJiaUser(leJiaUser);
+//    ScoreB scoreB = scoreBService.findScoreBByWeiXinUser(leJiaUser);
+//    return LejiaResult.build(200, "登录成功", new LeJiaUserDto(scoreA.getScore(), scoreB.getScore(),
+//                                                           leJiaUser.getOneBarCodeUrl(),
+//                                                           leJiaUser.getUserSid(),
+//                                                           leJiaUser.getHeadImageUrl(),
+//                                                           leJiaUser.getPhoneNumber(),
+//                                                           leJiaUser.getPhoneNumber()));
+//  }
 
   @ApiOperation(value = "发送验证码重置密码时验证验证码")
   @RequestMapping(value = "/validate", method = RequestMethod.POST)
@@ -234,50 +239,6 @@ public class LeJiaUserController {
       return LejiaResult.build(2003, "token无效");
     }
     return LejiaResult.ok();
-  }
-
-  /**
-   * app微信登录1.1版
-   */
-  @ApiOperation(value = "微信登录")
-  @RequestMapping(value = "/wxLogin", method = RequestMethod.POST)
-  public LejiaResult wxLogin(@RequestParam(required = true) String unionid,
-                             @RequestParam(required = true) String openid,
-                             @RequestParam(required = false) String country,
-                             @RequestParam(required = false) String nickname,
-                             @RequestParam(required = false) String city,
-                             @RequestParam(required = false) String province,
-                             @RequestParam(required = false) String language,
-                             @RequestParam(required = false) String headimgurl,
-                             @RequestParam(required = false) Long sex,
-                             @ApiParam(value = "推送token") @RequestParam(required = false) String token) {
-    if (unionid == null || "null".equals(unionid) || "".equals(unionid)) {
-      return LejiaResult.build(2008, messageUtil.getMsg("2008"));
-    }
-    WeiXinUser weiXinUser = weiXinUserService.findWeiXinUserByUnionId(unionid);  //是否已注册
-    LeJiaUser leJiaUser = null;
-    try {
-      leJiaUser =
-          weiXinUserService
-              .saveWeiXinUserByApp(weiXinUser, unionid, openid, country, city, nickname,
-                                   province, language, headimgurl, sex, token);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return LejiaResult.build(500, "服务器异常");
-    }
-    ScoreA scoreA = scoreAService.findScoreAByLeJiaUser(leJiaUser);
-//    ScoreB scoreB = scoreBService.findScoreBByWeiXinUser(leJiaUser);
-    ScoreC scoreC = scoreCService.findScoreCByLeJiaUser(leJiaUser);
-    if (scoreA != null && scoreC != null && leJiaUser != null) {
-      return LejiaResult.build(200, "登录成功", new LeJiaUserDto(scoreA.getScore(), scoreC.getScore(),
-                                                             null,
-                                                             leJiaUser.getUserSid(),
-                                                             headimgurl,
-                                                             nickname,
-                                                             leJiaUser.getPhoneNumber()));
-    } else {
-      return LejiaResult.build(500, "服务器异常");
-    }
   }
 
   /**
@@ -364,6 +325,48 @@ public class LeJiaUserController {
   @RequestMapping(value = "/notFound")
   public LejiaResult userTest() {
     return LejiaResult.build(2003, "查找用户异常");
+  }
+
+  @RequestMapping(value = "/testSign")
+  public LejiaResult testSign(HttpServletRequest request) {
+    TreeMap<String, Object> parameters = getParametersFromRequest(request);
+
+    System.out.println("请求数据==================" + parameters.toString());
+    String sign = String.valueOf(parameters.get("sign"));
+    parameters.remove("sign");
+    String requestStr = getOriginStr(parameters);
+    if (SignUtil.testSign(requestStr, sign)) { //验签
+      System.out.println("success");
+      TreeMap<String, Object> returnMap = new TreeMap<>();
+      returnMap.put("orderId", "11232332232");
+      returnMap.put("score", 123);
+      returnMap.put("timestamp", System.currentTimeMillis());
+      returnMap.put("sign", SignUtil.sign(getOriginStr(returnMap)));
+      System.out.println("返回数据====================" + returnMap.toString());
+
+      return LejiaResult.ok(returnMap);
+    } else {
+      System.out.println("fail");
+      return LejiaResult.build(400, "验签失败");
+    }
+  }
+
+  private String getOriginStr(TreeMap<String, Object> parameters) {
+    StringBuilder sb = new StringBuilder();
+    parameters.forEach((k, v) -> sb.append(k).append("=").append(v).append("&"));
+    return sb.deleteCharAt(sb.length() - 1).toString();
+  }
+
+  private TreeMap<String, Object> getParametersFromRequest(HttpServletRequest request) {
+    Map<String, String[]> params = request.getParameterMap();
+    TreeMap<String, Object> returnMap = new TreeMap<>();
+    for (String key : params.keySet()) {
+      String[] values = params.get(key);
+      for (String val : values) {
+        returnMap.put(key, val);
+      }
+    }
+    return returnMap;
   }
 
 }
