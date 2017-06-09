@@ -12,7 +12,6 @@ import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
-import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.score.service.ScoreAService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
@@ -105,27 +104,27 @@ public class ActivityCodeBurseController {
     return MvUtil.go("/activity/share2");
   }
 
-  /**
-   * 分享页面提交  16/09/07
-   *
-   * @param phoneNumber 被邀请的手机号码
-   * @param token       邀请人的token
-   * @param request     请求
-   * @return 状态
-   */
-  @RequestMapping(value = "/share/submit", method = RequestMethod.GET)
-  public LejiaResult shareSubmit(@RequestParam String phoneNumber, @RequestParam String token,
-                                 HttpServletRequest request) {
-    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-
-    //给双方派发红包和积分,填充手机号码成为会员，修改邀请人邀请记录(info)并记录shareLog
-    try {
-      activityShareLogService.giveScoreByShare(weiXinUser, token, phoneNumber);
-      return LejiaResult.ok();
-    } catch (Exception e) {
-      return LejiaResult.build(202, "服务器异常");
-    }
-  }
+//  /**
+//   * 分享页面提交  16/09/07
+//   *
+//   * @param phoneNumber 被邀请的手机号码
+//   * @param token       邀请人的token
+//   * @param request     请求
+//   * @return 状态
+//   */
+//  @RequestMapping(value = "/share/submit", method = RequestMethod.GET)
+//  public LejiaResult shareSubmit(@RequestParam String phoneNumber, @RequestParam String token,
+//                                 HttpServletRequest request) {
+//    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+//
+//    //给双方派发红包和积分,填充手机号码成为会员，修改邀请人邀请记录(info)并记录shareLog
+//    try {
+//      activityShareLogService.giveScoreByShare(weiXinUser, token, phoneNumber);
+//      return LejiaResult.ok();
+//    } catch (Exception e) {
+//      return LejiaResult.build(202, "服务器异常");
+//    }
+//  }
 
   //关注图文链接页面
   @RequestMapping("/subPage")
