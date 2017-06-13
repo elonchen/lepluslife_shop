@@ -52,12 +52,13 @@ public class SignFilter implements HandlerInterceptor {
     parameters.forEach((k, v) -> sb.append(k).append("=").append(v).append("&"));
     String requestStr = sb.deleteCharAt(sb.length() - 1).toString();
 
+    System.out.println("签名数据====" + requestStr);
     if (SignUtil.testSign(requestStr, sign)) { //验签
       System.out.println("success");
       return true;
     }
     logger.error("签名有误" + requestStr);
-    return true;
+    return false;
   }
 
   @Override
