@@ -68,6 +68,9 @@ public class ShopController {
     return MvUtil.go("/shop/more");
   }
 
+  /**
+   * 商家详情页  2017/4/17
+   */
   @RequestMapping(value = "/weixin/m", method = RequestMethod.GET)
   public ModelAndView goMerchantPage(HttpServletRequest request, Model model,
                                      @RequestParam Long id,

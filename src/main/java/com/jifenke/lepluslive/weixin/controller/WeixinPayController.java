@@ -4,7 +4,6 @@ import com.jifenke.lepluslive.activity.domain.entities.ActivityPhoneOrder;
 import com.jifenke.lepluslive.activity.service.ActivityPhoneOrderService;
 import com.jifenke.lepluslive.global.config.Constants;
 import com.jifenke.lepluslive.global.service.MessageService;
-import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.global.util.WeixinPayUtil;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
@@ -95,59 +94,6 @@ public class WeixinPayController {
   private WeixinPayLogService weixinPayLogService;
 
   /**
-   * 话费订单生成 生成支付参数  16/10/28
-   *
-   * @param ruleId 话费产品ID
-   * @param phone  充值手机号
-   */
-  //todo:待删除 转移到其他方法
-  @RequestMapping(value = "/phonePay", method = RequestMethod.POST)
-  public LejiaResult phoneOrderPay(@RequestParam Long ruleId, @RequestParam String phone,
-                                   HttpServletRequest request) {
-    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-    Map<Object, Object> result = null;
-    try {
-      result = phoneOrderService.createPhoneOrder(ruleId, weiXinUser.getLeJiaUser(), phone, 5L);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return LejiaResult.build(500, "出现未知错误,请联系管理员或稍后重试");
-    }
-    if (!"200".equals("" + result.get("status"))) {
-      return LejiaResult
-          .build((Integer) result.get("status"), messageService.getMsg("" + result.get("status")));
-    }
-
-    ActivityPhoneOrder order = (ActivityPhoneOrder) result.get("data");
-    //话费产品如果是全积分，这直接调用充话费接口
-    if (order.getPhoneRule().getPayType() == 3) {
-      try {
-        phoneOrderService.paySuccess(order.getOrderSid());
-        return LejiaResult.build(2000, "支付成功", order.getId());
-      } catch (Exception e) {
-        e.printStackTrace();
-        return LejiaResult.build(500, "出现未知错误,请联系管理员或稍后重试");
-      }
-    }
-    //封装订单参数
-    SortedMap<String, Object>
-        map =
-        weiXinPayService
-            .buildOrderParams(request, "话费充值", order.getOrderSid(), "" + order.getTruePrice(),
-                              Constants.PHONEORDER_NOTIFY_URL);
-    //获取预支付id
-    Map<String, Object> unifiedOrder = weiXinPayService.createUnifiedOrder(map);
-    if (unifiedOrder.get("prepay_id") != null) {
-      //返回前端页面
-      SortedMap<String, Object>
-          params =
-          weiXinPayService.buildJsapiParams(unifiedOrder.get("prepay_id").toString());
-      params.put("orderId", order.getId());
-      return LejiaResult.ok(params);
-    }
-    return LejiaResult.build(500, "出现未知错误,请联系管理员或稍后重试");
-  }
-
-  /**
    * 话费订单 微信回调函数 16/10/31
    */
   @RequestMapping(value = "/afterPhonePay", produces = MediaType.APPLICATION_XML_VALUE)
@@ -211,11 +157,7 @@ public class WeixinPayController {
     ActivityPhoneOrder order = phoneOrderService.findByOrderId(orderId);
     model.addAttribute("order", order);
     model.addAttribute("wxConfig", weiXinService.getWeiXinConfig(request));
-    if (order.getType() == 2) {
-      return MvUtil.go("/gold/recharge/success");
-    }
-
-    return MvUtil.go("/activity/phone/success");
+    return MvUtil.go("/gold/recharge/success");
   }
 
   //微信支付接口
@@ -358,22 +300,6 @@ public class WeixinPayController {
       }
     }
     return null;
-  }
-
-  //todo:待删除 等公众号积分商品下线后可删除
-  @RequestMapping(value = "/payFail/{orderId}")
-  public ModelAndView goPayFailPage(@PathVariable Long orderId, Model model,
-                                    HttpServletRequest request) {
-    LeJiaUser leJiaUser = weiXinService.getCurrentWeiXinUser(request).getLeJiaUser();
-    //商品分类
-    List<ProductType> typeList = productService.findAllProductType();
-    //主打爆品
-//    Map product = productService.findMainHotProduct();
-//    model.addAttribute("product", product);
-    model.addAttribute("scoreC", scoreCService.findScoreCByLeJiaUser(leJiaUser));
-    model.addAttribute("typeList", typeList);
-    model.addAttribute("orderId", orderId);
-    return MvUtil.go("/product/productIndex");
   }
 
 }

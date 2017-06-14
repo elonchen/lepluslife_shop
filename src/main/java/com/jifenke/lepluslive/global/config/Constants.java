@@ -20,7 +20,7 @@ public final class Constants {
 
   public static final String WEI_XIN_URL = "http://shop.tiegancrm.com";
 
-//  public static final String WEI_XIN_LIFE_URL = "http://www.tiegancrm.com"; //测试
+  //  public static final String WEI_XIN_LIFE_URL = "http://www.tiegancrm.com"; //测试
   public static final String WEI_XIN_LIFE_URL = "http://www.lepluslife.com"; //线上
 
 
@@ -74,10 +74,7 @@ public final class Constants {
       ONLINEORDER_NOTIFY_URL =
       "http://shop.tiegancrm.com/weixin/pay/afterPay";
   //商城订单微信回调
-  public static final String
-      PHONEORDER_NOTIFY_URL =
-      "http://shop.tiegancrm.com/weixin/pay/afterPhonePay";
-  //话费订单微信回调
+
 //  public static final String ONLINEORDER_NOTIFY_URL = "http://www.tiegancrm.com/weixin/pay/afterPay";  //商城订单微信回调
 //  public static final String PHONEORDER_NOTIFY_URL = "http://www.tiegancrm.com/weixin/pay/afterPhonePay";  //话费订单微信回调
 

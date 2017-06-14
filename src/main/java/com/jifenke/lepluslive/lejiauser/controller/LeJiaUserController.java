@@ -1,6 +1,5 @@
 package com.jifenke.lepluslive.lejiauser.controller;
 
-import com.aliyun.oss.internal.OSSUtils;
 import com.jifenke.lepluslive.global.service.MessageService;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MD5Util;
@@ -11,13 +10,9 @@ import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
 import com.jifenke.lepluslive.lejiauser.service.SmsService;
 import com.jifenke.lepluslive.lejiauser.service.ValidateCodeService;
 import com.jifenke.lepluslive.order.service.OrderService;
-import com.jifenke.lepluslive.score.domain.entities.ScoreA;
-import com.jifenke.lepluslive.score.domain.entities.ScoreB;
-import com.jifenke.lepluslive.score.domain.entities.ScoreC;
 import com.jifenke.lepluslive.score.service.ScoreAService;
 import com.jifenke.lepluslive.score.service.ScoreBService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
-import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
 import com.jifenke.lepluslive.weixin.service.WeiXinUserService;
 
@@ -33,10 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
