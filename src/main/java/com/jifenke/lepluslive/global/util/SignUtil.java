@@ -30,24 +30,28 @@ public class SignUtil {
    */
   private static String pub;
 
+/*
   @Value("#{T(org.apache.commons.io.FileUtils).readFileToString(" +
          "T(org.springframework.util.ResourceUtils).getFile('classpath:key/sign-pub-key.txt')" +
          ")}")
   public void setPub(String key) {
     pub = key;
   }
+*/
 
   /**
    * 服务器私钥
    */
   private static String pri;
 
+/*
   @Value("#{T(org.apache.commons.io.FileUtils).readFileToString(" +
          "T(org.springframework.util.ResourceUtils).getFile('classpath:key/sign-pri-key.txt')" +
          ")}")
   public void setPri(String key) {
     pri = key;
   }
+*/
 
 
   private static final String ALGORITHM = "RSA";
