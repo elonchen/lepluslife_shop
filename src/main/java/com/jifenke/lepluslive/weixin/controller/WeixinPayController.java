@@ -166,6 +166,9 @@ public class WeixinPayController {
                                        @RequestParam String trueScore,
                                        @RequestParam Integer transmitWay,
                                        HttpServletRequest request) {
+    if (trueScore == null || trueScore.equals("")) {
+      trueScore = "0";
+    }
     Long newTruePrice = new BigDecimal(truePrice).multiply(new BigDecimal(100)).longValue();
     Long newTrueScore = new BigDecimal(trueScore).multiply(new BigDecimal(100)).longValue();
     if (newTruePrice == 0) {//全金币兑换流程
