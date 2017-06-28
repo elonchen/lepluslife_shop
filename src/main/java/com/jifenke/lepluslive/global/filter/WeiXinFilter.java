@@ -26,7 +26,7 @@ public class WeiXinFilter implements HandlerInterceptor {
         .getQueryString() : "");
     if (action.equals("/weixin/weixinReply") || action.equals("/weixin/load") || action
         .equals("/weixin/userRegister") || action
-            .equals("/weixin/getOpenId") || action.equals("/weixin/pay/afterPay") || action
+            .equals("/weixin/getOpenId") || action
             .equals("/weixin/pay/afterPhonePay")) {
       return true;
     }

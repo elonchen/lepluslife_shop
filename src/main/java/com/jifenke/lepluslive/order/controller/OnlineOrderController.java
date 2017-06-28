@@ -1,18 +1,13 @@
 package com.jifenke.lepluslive.order.controller;
 
-import com.jifenke.lepluslive.Address.domain.entities.Address;
-import com.jifenke.lepluslive.Address.service.AddressService;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.order.domain.entities.OnLineOrder;
 import com.jifenke.lepluslive.order.service.OnlineOrderService;
-import com.jifenke.lepluslive.order.service.OrderDetailService;
 import com.jifenke.lepluslive.order.service.OrderService;
 import com.jifenke.lepluslive.score.service.ScoreCService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
-import com.jifenke.lepluslive.weixin.service.DictionaryService;
-import com.jifenke.lepluslive.weixin.service.WeiXinPayService;
 import com.jifenke.lepluslive.weixin.service.WeiXinService;
 
 import org.springframework.ui.Model;
@@ -24,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -40,60 +34,13 @@ public class OnlineOrderController {
   private OrderService orderService;
 
   @Inject
-  private AddressService addressService;
-
-
-  @Inject
   private WeiXinService weiXinService;
-
-  @Inject
-  private OrderDetailService orderDetailService;
 
   @Inject
   private OnlineOrderService onlineOrderService;
 
   @Inject
-  private WeiXinPayService weiXinPayService;
-
-  @Inject
   private ScoreCService scoreCService;
-
-
-  /**
-   * 爆品详情页点击购买生成订单 16/09/22
-   *
-   * @param productId 产品ID
-   * @param buyNumber 规格数量
-   * @param specId    规格ID
-   */
-  @RequestMapping(value = "/weixin/createHotOrder", method = RequestMethod.POST)
-  @ResponseBody
-  public LejiaResult createHotOrder(HttpServletRequest request,
-                                    @RequestParam Long productId,
-                                    @RequestParam Integer buyNumber,
-                                    @RequestParam Long specId) {
-    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-    LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
-    //查询某个用户待付款的某个商品的数量
-    int count = orderDetailService.getCurrentUserOrderProductCount(leJiaUser.getId(), productId);
-    if (count > 0) {
-      return LejiaResult.build(5002, "请先支付该商品的待支付订单");
-    }
-    Address address = addressService.findAddressByLeJiaUserAndState(leJiaUser);
-    //创建爆品的待支付订单
-    try {
-      Map
-          result =
-          onlineOrderService.createHotOrder(productId, specId, buyNumber, leJiaUser, address, 5L);
-      return LejiaResult.build((Integer) result.get("status"), "ok", result.get("data"));
-    } catch (Exception e) {
-      e.printStackTrace();
-      return LejiaResult.build(500, "服务器异常");
-    }
-  }
-
-  @Inject
-  private DictionaryService dictionaryService;
 
   /**
    * 订单确认页 16/09/22

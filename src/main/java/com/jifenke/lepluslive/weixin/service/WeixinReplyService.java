@@ -166,6 +166,8 @@ public class WeixinReplyService {
 //          str = reply.buildReplyXmlString(buildMap);
 //        }
 //      }
+    } else {
+      return result;
     }
 
     //关注公众号后查询数据库有没有该用户信息，没有的话主动获取

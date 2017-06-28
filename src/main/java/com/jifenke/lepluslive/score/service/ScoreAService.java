@@ -43,21 +43,6 @@ public class ScoreAService {
     return null;
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public void paySuccess(LeJiaUser leJiaUser, Long payBackScore, String orderSid) {
-    ScoreA scoreA = findScoreAByLeJiaUser(leJiaUser);
-    scoreA.setScore(scoreA.getScore() + payBackScore);
-    scoreA.setTotalScore(scoreA.getTotalScore() + payBackScore);
-    ScoreADetail scoreADetail = new ScoreADetail();
-    scoreADetail.setOperate("乐+商城返鼓励金");
-    scoreADetail.setOrigin(1);
-    scoreADetail.setOrderSid(orderSid);
-    scoreADetail.setScoreA(scoreA);
-    scoreADetail.setNumber(payBackScore);
-    scoreADetailRepository.save(scoreADetail);
-    scoreARepository.save(scoreA);
-  }
-
   /**
    * 根据scoreA查询红包明细列表
    */
@@ -67,7 +52,7 @@ public class ScoreAService {
   }
 
   //活动派发红包
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(propagation = Propagation.REQUIRED)
   public int giveScoreAByActivity(ActivityCodeBurse codeBurse, LeJiaUser leJiaUser) {
     try {
       ScoreA scoreA = findScoreAByLeJiaUser(leJiaUser);
@@ -97,7 +82,7 @@ public class ScoreAService {
   /**
    * 添加红包 16/10/18
    */
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(propagation = Propagation.REQUIRED)
   public int giveScoreAByDefault(LeJiaUser leJiaUser, int defaultScoreA, String operate,
                                  Integer origin, String orderSid) {
     ScoreA scoreA = scoreARepository.findByLeJiaUser(leJiaUser).get(0);
@@ -120,5 +105,62 @@ public class ScoreAService {
       return 0;
     }
     return 1;
+  }
+
+  /**
+   * 保存鼓励金账户  17/6/20
+   *
+   * @param scoreA 鼓励金账户
+   * @param type   1=增加|0=减少
+   * @param val    增加或减少的鼓励金
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public void saveScore(ScoreA scoreA, int type, Long val) throws Exception {
+    Date date = new Date();
+    scoreA.setLastUpdateDate(date);
+    try {
+      if (type == 0) {
+        scoreA.setScore(scoreA.getScore() - val);
+      } else {
+        scoreA.setScore(scoreA.getScore() + val);
+        scoreA.setTotalScore(scoreA.getTotalScore() + val);
+      }
+      scoreARepository.save(scoreA);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException();
+    }
+  }
+
+  /**
+   * 添加用户鼓励金变动明细   2017/2/20
+   *
+   * @param scoreA   鼓励金账户
+   * @param state    1=加鼓励金|0=减鼓励金
+   * @param number   更改鼓励金的数额
+   * @param origin   变动来源
+   * @param operate  变动文字描述
+   * @param orderSid 对应的订单号(可为空)
+   */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public void saveScoreDetail(ScoreA scoreA, Integer state, Long number, Integer origin,
+                              String operate,
+                              String orderSid) throws Exception {
+    try {
+      ScoreADetail detail = new ScoreADetail();
+      detail.setOperate(operate);
+      detail.setOrigin(origin);
+      detail.setOrderSid(orderSid);
+      detail.setScoreA(scoreA);
+      if (state == 0) {
+        detail.setNumber(-number);
+      } else {
+        detail.setNumber(number);
+      }
+      scoreADetailRepository.save(detail);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException();
+    }
   }
 }

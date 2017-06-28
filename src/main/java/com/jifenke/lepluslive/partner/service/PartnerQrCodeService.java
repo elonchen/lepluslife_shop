@@ -92,7 +92,8 @@ public class PartnerQrCodeService {
         partnerQrCode = repository.findOne(id);
         WeiXinUser weiXinUser = partnerQrCode.getPartner().getWeiXinUser();
         partnerQrCode =
-            uploadImage(partnerQrCode, weiXinUser.getHeadImageUrl(), weiXinUser.getNickname());
+            uploadImage(partnerQrCode, weiXinUser.getHeadImageUrl(),
+                        partnerQrCode.getPartner().getName());
       }
       //发送图片消息
       Map<String, Object>
@@ -163,7 +164,7 @@ public class PartnerQrCodeService {
     PartnerQrCode partnerQrCode = insertQrCode(partner); //创建记录并获取临时二维码
     WeiXinUser weiXinUser = partner.getWeiXinUser();
     if (partnerQrCode != null) {
-      return uploadImage(partnerQrCode, weiXinUser.getHeadImageUrl(), weiXinUser.getNickname());
+      return uploadImage(partnerQrCode, weiXinUser.getHeadImageUrl(), partner.getName());
     }
     return null;
   }
