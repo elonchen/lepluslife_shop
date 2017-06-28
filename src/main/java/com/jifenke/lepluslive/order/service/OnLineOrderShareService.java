@@ -3,16 +3,11 @@ package com.jifenke.lepluslive.order.service;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
 import com.jifenke.lepluslive.merchant.domain.entities.Merchant;
-import com.jifenke.lepluslive.merchant.domain.entities.MerchantScanPayWay;
 import com.jifenke.lepluslive.merchant.domain.entities.MerchantWalletOnline;
-import com.jifenke.lepluslive.merchant.service.MerchantScanPayWayService;
 import com.jifenke.lepluslive.merchant.service.MerchantService;
 import com.jifenke.lepluslive.merchant.service.MerchantWalletOnlineService;
 import com.jifenke.lepluslive.order.controller.dto.OrderShare;
-import com.jifenke.lepluslive.order.domain.entities.OnLineOrder;
 import com.jifenke.lepluslive.order.domain.entities.OnLineOrderShare;
-import com.jifenke.lepluslive.order.domain.entities.OrderDetail;
-import com.jifenke.lepluslive.order.domain.entities.PayOrigin;
 import com.jifenke.lepluslive.order.repository.OnLineOrderShareRepository;
 import com.jifenke.lepluslive.partner.domain.entities.Partner;
 import com.jifenke.lepluslive.partner.domain.entities.PartnerManager;
@@ -20,13 +15,10 @@ import com.jifenke.lepluslive.partner.domain.entities.PartnerManagerWalletOnline
 import com.jifenke.lepluslive.partner.domain.entities.PartnerWalletOnline;
 import com.jifenke.lepluslive.partner.service.PartnerManagerWalletOnlineService;
 import com.jifenke.lepluslive.partner.service.PartnerWalletOnlineService;
-import com.jifenke.lepluslive.product.domain.entities.ProductSpec;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
