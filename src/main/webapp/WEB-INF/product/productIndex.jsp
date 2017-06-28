@@ -142,8 +142,9 @@
                 <div><a style="color: #fff;width: 100%;height: 100%;display: block"
                         href="/front/partner/weixin/becomePartner">成为合伙人</a></div>
             </c:if>
-            <div onclick="hideModel('mask-success')">查看订单</div>
-            <div><img src="${leplusShopResource}/product/index/img/cha.png" alt=""></div>
+            <div onclick="goOrderList()">查看订单</div>
+            <div onclick="hideModel()"><img src="${leplusShopResource}/product/index/img/cha.png"
+                                            alt=""></div>
         </div>
     </div>
 </c:if>
@@ -417,9 +418,11 @@
         }
     }
 
-    function hideModel(idName) {
-        $("#" + idName).css('display', 'none');
+    function goOrderList() {
         location.href = "/front/order/weixin/orderList";
+    }
+    function hideModel() {
+        $("#mask-success").css('display', 'none');
     }
 
     function ajaxProductList(contentId, typeId, page) {

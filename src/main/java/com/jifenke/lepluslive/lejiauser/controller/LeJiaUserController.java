@@ -3,7 +3,6 @@ package com.jifenke.lepluslive.lejiauser.controller;
 import com.jifenke.lepluslive.global.service.MessageService;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MD5Util;
-import com.jifenke.lepluslive.global.util.SignUtil;
 import com.jifenke.lepluslive.lejiauser.controller.dto.LeJiaUserDto;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
@@ -30,7 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -318,48 +316,6 @@ public class LeJiaUserController {
   @RequestMapping(value = "/notFound")
   public LejiaResult userTest() {
     return LejiaResult.build(2003, "查找用户异常");
-  }
-
-  @RequestMapping(value = "/testSign")
-  public LejiaResult testSign(HttpServletRequest request) {
-    TreeMap<String, Object> parameters = getParametersFromRequest(request);
-
-    System.out.println("请求数据==================" + parameters.toString());
-    String sign = String.valueOf(parameters.get("sign"));
-    parameters.remove("sign");
-    String requestStr = getOriginStr(parameters);
-    if (SignUtil.testSign(requestStr, sign)) { //验签
-      System.out.println("success");
-      TreeMap<String, Object> returnMap = new TreeMap<>();
-      returnMap.put("orderId", "11232332232");
-      returnMap.put("score", 123);
-      returnMap.put("timestamp", System.currentTimeMillis());
-      returnMap.put("sign", SignUtil.sign(getOriginStr(returnMap)));
-      System.out.println("返回数据====================" + returnMap.toString());
-
-      return LejiaResult.ok(returnMap);
-    } else {
-      System.out.println("fail");
-      return LejiaResult.build(400, "验签失败");
-    }
-  }
-
-  private String getOriginStr(TreeMap<String, Object> parameters) {
-    StringBuilder sb = new StringBuilder();
-    parameters.forEach((k, v) -> sb.append(k).append("=").append(v).append("&"));
-    return sb.deleteCharAt(sb.length() - 1).toString();
-  }
-
-  private TreeMap<String, Object> getParametersFromRequest(HttpServletRequest request) {
-    Map<String, String[]> params = request.getParameterMap();
-    TreeMap<String, Object> returnMap = new TreeMap<>();
-    for (String key : params.keySet()) {
-      String[] values = params.get(key);
-      for (String val : values) {
-        returnMap.put(key, val);
-      }
-    }
-    return returnMap;
   }
 
 }

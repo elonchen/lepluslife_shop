@@ -117,7 +117,7 @@ public class WeiXinPayService {
     orderParams.put("input_charset", "UTF-8");
     orderParams.put("openid", weiXinOtherUserService
         .findByWeiXinUser(weiXinService.getCurrentWeiXinUser(request)).getOpenId());
-    String sign = createSign("UTF-8", orderParams, "JSAPI");
+    String sign = createSign(orderParams, "JSAPI");
     orderParams.put("sign", sign);
     return orderParams;
   }
@@ -141,7 +141,7 @@ public class WeiXinPayService {
     orderParams.put("notify_url", notifyUrl);
     orderParams.put("trade_type", "APP");
     orderParams.put("input_charset", "UTF-8");
-    String sign = createSign("UTF-8", orderParams, "APP");
+    String sign = createSign(orderParams, "APP");
     orderParams.put("sign", sign);
     return orderParams;
   }
@@ -158,7 +158,7 @@ public class WeiXinPayService {
     jsapiParams.put("nonceStr", MvUtil.getRandomStr());
     jsapiParams.put("package", "prepay_id=" + prepayId);
     jsapiParams.put("signType", "MD5");
-    String sign = createSign("UTF-8", jsapiParams, "JSAPI");
+    String sign = createSign(jsapiParams, "JSAPI");
     jsapiParams.put("sign", sign);
     return jsapiParams;
   }
@@ -176,7 +176,7 @@ public class WeiXinPayService {
     jsapiParams.put("partnerid", mchId_APP);
     jsapiParams.put("prepayid", prepayId);
     jsapiParams.put("package", "Sign=WXPay");
-    String sign = createSign("UTF-8", jsapiParams, "APP");
+    String sign = createSign(jsapiParams, "APP");
     jsapiParams.put("sign", sign);
     return jsapiParams;
   }
@@ -204,7 +204,7 @@ public class WeiXinPayService {
   /**
    * 生成微信签名
    */
-  public String createSign(String characterEncoding, Map<String, Object> parameters,
+  public String createSign( Map<String, Object> parameters,
                            String type) {
     StringBuilder sb = new StringBuilder();
     parameters.forEach((k, v) -> {
@@ -218,7 +218,7 @@ public class WeiXinPayService {
     } else {
       sb.append("key=").append(mchKey_APP);
     }
-    return MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
+    return MD5Util.MD5Encode(sb.toString(), "UTF-8").toUpperCase();
   }
 
 

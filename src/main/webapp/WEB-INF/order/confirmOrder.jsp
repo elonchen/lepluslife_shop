@@ -22,7 +22,6 @@
     <!--App自定义的css-->
     <link rel="stylesheet" href="${resourceUrl}/frontRes/css/reset.css">
     <link rel="stylesheet" href="${leplusShopResource}/order/common_confirm/css/pay.css">
-    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <%--以下代替jquery--%>
     <script src="${resourceUrl}/js/zepto.min.js"></script>
 </head>
@@ -93,15 +92,17 @@
         </div>
     </div>
 </section>
-<c:if test="${order.address != null && userState == 0}">
-    <section class="joinLe">
-        <div class="clearfix">
-            <div><img id="w-check" src="${leplusShopResource}/order/common_confirm/img/1.png"
-                      alt=""></div>
-            <div>使用<span id="phone">${order.address.phoneNumber}</span>注册成为乐+会员</div>
-        </div>
-        <p>成为乐+会员，消费后能得鼓励金呦！</p>
-    </section>
+<c:if test="${order.address != null}">
+    <c:if test="${userState == 0}">
+        <section class="joinLe">
+            <div class="clearfix">
+                <div><img id="w-check" src="${leplusShopResource}/order/common_confirm/img/1.png"
+                          alt=""></div>
+                <div>使用<span id="phone">${order.address.phoneNumber}</span>注册成为乐+会员</div>
+            </div>
+            <p>成为乐+会员，消费后能得鼓励金呦！</p>
+        </section>
+    </c:if>
 </c:if>
 
 <section class="goodsList">
@@ -171,10 +172,7 @@
     <div>
         <div>总价</div>
         <div>￥<fmt:formatNumber type="number" value="${order.truePrice/100}" pattern="0.00"
-                                maxFractionDigits="2"/>+<span><fmt:formatNumber type="number"
-                                                                                value="${order.totalScore/100}"
-                                                                                pattern="0.00"
-                                                                                maxFractionDigits="2"/>金币</span>
+                                maxFractionDigits="2"/>
         </div>
     </div>
 </section>
@@ -203,6 +201,7 @@
     </div>
 </div>
 </body>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script>
     var checked = true;
     $(".w-check").click(function () {
@@ -238,7 +237,7 @@
         } else { //用户金币少于订单可用金币
             $('#maxScore').html(toDecimal(canUseScore / 100));
             $('#trueScore').val(toDecimal(canUseScore / 100));
-            $('#truePrice').html(toDecimal((minPrice + orderTotalScore - canUseScore) / 100));
+            $('#truePrice').html(toDecimal((minPrice - canUseScore) / 100));
             maxScore = canUseScore;
             $('#scoreBwarning').show();
             $('#BWarningText').html('您的金币不足，将按1元=1金币补交');
@@ -252,7 +251,7 @@
             $(".useJf").hide();
             trueScoreInput.val(0);
             on = false;
-            $('#truePrice').html(toDecimal((minPrice + orderTotalScore) / 100));
+            $('#truePrice').html(toDecimal((minPrice) / 100));
             $('#scoreBwarning').show();
             $('#BWarningText').html('不使用金币，将按1元=1金币补交');
         } else {//使用金币
@@ -293,7 +292,7 @@
     //数量切换
     //可买数量的最大值和最小值判断
     function judgeFun1() {
-        if (eval(trueScoreInput.val()) * 100 > maxScore) {
+        if (parseInt(trueScoreInput.val()) * 100 > maxScore) {
             if (maxScore == orderTotalScore) {
                 $('#scoreBwarning').hide();
             } else if (maxScore == canUseScore) {
@@ -312,9 +311,9 @@
     }
     //点击事件
     function allClick() {
-        $('#truePrice').html(toDecimal((minPrice + (orderTotalScore - (eval(trueScoreInput.val())
-                                                                       == null ? 0
-                                           : eval(trueScoreInput.val() * 100))))
+        $('#truePrice').html(toDecimal((minPrice - (eval(trueScoreInput.val())
+                                                    == null ? 0
+                                           : eval(trueScoreInput.val() * 100)))
                                        / 100));
     }
     //输入框改变
@@ -396,34 +395,24 @@
             }
             //判断是否注册（异步）
             if ($('.joinLe').length > 0) {
+
                 $.post('/front/weixin/weixin/register', {phoneNumber: $('#phone').html()});
             }
-            var price = eval(truePrice * 100);
 //            首先提交请求，生成预支付订单
-            $.post('/weixin/pay/weixinpay', {
+            $.post('/order/weixin/submit', {
                 orderId: '${order.id}',
-                truePrice: truePrice,
+                source: 'WEB',
                 trueScore: $('#trueScore').val(),
                 transmitWay: transmitWay
             }, function (res) {
-                if (price == 0) {
-                    if (res.status == 200) {
-                        location.href = "/front/order/weixin/orderList";
-                    } else {
-                        $('.waiting').css('display', 'none');
-                        alert("订单处理异常(" + res.status + ")");
-                        $('#btn-wxPay').attr('onclick', 'payByWx()');
-                    }
+                if (res.status == 2000) {
+                    window.location.href = "/front/order/weixin/orderList";
+                } else if (res.status == 200) {
+                    weixinPay(res.data);
                 } else {
-                    if (res.status == 200) {//调用微信支付js-api接口
-                        weixinPay(res);
-                        return;
-                    } else {
-                        $('.waiting').css('display', 'none');
-                        alert(res['msg']);
-                        $('#btn-wxPay').attr('onclick', 'payByWx()');
-                        return;
-                    }
+                    $('.waiting').css('display', 'none');
+                    alert(res['msg']);
+                    $('#btn-wxPay').attr('onclick', 'payByWx()');
                 }
             });
         } else {
@@ -436,24 +425,33 @@
 
     function weixinPay(res) {
         $('.waiting').css('display', 'none');
-        wx.chooseWXPay({
-                           timestamp: res['timeStamp'], // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-                           nonceStr: res['nonceStr'], // 支付签名随机串，不长于 32 位
-                           package: res['package'], // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
-                           signType: res['signType'], // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-                           paySign: res['sign'], // 支付签名
-                           success: function (res) {
-                               // 支付成功后的回调函数
-//                               var total = eval($("#truePrice").html()) * 100;
-                               window.location.href = '/weixin/pay/paySuccess/${order.id}';
-                           },
-                           cancel: function (res) {
-                               $('#btn-wxPay').attr('onclick', 'payByWx()');
-                           },
-                           fail: function (res) {
-                               $('#btn-wxPay').attr('onclick', 'payByWx()');
-                           }
-                       });
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest', {
+                "appId": res['appId'] + "",     //公众号名称，由商户传入
+                "timeStamp": res['timeStamp'] + "", // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                "nonceStr": res['nonceStr'] + "", // 支付签名随机串，不长于 32 位
+                "package": res['package'] + "", // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+                "signType": res['signType'] + "", // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+                "paySign": res['sign'] + "" // 支付签名
+            },
+            function (reslut) {
+                if (reslut.err_msg == "get_brand_wcpay_request:ok") {
+                    window.location.href = '/order/paySuccess/${order.id}';
+                } else {
+                    $('#btn-wxPay').attr('onclick', 'payByWx()');
+                }
+            }
+        );
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', weixinPay, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', weixinPay);
+                document.attachEvent('onWeixinJSBridgeReady', weixinPay);
+            }
+        } else {
+            weixinPay();
+        }
     }
 </script>
 </html>

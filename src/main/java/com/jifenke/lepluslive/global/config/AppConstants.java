@@ -9,10 +9,11 @@ public final class AppConstants {
 
   public static int REQUEST_TIMESTAMP_ALLOW_RANGE = 900000; //请求时间戳允许误差/毫秒
 
-  //APP话费订单微信回调
-  public static final String
-      ORDER_PHONE_NOTIFY_URL =
-      "http://app.leplusshop.com/weixin/pay/afterPhonePay";
+  //线上域名  ↓
+  private static final String NOTIFY_ROOT_URL = "http://shop.tiegancrm.com"; //线上
+//  private static final String NOTIFY_ROOT_URL = "http://www.tiegancrm.com";  //测试
 
+  //臻品订单微信支付回调地址  APP&WEB  ↓
+  public static final String ONLINEORDER_NOTIFY_URL = NOTIFY_ROOT_URL + "/order/afterPay";
 
 }

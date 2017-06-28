@@ -166,10 +166,18 @@
                         <span>包邮</span>
                     </c:if>
                     <c:if test="${product.postage != 0}">
-                        <span>满<font><fmt:formatNumber type="number"
-                                                       value="${product.freePrice/100}"
-                                                       pattern="0.00"
-                                                       maxFractionDigits="2"/></font>包邮</span>
+                        <c:if test="${product.freePrice == 0}">
+                            <span>邮费<fmt:formatNumber type="number"
+                                                      value="${product.postage/100}"
+                                                      pattern="0.00"
+                                                      maxFractionDigits="2"/>元</span>
+                        </c:if>
+                        <c:if test="${product.freePrice != 0}">
+                             <span>满<font><fmt:formatNumber type="number"
+                                                            value="${product.freePrice/100}"
+                                                            pattern="0.00"
+                                                            maxFractionDigits="2"/></font>包邮</span>
+                        </c:if>
                     </c:if>
                 </p>
             </div>
@@ -245,13 +253,11 @@
         </div>
         <ul class="mui-table-view mui-table-view-chevron detail-hid"></ul>
     </div>
-    <form action="/weixin/order/confirm" method="post" id="form">
-        <input type="hidden" id="productId" name="productId" value="${product.id}">
-        <input type="hidden" id="productNum" name="productNum">
-        <input type="hidden" id="totalPrice" name="totalPrice">
-        <input type="hidden" id="totalScore" name="totalScore">
-        <input type="hidden" id="productSpec" name="productSpec">
-    </form>
+    <input type="hidden" id="productId" name="productId" value="${product.id}">
+    <input type="hidden" id="productNum" name="productNum">
+    <input type="hidden" id="totalPrice" name="totalPrice">
+    <input type="hidden" id="totalScore" name="totalScore">
+    <input type="hidden" id="productSpec" name="productSpec">
 </div>
 
 <!--提示-->
@@ -416,22 +422,12 @@
         var productSpecId = $(".focusClass").find(".id-hidden").val();
         $("#productSpec").val(productSpecId);
 
-        var cartDetailDtos = [];
-        var cartDetailDto = {};
-        var product = {};
-        product.id = ${product.id};
-        var productSpec = {};
-        productSpec.id = productSpecId;
-        cartDetailDto.product = product;
-        cartDetailDto.productSpec = productSpec;
-        cartDetailDto.productNumber = $("#productNum").val();
-        cartDetailDtos.push(cartDetailDto);
-
+        //商品id_商品规格id_数量
+        var carts = '${product.id}_' + productSpecId + '_' + $("#productNum").val();
         $.ajax({
                    type: "post",
-                   url: "/weixin/cart/createCartOrder",
-                   contentType: "application/json",
-                   data: JSON.stringify(cartDetailDtos),
+                   url: "/order/weixin/create",
+                   data: {carts: carts, source: 'WEB', type: 1},
                    success: function (data) {
                        if (data.status == 200) {
                            location.href =

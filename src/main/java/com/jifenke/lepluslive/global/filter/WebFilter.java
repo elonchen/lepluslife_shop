@@ -25,13 +25,12 @@ public class WebFilter extends WebMvcConfigurerAdapter {
   public void addInterceptors(InterceptorRegistry registry) {
     WeiXinFilter weiXinFilter = new WeiXinFilter();
     IdentifyUserFilter filter = new IdentifyUserFilter();
-    SignFilter signFilter = new SignFilter();
+
     filter.setWeiXinUserService(weiXinUserService);
     filter.setLeJiaUserService(leJiaUserService);
-    registry.addInterceptor(weiXinFilter).addPathPatterns("/weixin/**")
-        .addPathPatterns("/*/*/weixin/**");
+    registry.addInterceptor(weiXinFilter)
+        .addPathPatterns("/weixin/**", "/*/weixin/**", "/*/*/weixin/**");
     registry.addInterceptor(filter).addPathPatterns("/*/*/user/**");
-    registry.addInterceptor(signFilter).addPathPatterns("/*/sign/**");
     super.addInterceptors(registry);
   }
 }

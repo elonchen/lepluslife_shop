@@ -16,12 +16,13 @@ public final class Constants {
 
   public static final Long CODE_EXPIRE_SECONDS = 2592000L; //公众号临时二维码过期时间 30天
 
-  public static final String APPID = "wx9a694d7de8b8b081";
-
-  public static final String WEI_XIN_URL = "http://shop.tiegancrm.com";
-
-  //  public static final String WEI_XIN_LIFE_URL = "http://www.tiegancrm.com"; //测试
+  public static final String APPID = "wx9a694d7de8b8b081";   //线上
+  public static final String WEI_XIN_URL = "http://shop.tiegancrm.com"; //线上
   public static final String WEI_XIN_LIFE_URL = "http://www.lepluslife.com"; //线上
+
+//  public static final String APPID = "wxec4f3a2fb6ee8f06";
+//  public static final String WEI_XIN_URL = "http://www.tiegancrm.com";
+//    public static final String WEI_XIN_LIFE_URL = "http://www.tiegancrm.com"; //测试
 
 
   public static final String CARD_CHECK_KEY = "8001808eb38443d35671c7c6f8c7ddc0";
@@ -67,16 +68,6 @@ public final class Constants {
   public static final String
       PHONE_NOTIFY_URL =
       "http://www.lepluslife.com/front/phone/afterPay";
-  //充值回调
-//  public static final String PHONE_NOTIFY_URL = "http://www.tiegancrm.com/front/phone/afterPay";  //充值回调
-
-  public static final String
-      ONLINEORDER_NOTIFY_URL =
-      "http://shop.tiegancrm.com/weixin/pay/afterPay";
-  //商城订单微信回调
-
-//  public static final String ONLINEORDER_NOTIFY_URL = "http://www.tiegancrm.com/weixin/pay/afterPay";  //商城订单微信回调
-//  public static final String PHONEORDER_NOTIFY_URL = "http://www.tiegancrm.com/weixin/pay/afterPhonePay";  //话费订单微信回调
 
   public static final String
       WEIXIN_QRCODE =
