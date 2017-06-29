@@ -58,7 +58,8 @@ public class SmsService {
    */
   @Transactional(propagation = Propagation.REQUIRED)
   public Map<Object, Object> saveValidateCode(String phoneNumber, HttpServletRequest request,
-                                              Integer type, Verify verify) throws Exception {
+                                              Integer type,
+                                              Verify verify) throws Exception {
     Map<Object, Object> result = new HashMap<>();
     //某个手机号5分钟内不能发生超过5条
     Integer count = validateCodeRepository.countByPhoneNumberAndStatus(phoneNumber, 0);
@@ -67,7 +68,7 @@ public class SmsService {
       result.put("msg", "发送过于频繁，请稍后再试");//中文错误原因
       return result;
     }
-    Integer countByUnionId = verifyService.countByUnionId(verify.getUnionId());
+    Integer countByUnionId = verifyService.countByUserId(verify.getUserId());
     int limit = Integer.valueOf(dictionaryService.findDictionaryById(65L).getValue());
     if (countByUnionId > limit) {
       result.put("status", 3004);

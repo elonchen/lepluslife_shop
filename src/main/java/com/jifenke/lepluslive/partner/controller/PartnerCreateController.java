@@ -84,7 +84,7 @@ public class PartnerCreateController {
 //    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
     model.addAttribute("weiXinUser", weiXinUser);
     //发送验证码限制
-    Verify verify = verifyService.addVerify(weiXinUser.getUnionId(), 18003);
+    Verify verify = verifyService.addVerify(weiXinUser.getLeJiaUser().getId(), 18003);
     model.addAttribute("pageSid", verify.getPageSid());
     return MvUtil.go("/partner/register/register");
   }
