@@ -10,8 +10,10 @@ import com.jifenke.lepluslive.global.service.MessageService;
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
 import com.jifenke.lepluslive.lejiauser.domain.entities.LeJiaUser;
+import com.jifenke.lepluslive.lejiauser.domain.entities.Verify;
 import com.jifenke.lepluslive.lejiauser.service.LeJiaUserService;
 import com.jifenke.lepluslive.lejiauser.service.ValidateCodeService;
+import com.jifenke.lepluslive.lejiauser.service.VerifyService;
 import com.jifenke.lepluslive.score.service.ScoreAService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
@@ -71,6 +73,9 @@ public class ActivityCodeBurseController {
   @Inject
   private ValidateCodeService validateCodeService;
 
+  @Inject
+  private VerifyService verifyService;
+
   //关注图文链接页面
   @RequestMapping("/subPage")
   public ModelAndView subPage(HttpServletRequest request, Model model,
@@ -91,6 +96,9 @@ public class ActivityCodeBurseController {
 //      model.addAttribute("scoreA", joinLog.getDetail());
       model.addAttribute("status", 1);
     }
+    //发送验证码限制
+    Verify verify = verifyService.addVerify(weiXinUser.getUnionId(), 18005);
+    model.addAttribute("pageSid", verify.getPageSid());
     model.addAttribute("subSource", subSource);
     return MvUtil.go("/activity/subPage2");
   }

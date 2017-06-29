@@ -341,7 +341,8 @@
         $(btn).html(nums + '秒重新获取');
         $.post("/user/sendCode", {
             phoneNumber: $("#phone").val(),
-            type: 3
+            type: 3,
+            pageSid: '${pageSid}'
         }, function (res) {
             if (res.status != 200) {
                 alert(res.msg);

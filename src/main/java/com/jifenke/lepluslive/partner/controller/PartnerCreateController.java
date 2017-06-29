@@ -2,7 +2,9 @@ package com.jifenke.lepluslive.partner.controller;
 
 import com.jifenke.lepluslive.global.util.LejiaResult;
 import com.jifenke.lepluslive.global.util.MvUtil;
+import com.jifenke.lepluslive.lejiauser.domain.entities.Verify;
 import com.jifenke.lepluslive.lejiauser.service.ValidateCodeService;
+import com.jifenke.lepluslive.lejiauser.service.VerifyService;
 import com.jifenke.lepluslive.order.service.OnlineOrderService;
 import com.jifenke.lepluslive.partner.service.PartnerService;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
@@ -42,7 +44,7 @@ public class PartnerCreateController {
   private DictionaryService dictionaryService;
 
   @Inject
-  private WeiXinUserRepository weiXinUserRepository;
+  private VerifyService verifyService;
 
   @Inject
   private ValidateCodeService validateCodeService;
@@ -81,6 +83,9 @@ public class PartnerCreateController {
     WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
 //    WeiXinUser weiXinUser = weiXinUserRepository.findOne(1L);
     model.addAttribute("weiXinUser", weiXinUser);
+    //发送验证码限制
+    Verify verify = verifyService.addVerify(weiXinUser.getUnionId(), 18003);
+    model.addAttribute("pageSid", verify.getPageSid());
     return MvUtil.go("/partner/register/register");
   }
 
