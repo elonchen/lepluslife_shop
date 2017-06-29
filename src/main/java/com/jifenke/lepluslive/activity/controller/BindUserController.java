@@ -39,32 +39,32 @@ public class BindUserController {
   @Inject
   private BindUserService bindUserService;
 
-  /**
-   * 进入绑定页面 17/3/7
-   */
-  @RequestMapping(value = "/weixin/{merchantSid}", method = RequestMethod.GET)
-  public ModelAndView index(HttpServletRequest request, HttpServletResponse response, Model model,
-                            @PathVariable String merchantSid) {
-    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
-    LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
-    Merchant merchant = merchantService.findByMerchantSid(merchantSid);
-    if (leJiaUser != null && merchant != null) {
-      if (leJiaUser.getPhoneNumber() == null || "".equals(leJiaUser.getPhoneNumber())) {
-        model.addAttribute("merchantSid", merchant.getMerchantSid());
-        model.addAttribute("merchantName", merchant.getName());
-        model.addAttribute("subState", weiXinUser.getSubState());
-        return MvUtil.go("/activity/bind/index");
-      }
-    }
-    try {
-      response
-          .sendRedirect(
-              "http://www.lepluslife.com/resource/frontRes/activity/bind/hasRegister.html");
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
+//  /**
+//   * 进入绑定页面 17/3/7
+//   */
+//  @RequestMapping(value = "/weixin/{merchantSid}", method = RequestMethod.GET)
+//  public ModelAndView index(HttpServletRequest request, HttpServletResponse response, Model model,
+//                            @PathVariable String merchantSid) {
+//    WeiXinUser weiXinUser = weiXinService.getCurrentWeiXinUser(request);
+//    LeJiaUser leJiaUser = weiXinUser.getLeJiaUser();
+//    Merchant merchant = merchantService.findByMerchantSid(merchantSid);
+//    if (leJiaUser != null && merchant != null) {
+//      if (leJiaUser.getPhoneNumber() == null || "".equals(leJiaUser.getPhoneNumber())) {
+//        model.addAttribute("merchantSid", merchant.getMerchantSid());
+//        model.addAttribute("merchantName", merchant.getName());
+//        model.addAttribute("subState", weiXinUser.getSubState());
+//        return MvUtil.go("/activity/bind/index");
+//      }
+//    }
+//    try {
+//      response
+//          .sendRedirect(
+//              "http://www.lepluslife.com/resource/frontRes/activity/bind/hasRegister.html");
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+//    return null;
+//  }
 
   /**
    * 绑定页面提交 17/3/7
