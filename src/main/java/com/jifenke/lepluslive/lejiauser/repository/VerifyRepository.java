@@ -9,8 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface VerifyRepository extends JpaRepository<Verify, Long> {
 
+
   Verify findByPageSid(String pageSid);
 
-  Integer countByUnionIdAndAndState(String unionId, Integer state);
+  Integer countByUserIdAndState(Long userId,Integer state);
 
 }

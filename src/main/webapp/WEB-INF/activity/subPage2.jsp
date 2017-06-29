@@ -339,7 +339,7 @@
         btn = thisBtn;
         btn.disabled = true; //将按钮置为不可点击
         $(btn).html(nums + '秒重新获取');
-        $.post("/user/sendCode", {
+        $.post("/code/weixin/send", {
             phoneNumber: $("#phone").val(),
             type: 3,
             pageSid: '${pageSid}'

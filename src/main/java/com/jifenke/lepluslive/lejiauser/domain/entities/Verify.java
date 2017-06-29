@@ -17,9 +17,10 @@ import javax.persistence.Table;
 @Table(name = "VERIFY")
 public class Verify {
 
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private String id;
+  private Long id;
 
   private Date dateCreated = new Date();
 
@@ -27,7 +28,7 @@ public class Verify {
 
   private Integer pageType;   //发送验证码页面类型   category.id
 
-  private String unionId;
+  private Long userId;    //leJiaUser.id
 
   private String pageSid = MvUtil.getRandomNumber(20);
 
@@ -43,12 +44,12 @@ public class Verify {
     this.dateCreated = dateCreated;
   }
 
-  public String getUnionId() {
-    return unionId;
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setUnionId(String unionId) {
-    this.unionId = unionId;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public Integer getState() {
@@ -67,11 +68,11 @@ public class Verify {
     this.phone = phone;
   }
 
-  public String getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

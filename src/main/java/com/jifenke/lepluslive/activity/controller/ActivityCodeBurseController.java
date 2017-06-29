@@ -97,7 +97,7 @@ public class ActivityCodeBurseController {
       model.addAttribute("status", 1);
     }
     //发送验证码限制
-    Verify verify = verifyService.addVerify(weiXinUser.getUnionId(), 18005);
+    Verify verify = verifyService.addVerify(weiXinUser.getLeJiaUser().getId(), 18005);
     model.addAttribute("pageSid", verify.getPageSid());
     model.addAttribute("subSource", subSource);
     return MvUtil.go("/activity/subPage2");
