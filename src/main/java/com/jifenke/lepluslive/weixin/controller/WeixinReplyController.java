@@ -62,8 +62,6 @@ public class WeixinReplyController {
         break;
     }
 
-    System.out.println(res);
-
     return res;
   }
 
