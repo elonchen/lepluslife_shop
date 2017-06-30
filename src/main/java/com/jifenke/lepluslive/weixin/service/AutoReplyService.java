@@ -42,5 +42,9 @@ public class AutoReplyService {
     }
   }
 
+  public AutoReplyRule findById(Long id) {
+    return autoReplyRuleRepository.findOne(id);
+  }
+
 
 }

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -118,16 +119,12 @@ public class WeixinReplyService {
   /**
    * 关注公众号时发送的信息
    */
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(propagation = Propagation.REQUIRED)
   private String buildFocusMessageReply(Map map, Integer eventType) {
-//    WeiXinOtherUser
-//        user =
-//        weiXinOtherUserService.findByOpenId(map.get("FromUserName").toString());
-//    AutoReplyRule rule = autoReplyService.findByReplyType("focusReply_2");
     String result = "";
     String subSource = "0_0_0";
     if (eventType == 1) {
-      result = redisCacheService.getByKey("reply:sub");
+//      result = redisCacheService.getByKey("reply:sub");
       //判断是不是临时二维码
       if (map.get("EventKey") != null && (!"".equals(map.get("EventKey").toString()))) {
         String keyType = map.get("EventKey").toString().split("_")[0];
@@ -140,45 +137,25 @@ public class WeixinReplyService {
           }
         }
       }
-      result =
-          result
-              .replaceAll("&1&", Constants.WEI_XIN_URL + "/weixin/subPage?subSource=" + subSource);
-//      if (rule != null) {
-//        WeixinReply reply = null;
-//        if (null != rule.getReplyText() && (!"".equals(rule.getReplyText()))) {
-//          reply = new WeixinReplyText(map, rule);
-//          str = reply.buildReplyXmlString(null);
-//        } else {
-//          reply = new WeixinReplyImageText(map, rule);
-//          HashMap<String, String> buildMap = new HashMap<>();
-//          //判断是不是临时二维码
-//          if (map.get("EventKey") != null && (!"".equals(map.get("EventKey").toString()))) {
-//            String eventKey = map.get("EventKey").toString().split("_")[1];
-//            if (eventKey.startsWith("M")) {
-//              subSource = "2_0_0";
-//            } else {
-//              subSource = "1_0_" + eventKey;
-//            }
-//          }
-//          buildMap.put("title", "感谢您的关注，恭喜您获得臻品商城红包一个");
-//          buildMap.put("description", "↑↑↑戳这里，累计5000人领取");
-//          buildMap.put("url", Constants.WEI_XIN_URL + "/weixin/subPage?subSource=" + subSource);
-//          str = reply.buildReplyXmlString(buildMap);
-//        }
-//      }
+//      result =
+//          result
+//              .replaceAll("&1&", Constants.WEI_XIN_URL + "/weixin/subPage?subSource=" + subSource);
+      Map<String, Object> returnMap = new HashMap<>();
+      returnMap.put("url", Constants.WEI_XIN_URL + "/weixin/subPage?subSource=" + subSource);
+      result = returnSingleImageText(map, returnMap, 6L);
     } else {
       return result;
     }
 
     //关注公众号后查询数据库有没有该用户信息，没有的话主动获取
     subscribeWeiXinUser(map, subSource, eventType);
-    return returnText(map, result);
+    return result;
   }
 
   /**
    * 点击自定义菜单发送图片
    */
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(propagation = Propagation.REQUIRED)
   private String buildMenuMessageReply(Map map) {
     String mediaId = null;
     try {
@@ -215,6 +192,22 @@ public class WeixinReplyService {
       }
       String str = reply.buildReplyXmlString(null);
       return str;
+    }
+    return "";
+  }
+
+  /**
+   * 回复：单图文
+   *
+   * @param receiveMap 微信元素
+   * @param returnMap  图文元素  为null使用ReplyImageText0
+   * @param id         图文ID
+   */
+  private String returnSingleImageText(Map receiveMap, Map returnMap, Long id) {
+    AutoReplyRule rule = autoReplyService.findById(id);
+    if (rule != null) {
+      WeixinReply reply = new WeixinReplyImageText(receiveMap, rule);
+      return reply.buildReplyXmlString(returnMap);
     }
     return "";
   }
