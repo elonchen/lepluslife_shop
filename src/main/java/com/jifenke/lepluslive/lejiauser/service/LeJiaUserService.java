@@ -310,7 +310,7 @@ public class LeJiaUserService {
   @Inject
   private PartnerQrCodeService partnerQrCodeService;
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(propagation = Propagation.REQUIRED)
   public void checkUserBindPartner(LeJiaUser leJiaUser, String subSource) {
     if (subSource != null && !"".equals(subSource)) {
       if (leJiaUser.getBindPartner() == null) {

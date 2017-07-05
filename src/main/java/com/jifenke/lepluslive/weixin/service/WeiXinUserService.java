@@ -185,10 +185,8 @@ public class WeiXinUserService {
     result[1] = unionId;
 
     //判断是否需要绑定合伙人 1_0_3
-    if (weiXinUser.getState() == 0) {
-      leJiaUserService.checkUserBindPartner(weiXinUser.getLeJiaUser(),
-                                            String.valueOf(userDetail.get("subSource")));
-    }
+    leJiaUserService.checkUserBindPartner(weiXinUser.getLeJiaUser(),
+                                          String.valueOf(userDetail.get("subSource")));
 
     return result;
   }
@@ -289,6 +287,7 @@ public class WeiXinUserService {
     Map<String, Integer> map = new HashMap<>();
     try {
       leJiaUser.setPhoneNumber(phoneNumber);
+      leJiaUser.setPhoneBindDate(date);
       leJiaUserRepository.save(leJiaUser);
 
       //是否返金币|返金币规则
