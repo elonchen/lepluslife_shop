@@ -89,7 +89,7 @@ public class WeiXinWithdrawBillService {
             weiXinWithdrawBill.setMchBillno(orderSid);
             weiXinWithdrawBill.setWithdrawBillSid(orderSid);
             weiXinWithdrawBill.setWeiXinOtherUser(otherUser);
-            weiXinWithdrawBillRepository.save(weiXinWithdrawBill);
+//            weiXinWithdrawBillRepository.save(weiXinWithdrawBill);
             // 3 -  修改钱包金额 , 生成日志
             if(sumOnLine>price) {
                 Long afterAvail = walletOnline.getAvailableBalance()-price;               //  只减线上钱包
