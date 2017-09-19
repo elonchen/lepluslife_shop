@@ -100,7 +100,7 @@ public class WeiXinWithdrawBillService {
                 PartnerWalletOnlineLog onlineLog = new PartnerWalletOnlineLog();
                 onlineLog.setBeforeChangeMoney(sumOnLine);
                 onlineLog.setAfterChangeMoney(walletOnline.getAvailableBalance());
-                onlineLog.setChangeMoney(price);
+                onlineLog.setChangeMoney(0-price);
                 onlineLog.setType(16003L);
                 onlineLog.setCreateDate(new Date());
                 onlineLog.setOrderSid(orderSid);
@@ -122,7 +122,7 @@ public class WeiXinWithdrawBillService {
                 PartnerWalletOnlineLog onlineLog = new PartnerWalletOnlineLog();          //  线上钱包日志
                 onlineLog.setBeforeChangeMoney(sumOnLine);
                 onlineLog.setAfterChangeMoney(walletOnline.getAvailableBalance());
-                onlineLog.setChangeMoney(price);
+                onlineLog.setChangeMoney(0-price);
                 onlineLog.setType(16003L);
                 onlineLog.setCreateDate(new Date());
                 onlineLog.setOrderSid(orderSid);
@@ -130,7 +130,7 @@ public class WeiXinWithdrawBillService {
                 PartnerWalletLog offlineLog = new PartnerWalletLog();                    //  线下钱包日志
                 offlineLog.setBeforeChangeMoney(sumOffLine);
                 offlineLog.setAfterChangeMoney(walletOff.getAvailableBalance());
-                offlineLog.setChangeMoney((price-sumOnLine));
+                offlineLog.setChangeMoney((sumOnLine-price));
                 offlineLog.setType(15003L);
                 offlineLog.setCreateDate(new Date());
                 offlineLog.setOrderSid(orderSid);
@@ -148,7 +148,7 @@ public class WeiXinWithdrawBillService {
                 PartnerWalletLog offlineLog = new PartnerWalletLog();
                 offlineLog.setBeforeChangeMoney(sumOffLine);
                 offlineLog.setAfterChangeMoney(walletOff.getAvailableBalance());
-                offlineLog.setChangeMoney(price);
+                offlineLog.setChangeMoney(0-price);
                 offlineLog.setType(15003L);
                 offlineLog.setCreateDate(new Date());
                 offlineLog.setOrderSid(orderSid);
