@@ -6,20 +6,8 @@ import com.jifenke.lepluslive.lejiauser.domain.entities.RegisterOrigin;
 import com.jifenke.lepluslive.lejiauser.repository.LeJiaUserRepository;
 import com.jifenke.lepluslive.merchant.domain.entities.Merchant;
 import com.jifenke.lepluslive.merchant.service.MerchantService;
-import com.jifenke.lepluslive.partner.domain.entities.Partner;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerInfo;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerScoreLog;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerWallet;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerWalletLog;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerWalletOnline;
-import com.jifenke.lepluslive.partner.domain.entities.PartnerWalletOnlineLog;
-import com.jifenke.lepluslive.partner.repository.PartnerInfoRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerScoreLogRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerWalletLogRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerWalletOnlineLogRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerWalletOnlineRepository;
-import com.jifenke.lepluslive.partner.repository.PartnerWalletRepository;
+import com.jifenke.lepluslive.partner.domain.entities.*;
+import com.jifenke.lepluslive.partner.repository.*;
 import com.jifenke.lepluslive.score.domain.entities.ScoreA;
 import com.jifenke.lepluslive.score.domain.entities.ScoreADetail;
 import com.jifenke.lepluslive.score.domain.entities.ScoreB;
@@ -31,7 +19,6 @@ import com.jifenke.lepluslive.score.repository.ScoreBRepository;
 import com.jifenke.lepluslive.weixin.domain.entities.WeiXinUser;
 import com.jifenke.lepluslive.weixin.repository.WeiXinUserRepository;
 import com.jifenke.lepluslive.weixin.service.DictionaryService;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -42,16 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.locks.ReentrantLock;
-
 import javax.inject.Inject;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by wcg on 16/6/3.
@@ -107,6 +88,9 @@ public class PartnerService {
 
     @Inject
     private PartnerWalletOnlineService partnerWalletOnlineService;
+
+    @Inject
+    private PartnerDevelopePartnerRepository partnerDevelopePartnerRepository;
 
     private static ReentrantLock lock = new ReentrantLock();
 
@@ -395,6 +379,7 @@ public class PartnerService {
         partner.setMerchantLimit(Long.parseLong(dictionaryService.findDictionaryById(61L).getValue()));
         partner.setOrigin(1);
         partnerRepository.save(partner);
+        // 创建线下钱包
         PartnerWallet partnerWallet = new PartnerWallet();
         partnerWallet.setPartner(partner);
         partnerWallet.setPartner(partner);
@@ -406,7 +391,6 @@ public class PartnerService {
         PartnerInfo partnerInfo = new PartnerInfo();
         partnerInfo.setPartner(partner);
         partnerInfoRepository.save(partnerInfo);
-
         //会员跟换手机号
         if (leJiaUser.getRegisterOrigin() == null) {
             leJiaUser.setRegisterOrigin(new RegisterOrigin(1L));
@@ -422,7 +406,8 @@ public class PartnerService {
         if (leJiaUser.getBindPartner() == null) {
             leJiaUser.setBindPartner(partner);
             leJiaUser.setBindPartnerDate(date);
-        } else {//为会员绑定合伙人发一笔福利
+        } else {
+            //为会员绑定合伙人发一笔福利
             PartnerWalletOnline
                     wallet =
                     partnerWalletOnlineRepository.findByPartner(leJiaUser.getBindPartner());
@@ -433,6 +418,14 @@ public class PartnerService {
                             + Long.parseLong(values[0]);
             partnerWalletOnlineService
                     .shareToPartner(welfare, leJiaUser.getBindPartner(), wallet, null, 16002L);
+            // 创建发展和合伙人关联关系
+            PartnerDevelopePartner partnerDevelopePartner = new PartnerDevelopePartner();
+            partnerDevelopePartner.setLeJiaUser(leJiaUser);
+            partnerDevelopePartner.setPartner(partner);
+            partnerDevelopePartner.setTotalCommission(welfare);
+            partnerDevelopePartner.setDevPartner(leJiaUser.getBindPartner());
+            partnerDevelopePartner.setCreateDate(new Date());
+            partnerDevelopePartnerRepository.save(partnerDevelopePartner);
         }
         return partner;
     }
