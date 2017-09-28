@@ -108,7 +108,7 @@
                         }else {
                             newContent+='<span class="left ttl">已到账</span>';
                         }
-                       newContent+='<span class="right time">'+new Date(list[i][3]).Format("yyyy-MM-dd hh:mm:ss")+'</span></p></div>';
+                       newContent+='<span class="right time">'+new Date(list[i][3]).Format("yyyy-MM-dd HH:mm:ss")+'</span></p></div>';
                 }
                 content.innerHTML+=newContent;
                 currPage = currPage+1;

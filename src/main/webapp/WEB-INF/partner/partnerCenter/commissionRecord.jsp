@@ -174,7 +174,7 @@
                         newOffContent += '<span class="left ttl"> 历史消费记录</span>';
                     }
                     newOffContent += '<span class="right num">' + (offLineLogs[off].afterChangeMoney - offLineLogs[off].beforeChangeMoney)/100.0 + '</span></p>';
-                    newOffContent += '<p class="time">' + new Date(offLineLogs[off].createDate).Format("yyyy-MM-dd hh:mm:ss") + '</p></div>';
+                    newOffContent += '<p class="time">' + new Date(offLineLogs[off].createDate).Format("yyyy-MM-dd HH:mm:ss") + '</p></div>';
                 }
                 for (var on = 0; on < onLineLogs.length; on++) {
                     newOnContent += '<div class="list"><p class="clearfix desc">';
@@ -192,7 +192,7 @@
                         newOffContent += '<span class="left ttl"> 历史消费记录</span>';
                     }
                     newOnContent += '<span class="right num">' + (onLineLogs[on].afterChangeMoney - onLineLogs[on].beforeChangeMoney)/100.0+ '</span></p>';
-                    newOnContent += '<p class="time">' + new Date(onLineLogs[on].createDate).Format("yyyy-MM-dd hh:mm:ss") + '</p></div>';
+                    newOnContent += '<p class="time">' + new Date(onLineLogs[on].createDate).Format("yyyy-MM-dd HH:mm:ss") + '</p></div>';
                 }
                 offContent.innerHTML += newOffContent;
                 onContent.innerHTML += newOnContent;
